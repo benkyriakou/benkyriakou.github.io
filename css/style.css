@@ -58,11 +58,6 @@ a:visited {
   color: #666;
 }
 
-a:focus {
-  border-radius: 0.25rem;
-  box-shadow: 0 0 3px 2px #F250ED;
-}
-
 a:hover,
 a:focus {
   color: #F250ED;
