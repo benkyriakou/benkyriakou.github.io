@@ -52,6 +52,7 @@ h1, h2, h3, h4, h5, h6 {
 a {
   color: #333;
   text-decoration: none;
+  word-wrap: break-word;
 }
 
 a:visited {
@@ -75,8 +76,8 @@ li > a:hover {
 
 p,
 ul {
-  font-size: 20px;
-  font-size: 1.25rem;
+  font-size: 16px;
+  font-size: 1rem;
   margin: 0;
 }
 
@@ -86,6 +87,14 @@ p + * {
 }
 
 @media screen and (min-width: 560px) {
+  p,
+  ul {
+    font-size: 20px;
+    font-size: 1.25rem;
+  }
+}
+
+@media screen and (min-width: 800px) {
   p,
   ul {
     font-size: 24px;
