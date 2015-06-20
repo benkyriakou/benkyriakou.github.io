@@ -1,47 +1,9 @@
+/* Core element styles */
+
 html {
   font-family: Georgia, serif;
   font-size: 16px;
   line-height: 1.5;
-}
-
-header {
-  border-bottom: 1px #CCC solid;
-  box-shadow: 0px 0px 2px 2px #EFEFEF;
-  margin-bottom: 2rem;
-  overflow: hidden;
-}
-
-.header-main {
-  font-family: 'Lato', Verdana, sans-serif;
-  font-size: 20px;
-  font-size: 1.25rem;
-  font-weight: 900;
-  margin: 8px 0;
-  margin: 0.5rem 0;
-  text-transform: uppercase;
-}
-
-.header-main--left {
-  float: left;
-  margin-right: 8px;
-  margin-right: 0.5rem;
-}
-
-.header-main--right {
-  float: right;
-}
-
-.center-wrapper {
-  margin: 0 auto;
-  max-width: 928px;
-  max-width: 58rem;
-  padding: 0 16px;
-  padding: 0 1rem;
-}
-
-.hidden {
-  left: -9999px;
-  position: absolute;
 }
 
 h1, h2, h3, h4, h5, h6 {
@@ -55,23 +17,9 @@ a {
   word-wrap: break-word;
 }
 
-a:visited {
-  color: #666;
-}
-
 a:hover,
 a:focus {
   color: #F250ED;
-}
-
-p > a,
-li > a {
-  text-decoration: underline;
-}
-
-p > a:hover,
-li > a:hover {
-  text-decoration: none;
 }
 
 p,
@@ -108,10 +56,59 @@ pre {
   white-space: pre-wrap;
 }
 
+/* Header styles */
+
+.site-header {
+  border-bottom: 1px #CCC solid;
+  box-shadow: 0px 0px 2px 2px #EFEFEF;
+  margin-bottom: 2rem;
+  overflow: hidden;
+}
+
+.site-header__item {
+  font-family: 'Lato', Verdana, sans-serif;
+  font-size: 20px;
+  font-size: 1.25rem;
+  font-weight: 900;
+  margin: 8px 0;
+  margin: 0.5rem 0;
+  text-transform: uppercase;
+}
+
+.site-header__item--left {
+  float: left;
+  margin-right: 8px;
+  margin-right: 0.5rem;
+}
+
+.site-header__item--right {
+  float: right;
+}
+
+.center-wrapper {
+  margin: 0 auto;
+  max-width: 928px;
+  max-width: 58rem;
+  padding: 0 16px;
+  padding: 0 1rem;
+}
+
 /* Article styling */
 
 .article {
   margin-bottom: 2rem;
+}
+
+.article a {
+  text-decoration: underline;
+}
+
+.article a:hover {
+  text-decoration: none;
+}
+
+.article a:visited {
+  color: #666;
 }
 
 .article__header {
@@ -123,6 +120,9 @@ pre {
   font-size: 2.5rem;
   text-indent: -0.1rem;
 }
+.article__header a {
+  text-decoration: none;
+}
 
 .article__date {
   color: #777;
@@ -130,4 +130,11 @@ pre {
   font-family: 'Lato', Verdana, sans-serif;
   font-weight: 400;
   text-transform: uppercase;
+}
+
+/* Utility classes */
+
+.hidden {
+  left: -9999px;
+  position: absolute;
 }
