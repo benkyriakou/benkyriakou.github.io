@@ -71,16 +71,20 @@ pre {
 
 img {
   display: block;
-  width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+  max-width: 100%;
 }
 
+/* Don't do this on Android because vh inconsistency due to address bar */
+html:not(.is-android) img {
+  max-height: 80vh;
+}
+
+/* Scale down images a bit on desktop */
 @media screen and (min-width: 600px) {
   img {
-    margin-left: auto;
-    margin-right: auto;
-    max-height: 80vh;
     max-width: 80%;
-    width: auto;
   }
 }
 
