@@ -80,6 +80,7 @@ img {
     margin-right: auto;
     max-height: 80vh;
     max-width: 80%;
+    width: auto;
   }
 }
 
