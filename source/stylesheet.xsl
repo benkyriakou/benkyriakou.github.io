@@ -14,8 +14,8 @@
         <title><xsl:apply-templates select="/*/title" /></title>
 
         <link href="//fonts.googleapis.com/css?family=Lato:400,900" rel="stylesheet" type="text/css" />
-        <link type="text/css" rel="stylesheet" href="../css/normalize.css" media="all" />
-        <link type="text/css" rel="stylesheet" href="../css/style.css" media="all" />
+        <link type="text/css" rel="stylesheet" href="/css/normalize.css" media="all" />
+        <link type="text/css" rel="stylesheet" href="/css/style.css" media="all" />
 
         <script>
           var userAgent = navigator.userAgent || navigator.vendor || window.opera;
