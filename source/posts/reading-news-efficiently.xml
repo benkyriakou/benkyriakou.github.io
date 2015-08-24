@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<?xml-stylesheet type="text/xsl" href="stylesheet.xsl"?>
+
+<article>
+  <title>Reading news efficiently</title>
+  <slug>reading-news-efficiently</slug>
+  <date datetime="2015-06">June 2015</date>
+  <description>How I set about curing my news addiction with RSS feeds and e-mail.</description>
+  <content>
+    <p>I always feel like I'm busy recently, so I'm trying to use my time more efficiently. Looking at how I spend my time, I spend far too much of it reading the news. I've become a news junkie - having a smartphone makes it much too easy to dip in and out of the news when I have downtime.</p>
+
+    <p>There's no reason for me to check the news multiple times per day - realistically nothing's going to happen in any 24 hour period that requires my immediate attention. Reading sites like the Guardian is also pretty inefficient - it's hard to see what's changed, and I automatically skip a lot of sections.</p>
+
+    <p>What I really need is a system that lets me:</p>
+
+    <ul>
+      <li>Read the news once per day</li>
+      <li>Only see what's new in the past 24 hours</li>
+      <li>Curate the sources to minimise noise</li>
+    </ul>
+
+    <p>I wanted to get this set up as quickly as possible, and the first service that came to mind was <a href="//ifttt.com">If This Then That</a>. I've been wanting to use this for something for a long time, so this was the perfect excuse.</p>
+
+    <p>After poking around with the settings, I discovered the brilliant e-mail digest action - it pulls in new items in an RSS feed and sends you an e-mail summary. You can do this daily or weekly, which was fine for me. I then picked my news sources, and set up three daily digests:</p>
+
+    <ul>
+      <li>Hacker News posts from <a href="//hnrss.org/newest?points=50">hnrss.org/newest?points=50</a></li>
+      <li>Guardian articles from three sources, combined using <a href="//chimpfeedr.com">Chimpfeedr</a>
+        <ul>
+          <li><a href="//theguardian.com/world/rss">theguardian.com/world/rss</a></li>
+          <li><a href="//theguardian.com/technology/rss">theguardian.com/technology/rss</a></li>
+          <li><a href="//theguardian.com/politics/rss">theguardian.com/politics/rss</a></li>
+        </ul>
+      </li>
+      <li>Cute animals from <a href="//reddit.com/r/aww/top.rss">reddit.com/r/aww/top.rss</a></li>
+    </ul>
+
+    <p>Now I get three e-mails every morning that let me easily browse the past day's news, with no distractions. This means I have no excuse to constantly check the news throughout the day, and I can use downtime more productively to read books, do some writing, or start a project.</p>
+  </content>
+</article>

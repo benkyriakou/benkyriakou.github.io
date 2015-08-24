@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<?xml-stylesheet type="text/xsl" href="stylesheet.xsl"?>
+
+<homepage>
+  <title>Ben Kyriakou</title>
+  <content>
+    <article>
+      <title>Coffee for one</title>
+      <slug>coffee-for-one</slug>
+      <date datetime="2015-07">July 2015</date>
+      <description>How I make coffee with a hand grinder and an Aeropress.</description>
+    </article>
+    <article>
+      <title>Reading news efficiently</title>
+      <slug>reading-news-efficiently</slug>
+      <date datetime="2015-06">June 2015</date>
+      <description>How I set about curing my news addiction with RSS feeds and e-mail.</description>
+    </article>
+  </content>
+</homepage>
