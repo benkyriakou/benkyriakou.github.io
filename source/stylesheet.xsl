@@ -34,11 +34,27 @@
             <xsl:call-template name="header" />
           </header><!--/header-->
           <main class="center-wrapper">
-            <xsl:apply-templates select="document/content" />
+            <xsl:apply-templates select="document" />
           </main><!-- /main -->
         </div>
       </body>
     </html>
+  </xsl:template>
+
+  <xsl:template match="document">
+    <xsl:if test="not(title) or title=''">
+      <xsl:message terminate="yes">
+        Document requires a title value.
+      </xsl:message>
+    </xsl:if>
+
+    <xsl:if test="not(description) or description=''">
+      <xsl:message terminate="yes">
+        Document requires a description value.
+      </xsl:message>
+    </xsl:if>
+
+    <xsl:apply-templates select="content" />
   </xsl:template>
 
   <xsl:template name="header">
