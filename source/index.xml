@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <?xml-stylesheet type="text/xsl" href="stylesheet.xsl"?>
 
-<homepage>
+<document type="homepage">
   <title>Ben Kyriakou</title>
+  <description>Expulsions from the mind of Ben Kyriakou. Programming and pedantry.</description>
   <content>
     <article>
       <title>Coffee for one</title>
@@ -17,4 +18,4 @@
       <description>How I set about curing my news addiction with RSS feeds and e-mail.</description>
     </article>
   </content>
-</homepage>
+</document>

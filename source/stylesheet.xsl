@@ -8,10 +8,10 @@
       <head>
         <meta charset="utf-8" />
         <meta name="theme-color" content="#333" />
-        <meta name="description" content="" />
+        <meta name="description" content="{document/description}" />
         <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=1" />
 
-        <title><xsl:apply-templates select="/*/title" /></title>
+        <title><xsl:apply-templates select="document/title" /></title>
 
         <link href="//fonts.googleapis.com/css?family=Lato:400,900" rel="stylesheet" type="text/css" />
         <link type="text/css" rel="stylesheet" href="/css/normalize.css" media="all" />
@@ -32,10 +32,10 @@
         <div class="wrapper">
           <header class="site-header">
             <xsl:call-template name="header" />
-          </header>
+          </header><!--/header-->
           <main class="center-wrapper">
-            <xsl:apply-templates select="/*/content" />
-          </main><!-- /.center-wrapper -->
+            <xsl:apply-templates select="document/content" />
+          </main><!-- /main -->
         </div>
       </body>
     </html>
@@ -56,30 +56,30 @@
     </div>
   </xsl:template>
 
-  <xsl:template match="/article/title">
+  <xsl:template match="document[@type!='homepage']/title">
     <xsl:value-of select="text()" /><xsl:text> | Ben Kyriakou</xsl:text>
   </xsl:template>
 
-  <xsl:template match="article/content">
+  <xsl:template match="article">
     <article class="article">
-      <time class="article__date" datetime="{/article/date/@datetime}">
-        <xsl:value-of select="/article/date" />
+      <time class="article__date" datetime="{date/@datetime}">
+        <xsl:value-of select="date" />
       </time>
       <h1 class="article__header">
-        <xsl:value-of select="/article/title" />
+        <xsl:value-of select="title" />
       </h1>
-      <xsl:copy-of select="node()" />
+      <xsl:copy-of select="content/node()" />
     </article><!-- /.article -->
   </xsl:template>
 
-  <xsl:template match="homepage/content">
+  <xsl:template match="document[@type='homepage']/content">
     <h1 class="hidden">Ben Kyriakou</h1>
     <div class="articles">
-      <xsl:apply-templates />
+      <xsl:apply-templates select="article" mode="teaser" />
     </div>
   </xsl:template>
 
-  <xsl:template match="homepage/content/article">
+  <xsl:template match="article" mode="teaser">
     <article class="article article--teaser">
       <time class="article__date" datetime="{date/@datetime}">
         <xsl:value-of select="date" />
@@ -104,5 +104,4 @@
       ga('send', 'pageview');
     </script>
   </xsl:template>
-
 </xsl:stylesheet>

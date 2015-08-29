@@ -1,50 +1,55 @@
 <?xml version="1.0" encoding="utf-8"?>
 <?xml-stylesheet type="text/xsl" href="stylesheet.xsl"?>
 
-<article>
+<document type="article">
   <title>Coffee for one</title>
-  <slug>coffee-for-one</slug>
-  <date datetime="2015-07">July 2015</date>
   <description>How I make coffee with a hand grinder and an Aeropress.</description>
   <content>
-    <p>For a long time, I made coffee with a cafetière. I make coffee one cup at a time and, whilst a cafetière is great for multiple cups, it wasn't great for me. They're fiddly to clean, can leave sediment in the coffee, and break when dropped.</p>
+    <article>
+      <title>Coffee for one</title>
+      <slug>coffee-for-one</slug>
+      <date datetime="2015-07">July 2015</date>
+      <content>
+        <p>For a long time, I made coffee with a cafetière. I make coffee one cup at a time and, whilst a cafetière is great for multiple cups, it wasn't great for me. They're fiddly to clean, can leave sediment in the coffee, and break when dropped.</p>
 
-    <p>This year I've completely changed my coffee setup. It's optimised for brewing a single cup at a time at the weekend, so takes a little more time, but makes a really nice cup of coffee. If I did this during the week I'd buy pre-ground coffee since I'd use it faster and so be less concerned about its freshness.</p>
+        <p>This year I've completely changed my coffee setup. It's optimised for brewing a single cup at a time at the weekend, so takes a little more time, but makes a really nice cup of coffee. If I did this during the week I'd buy pre-ground coffee since I'd use it faster and so be less concerned about its freshness.</p>
 
-    <h2>The coffee-making process</h2>
+        <h2>The coffee-making process</h2>
 
-    <p>I start with some nice, local, Small Batch beans.</p>
+        <p>I start with some nice, local, Small Batch beans.</p>
 
-    <img src="/images/coffee.jpg" alt="Small Batch coffee beans" />
+        <img src="/images/coffee.jpg" alt="Small Batch coffee beans" />
 
-    <p>The beans are ground in my Hario Mini Mill.</p>
+        <p>The beans are ground in my Hario Mini Mill.</p>
 
-    <img src="/images/grinder.jpg" alt="Hario Mini Mill" />
+        <img src="/images/grinder.jpg" alt="Hario Mini Mill" />
 
-    <p>I weigh the beans out - 17-20g depending on my caffeine requirement.</p>
+        <p>I weigh the beans out - 17-20g depending on my caffeine requirement.</p>
 
-    <img src="/images/grinder-beans.jpg" alt="Coffee beans on scales" />
+        <img src="/images/grinder-beans.jpg" alt="Coffee beans on scales" />
 
-    <p>Then grind away until they're all done. I'm playing with grind sizes, and at the moment it's #8 on this grinder.</p>
+        <p>Then grind away until they're all done. I'm playing with grind sizes, and at the moment it's #8 on this grinder.</p>
 
-    <img src="/images/grinder-full.jpg" alt="Ground coffee in grinder" />
+        <img src="/images/grinder-full.jpg" alt="Ground coffee in grinder" />
 
-    <p>Maybe a little coarse, but it makes a nice cup.</p>
+        <p>Maybe a little coarse, but it makes a nice cup.</p>
 
-    <img src="/images/grounds.jpg" alt="Close-up of ground coffee" />
+        <img src="/images/grounds.jpg" alt="Close-up of ground coffee" />
 
-    <p>Now add water and brew.</p>
+        <p>Now add water and brew.</p>
 
-    <img src="/images/aeropress-brew.jpg" alt="Coffee brewing in Aeropress" />
+        <img src="/images/aeropress-brew.jpg" alt="Coffee brewing in Aeropress" />
 
-    <p>Press into the mug. Slowly does it&#2026;</p>
+        <p>Press into the mug. Slowly does it&#2026;</p>
 
-    <img src="/images/aeropress-done.jpg" alt="Aeropress on coffee mug" />
+        <img src="/images/aeropress-done.jpg" alt="Aeropress on coffee mug" />
 
-    <p>And now, it's time to drink.</p>
+        <p>And now, it's time to drink.</p>
 
-    <img src="../images/mug.jpg" alt="Mug of coffee" />
+        <img src="../images/mug.jpg" alt="Mug of coffee" />
 
-    <p>I really like this setup. Once the coffee's done I just eject the grounds from the Aeropress, then give it and the grinder a rinse. The only perishable items are the Aeropress filters, and one pack lasts forever. If you're making coffee for one, I'd definitely recommend this method.</p>
+        <p>I really like this setup. Once the coffee's done I just eject the grounds from the Aeropress, then give it and the grinder a rinse. The only perishable items are the Aeropress filters, and one pack lasts forever. If you're making coffee for one, I'd definitely recommend this method.</p>
+      </content>
+    </article>
   </content>
-</article>
+</document>
