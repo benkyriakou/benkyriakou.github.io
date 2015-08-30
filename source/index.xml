@@ -6,6 +6,12 @@
   <description>Expulsions from the mind of Ben Kyriakou. Programming and pedantry.</description>
   <content>
     <article>
+      <title>Agile in practice</title>
+      <slug>agile-in-practice</slug>
+      <date datetime="2015-08">August 2015</date>
+      <description>What I've learned running Agile projects in the real world.</description>
+    </article>
+    <article>
       <title>Coffee for one</title>
       <slug>coffee-for-one</slug>
       <date datetime="2015-07">July 2015</date>
