@@ -74,6 +74,7 @@ img {
   margin-left: auto;
   margin-right: auto;
   max-width: 100%;
+  transition: height 1s, width 1s;
 }
 
 /* Don't do this on Android because vh inconsistency due to address bar */
@@ -141,12 +142,14 @@ img + * {
   text-decoration: underline;
 }
 
-.article a:hover {
-  text-decoration: none;
+.article a:visited {
+  color: #666;
 }
 
-.article a:visited:not(:hover) {
-  color: #666;
+.article a:hover,
+.article a:focus {
+  color: #F250ED;
+  text-decoration: none;
 }
 
 .article__header {
