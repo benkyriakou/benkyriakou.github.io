@@ -92,18 +92,18 @@
   <xsl:template match="document[@type='homepage']/content">
     <h1 class="hidden">Ben Kyriakou</h1>
     <div class="articles">
-      <xsl:apply-templates select="article" mode="teaser" />
+      <xsl:apply-templates select="document[@type='article']" mode="teaser" />
     </div>
   </xsl:template>
 
-  <xsl:template match="article" mode="teaser">
+  <xsl:template match="document[@type='article']" mode="teaser">
     <article class="article article--teaser">
-      <time class="article__date" datetime="{date/@datetime}">
-        <xsl:value-of select="date" />
+      <time class="article__date" datetime="{.//article/date/@datetime}">
+        <xsl:value-of select=".//article/date" />
       </time>
       <h2 class="article__header">
         <a href="{slug}">
-          <xsl:value-of select="title" />
+          <xsl:value-of select=".//article/title" />
         </a>
       </h2>
       <p><xsl:value-of select="description" /></p>

@@ -19,5 +19,6 @@ for item in listing:
         os.makedirs(outpath)
 
       xml = etree.parse(inpath + '/' + filename)
+      xml.xinclude()
       result = transform(xml)
       result.write(outpath + '/' + name + '.html', pretty_print=True)
