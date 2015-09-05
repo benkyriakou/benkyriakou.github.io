@@ -3,10 +3,10 @@
 <document type="article">
   <title>Agile in practice</title>
   <description>What I've learned running Agile projects in the real world.</description>
+  <slug>/posts/agile-in-practice</slug>
   <content>
     <article>
       <title>Agile in practice</title>
-      <slug>agile-in-practice</slug>
       <date datetime="2015-08">August 2015</date>
       <content>
         <p>After training as a Certified Scrummaster earlier this year, I've had the opportunity to run a fairly large Agile project. Along the way I've learnt a few things about what really helps your sprints be sucessful.</p>

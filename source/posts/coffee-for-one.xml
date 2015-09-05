@@ -4,10 +4,10 @@
 <document type="article">
   <title>Coffee for one</title>
   <description>How I make coffee with a hand grinder and an Aeropress.</description>
+  <slug>/posts/coffee-for-one</slug>
   <content>
     <article>
       <title>Coffee for one</title>
-      <slug>coffee-for-one</slug>
       <date datetime="2015-07">July 2015</date>
       <content>
         <p>For a long time, I made coffee with a cafetière. I make coffee one cup at a time and, whilst a cafetière is great for multiple cups, it wasn't great for me. They're fiddly to clean, can leave sediment in the coffee, and break when dropped.</p>

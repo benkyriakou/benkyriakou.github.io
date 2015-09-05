@@ -10,6 +10,7 @@
         <meta name="theme-color" content="#333" />
         <meta name="description" content="{document/description}" />
         <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=1" />
+        <link rel="canonical" href="http://benkyriakou.com{document/slug}" />
 
         <title><xsl:apply-templates select="document/title" /></title>
 
@@ -101,7 +102,7 @@
         <xsl:value-of select="date" />
       </time>
       <h2 class="article__header">
-        <a href="/posts/{slug}">
+        <a href="{slug}">
           <xsl:value-of select="title" />
         </a>
       </h2>
