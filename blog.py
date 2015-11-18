@@ -18,7 +18,12 @@ for item in listing:
       if not os.path.exists(outpath):
         os.makedirs(outpath)
 
+      print('Processing ' + inpath + '/' + filename)
+
       xml = etree.parse(inpath + '/' + filename)
       xml.xinclude()
       result = transform(xml)
+
+      print('Generating ' + outpath + '/' + name + '.html')
+
       result.write(outpath + '/' + name + '.html', pretty_print=True)

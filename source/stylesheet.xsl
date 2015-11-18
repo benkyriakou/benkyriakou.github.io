@@ -65,7 +65,7 @@
           <a href="/">Home</a>
         </div>
         <div class="site-header__item site-header__item--right">
-          <a href="//twitter.com/benkyriakou" target="_blank">
+          <a href="//twitter.com/benkyriakou">
             Twitter
           </a>
         </div>

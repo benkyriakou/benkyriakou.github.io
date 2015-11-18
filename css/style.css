@@ -22,14 +22,22 @@ h2 {
 }
 
 a {
-  color: #333;
-  text-decoration: none;
+  color: #341DFF;
+  text-decoration: underline;
   word-wrap: break-word;
 }
 
 a:hover,
 a:focus {
-  color: #F250ED;
+  background-color: #341DFF;
+  color: #FFF;
+  outline: 2px #341DFF solid;
+  text-decoration: none;
+}
+
+a:active {
+  background-color: #897CFF;
+  outline-color: #897CFF;
 }
 
 p,
@@ -110,6 +118,29 @@ img + * {
   overflow: hidden;
 }
 
+.site-header a {
+  color: #000;
+  text-decoration: none;
+}
+
+.site-header a:hover,
+.site-header a:focus {
+  background-color: #000;
+  color: #FFF;
+  outline-color: #000;
+}
+
+.site-header a:active {
+  background-color: #888;
+  outline-color: #888;
+}
+
+@media print {
+  .site-header {
+    display: none;
+  }
+}
+
 .site-header__item {
   font-family: 'Lato', Verdana, sans-serif;
   font-size: 20px;
@@ -144,20 +175,6 @@ img + * {
   margin-bottom: 2rem;
 }
 
-.article a {
-  text-decoration: underline;
-}
-
-.article a:visited {
-  color: #666;
-}
-
-.article a:hover,
-.article a:focus {
-  color: #F250ED;
-  text-decoration: none;
-}
-
 .article__header {
   line-height: 1.25;
   margin-bottom: 8px;
@@ -166,10 +183,6 @@ img + * {
   font-size: 40px;
   font-size: 2.5rem;
   text-indent: -0.1rem;
-}
-
-.article__header a {
-  text-decoration: none;
 }
 
 .article__date {
