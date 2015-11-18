@@ -47,11 +47,9 @@ ul {
   margin: 0;
 }
 
-ul + *, 
-p + * {
+.article__content > * + * {
   margin-top: 1.5rem;
 }
-
 
 ul {
   padding-left: 1.5em;
@@ -63,7 +61,8 @@ ul ul {
 
 @media screen and (min-width: 560px) {
   p,
-  ul {
+  ul,
+  blockquote {
     font-size: 20px;
     font-size: 1.25rem;
   }
@@ -71,7 +70,8 @@ ul ul {
 
 @media screen and (min-width: 800px) {
   p,
-  ul {
+  ul,
+  blockquote {
     font-size: 24px;
     font-size: 1.5rem;
   }
@@ -89,6 +89,16 @@ img {
   margin-right: auto;
   max-width: 100%;
   transition: height 1s, width 1s;
+}
+
+blockquote {
+  font-style: italic;
+}
+
+@media screen and (min-width: 560px) {
+  blockquote {
+    margin: 0 3rem;
+  }
 }
 
 /* Don't do this on Android because vh inconsistency due to address bar */
@@ -191,6 +201,21 @@ img + * {
   font-family: 'Lato', Verdana, sans-serif;
   font-weight: 400;
   text-transform: uppercase;
+}
+
+.article__video {
+  display: block;
+  height: 150px;
+  margin-left: auto;
+  margin-right: auto;
+  max-width: 600px;
+  width: 100%;
+}
+
+@media screen and (min-width: 560px) {
+  .article__video {
+    height: 315px;
+  }
 }
 
 /* Utility classes */

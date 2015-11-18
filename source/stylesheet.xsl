@@ -85,7 +85,9 @@
       <h1 class="article__header">
         <xsl:value-of select="title" />
       </h1>
-      <xsl:copy-of select="content/node()" />
+      <div class="article__content">
+        <xsl:copy-of select="content/node()" />
+      </div>
     </article><!-- /.article -->
   </xsl:template>
 
