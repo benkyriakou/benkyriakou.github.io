@@ -15,16 +15,7 @@
         <title><xsl:apply-templates select="document/title" /></title>
 
         <link href="//fonts.googleapis.com/css?family=Lato:400,900" rel="stylesheet" type="text/css" />
-        <link type="text/css" rel="stylesheet" href="/css/normalize.css" media="all" />
         <link type="text/css" rel="stylesheet" href="/css/style.css" media="all" />
-
-        <script>
-          var userAgent = navigator.userAgent || navigator.vendor || window.opera;
-
-          if (userAgent.match(/Android/i)) {
-            document.documentElement.className += ' is-android';
-          }
-        </script>
 
         <xsl:call-template name="google-analytics" />
       </head>
@@ -38,6 +29,14 @@
             <xsl:apply-templates select="document" />
           </main><!-- /main -->
         </div>
+
+        <script>
+          var userAgent = navigator.userAgent || navigator.vendor || window.opera;
+
+          if (userAgent.match(/Android/i)) {
+            document.documentElement.className += ' is-android';
+          }
+        </script>
       </body>
     </html>
   </xsl:template>
