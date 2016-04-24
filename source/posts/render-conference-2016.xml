@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<document type="article">
+  <title>Render conference 2016</title>
+  <description>A note on my experiences at Render conference 2016.</description>
+  <slug>/posts/render-conference-2016</slug>
+  <content>
+    <article>
+      <title>Render conference 2016</title>
+      <date datetime="2016-04">April 2016</date>
+      <content>
+        <p>This week I spent a couple of days at the first Render conference in Oxford. It was great fun; and I was pleasantly surprised that my favourite talk wasn't about tech&#8212;it was about gender.</p>
+
+        <p>There's an ongoing global conversation about gender, but what we see in the media mostly covers the ideological side. That side of the conversation is needed, but already has plenty of participants&#8212;it's going to happen whether we contribute or not.</p>
+
+        <p>The other side of the conversation is the practical side, the side that concerns how gender works in everyday life; things like which bathrooms people use, and how we talk about non-binary gender. This is the side that I feel is sorely needed, but attracts less attention as it doesn't make good headlines.</p>
+
+        <p>Chad Gowler's talk, "<a href="https://slidr.io/kitation/asking-about-gender-render-conf#1">How to ask about gender</a>", addresses the thorny topic of asking people about their gender in an online context. She clearly outlines the appropriate time and place to ask about gender and how, if you really must ask, to do it correctly.</p>
+
+        <p>As web developers we're often put in the powerful position of guiding clients to do the correct thing on their websites. This talk is something all developers can use to better fulfil this role, and to make the lives of those who interact with our work a little simpler.</p>
+
+        <p>So thanks, Chad.</p>
+
+        <p>(Check out <a href="//twitter.com/kitation">Chad on Twitter</a>).</p>
+      </content>
+    </article>
+  </content>
+</document>

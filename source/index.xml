@@ -6,6 +6,7 @@
   <description>Expulsions from the mind of Ben Kyriakou. Programming and pedantry.</description>
   <slug></slug>
   <content>
+    <xi:include href="posts/render-conference-2016.xml" parse="xml" xpointer="xpointer(/document)" />
     <xi:include href="posts/anger-on-the-internet.xml" parse="xml" xpointer="xpointer(/document)" />
     <xi:include href="posts/not-on-linkedin.xml" parse="xml" xpointer="xpointer(/document)" />
     <xi:include href="posts/agile-in-practice.xml" parse="xml" xpointer="xpointer(/document)" />
