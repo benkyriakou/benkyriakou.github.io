@@ -81,9 +81,11 @@
 
   <xsl:template match="article">
     <article class="article">
-      <time class="article__date" datetime="{date/@datetime}">
-        <xsl:value-of select="date" />
-      </time>
+      <xsl:if test="date/@datetime">
+        <time class="article__date" datetime="{date/@datetime}">
+          <xsl:value-of select="date" />
+        </time>
+      </xsl:if>
       <h1 class="article__header">
         <xsl:value-of select="title" />
       </h1>

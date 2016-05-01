@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<?xml-stylesheet type="text/xsl" href="stylesheet.xsl"?>
+
+<document type="generic">
+  <title>404&#8212;File Not Found</title>
+  <description>This URL does not exist.</description>
+  <slug></slug>
+  <content>
+    <article>
+      <title>404&#8212;File Not Found</title>
+      <content>
+        <p>This URL does not exist. Please try another URL, or <a href="/">return to the homepage.</a></p>
+      </content>
+    </article>
+  </content>
+</document>
