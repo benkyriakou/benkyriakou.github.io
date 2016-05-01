@@ -11,11 +11,14 @@
         <meta name="description" content="{document/description}" />
         <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=1" />
         <link rel="canonical" href="http://benkyriakou.com{document/slug}" />
+        <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
 
         <title><xsl:apply-templates select="document/title" /></title>
 
         <link href="//fonts.googleapis.com/css?family=Lato:400,900" rel="stylesheet" type="text/css" />
         <link type="text/css" rel="stylesheet" href="/css/style.css" media="all" />
+
+        <xsl:call-template name="twitter-card" />
 
         <xsl:call-template name="google-analytics" />
       </head>
@@ -109,6 +112,14 @@
       </h2>
       <p><xsl:value-of select="description" /></p>
     </article>
+  </xsl:template>
+
+  <xsl:template name="twitter-card">
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:site" content="@benkyriakou" />
+    <meta name="twitter:title" content="{document/title}" />
+    <meta name="twitter:description" content="{document/description}" />
+    <meta name="twitter:image" content="http://benkyriakou.com/images/global/twitter-card-image.jpg" />
   </xsl:template>
 
   <xsl:template name="google-analytics">
