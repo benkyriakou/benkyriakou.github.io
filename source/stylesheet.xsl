@@ -15,7 +15,6 @@
 
         <title><xsl:apply-templates select="document/title" /></title>
 
-        <link href="//fonts.googleapis.com/css?family=Lato:400,900" rel="stylesheet" type="text/css" />
         <link type="text/css" rel="stylesheet" href="/css/style.css" media="all" />
 
         <xsl:call-template name="twitter-card" />
@@ -112,7 +111,9 @@
           <xsl:value-of select=".//article/title" />
         </a>
       </h2>
-      <p><xsl:value-of select="description" /></p>
+      <div class="article__content">
+        <p><xsl:value-of select="description" /></p>
+      </div>
     </article>
   </xsl:template>
 

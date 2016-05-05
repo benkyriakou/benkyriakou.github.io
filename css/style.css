@@ -14,8 +14,13 @@ body {
   margin: 0;
 }
 
-h1, h2, h3, h4, h5, h6 {
-  font-family: 'Lato', Verdana, sans-serif;
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: 'Trebuchet MS', sans-serif;
   font-weight: 900;
   margin-top: 0;
 }
@@ -27,7 +32,10 @@ h2 {
 
 a {
   color: #341DFF;
+  outline-color: transparent;
   text-decoration: underline;
+  transition-duration: 0.25s;
+  transition-property: background-color, color, outline-color;
   word-wrap: break-word;
 }
 
@@ -44,73 +52,99 @@ a:active {
   outline-color: #897CFF;
 }
 
-p,
-ul {
+.article__content p,
+.article__content ul {
   font-size: 16px;
   font-size: 1rem;
-  margin: 0;
+  margin: 0 0 1.5rem;
 }
 
-.article__content > * + * {
-  margin-top: 1.5rem;
+.article__content *:last-child {
+  margin-bottom: 0;
 }
 
-ul {
+.article__content ul {
   padding-left: 1.5em;
 }
 
-ul ul {
+.article__content ul ul {
   padding-left: 1em;
 }
 
 @media screen and (min-width: 560px) {
-  p,
-  ul,
-  blockquote {
+  .article__content p,
+  .article__content ul,
+  .article__content blockquote {
     font-size: 20px;
     font-size: 1.25rem;
   }
 }
 
-pre {
+.article__content pre {
   background-color:#EDEDED;
+  margin: 0 0 1.5rem;
   padding: 1rem;
   white-space: pre-wrap;
 }
 
-img {
+.article__content img {
   border: 0;
   display: block;
-  margin-left: auto;
-  margin-right: auto;
+  margin: 0 auto 1.5rem;
   max-width: 100%;
   transition: height 1s, width 1s;
 }
 
-blockquote {
+.article__content blockquote {
   font-style: italic;
+  margin: 0;
+}
+
+.article__content blockquote:before {
+  content: '\201C';
+}
+
+.article__content blockquote:after {
+  content: '\201D';
+}
+
+.article__content .blockquote {
+  margin: 0 0 1.5rem;
+}
+
+.article__content cite {
+  display: block;
+  font-style: normal;
+  font-weight: bold;
+  margin-top: 0.5rem;
+}
+
+.article__content cite:before {
+  content: '\2014';
 }
 
 @media screen and (min-width: 560px) {
-  blockquote {
-    margin: 0 3rem;
+  .article__content cite,
+  .article__content blockquote {
+    margin-left: 3rem;
+    margin-right: 3rem;
   }
 }
 
 /* Don't do this on Android because vh inconsistency due to address bar */
-html:not(.is-android) img {
+html:not(.is-android) .article__content img {
   max-height: 80vh;
 }
 
 /* Scale down images a bit on desktop */
 @media screen and (min-width: 600px) {
-  img {
+  .article__content img {
     max-width: 80%;
   }
 }
 
-* + img,
-img + * {
+.article__content * + img,
+.article__content img + * {
   margin-top: 24px;
   margin-top: 1.5rem;
 }
@@ -148,7 +182,7 @@ img + * {
 }
 
 .site-header__item {
-  font-family: 'Lato', Verdana, sans-serif;
+  font-family: 'Trebuchet MS', sans-serif;
   font-size: 20px;
   font-size: 1.25rem;
   font-weight: 900;
@@ -194,7 +228,7 @@ img + * {
 .article__date {
   color: #777;
   display: block;
-  font-family: 'Lato', Verdana, sans-serif;
+  font-family: 'Trebuchet MS', sans-serif;
   font-weight: 400;
   text-transform: uppercase;
 }
