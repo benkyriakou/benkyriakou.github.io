@@ -17,8 +17,8 @@
 
         <link type="text/css" rel="stylesheet" href="/css/style.css" media="all" />
 
+        <xsl:call-template name="open-graph" />
         <xsl:call-template name="twitter-card" />
-
         <xsl:call-template name="google-analytics" />
       </head>
       
@@ -115,6 +115,13 @@
         <p><xsl:value-of select="description" /></p>
       </div>
     </article>
+  </xsl:template>
+
+  <xsl:template name="open-graph">
+    <meta property="og:url" content="http://benkyriakou.com{document/slug}" />
+    <meta property="og:title" content="{document/title}" />
+    <meta property="og:description" content="{document/description}" />
+    <meta property="og:image" content="http://benkyriakou.com/images/global/twitter-card-image.jpg" />
   </xsl:template>
 
   <xsl:template name="twitter-card">

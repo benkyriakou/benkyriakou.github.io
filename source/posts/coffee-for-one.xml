@@ -46,7 +46,7 @@
 
         <p>And now, it's time to drink.</p>
 
-        <img src="../images/mug.jpg" alt="Mug of coffee" />
+        <img src="/images/mug.jpg" alt="Mug of coffee" />
 
         <p>I really like this setup. Once the coffee's done I just eject the grounds from the Aeropress, then give it and the grinder a rinse. The only perishable items are the Aeropress filters, and one pack lasts forever. If you're making coffee for one, I'd definitely recommend this method.</p>
       </content>
