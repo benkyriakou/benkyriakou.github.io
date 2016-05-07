@@ -207,6 +207,7 @@ html:not(.is-android) .article__content img {
 
 .article {
   margin-bottom: 1.5rem;
+  position: relative;
 }
 
 .article__header {
@@ -223,6 +224,22 @@ html:not(.is-android) .article__content img {
   font-family: 'Trebuchet MS', sans-serif;
   font-weight: 400;
   text-transform: uppercase;
+}
+
+/* 24rem larger than the max wrapper size */
+@media screen and (min-width: 76rem) {
+  .article__date {
+    font-family: 'Trebuchet MS', sans-serif;
+    font-size: 1.25rem;
+    left: -12rem;
+    line-height: 1;
+    margin-top: 0.3rem;
+    padding: 0 1.25rem 0 1rem;
+    position: absolute;
+    text-align: right;
+    top: 0;
+    width: 12rem;
+  }
 }
 
 .article__video {
