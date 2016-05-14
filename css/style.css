@@ -59,7 +59,7 @@ a:active {
   margin: 0 0 1.5rem;
 }
 
-.article__content *:last-child {
+.article__content > *:last-child {
   margin-bottom: 0;
 }
 
@@ -97,38 +97,54 @@ a:active {
 
 .article__content blockquote {
   font-style: italic;
-  margin: 0;
-}
-
-.article__content blockquote:before {
-  content: '\201C';
-}
-
-.article__content blockquote:after {
-  content: '\201D';
-}
-
-.article__content .blockquote {
   margin: 0 0 1.5rem;
 }
 
-.article__content cite {
+.article__content blockquote p {
+  margin: 0;
+}
+
+.article__content blockquote p:first-of-type:before {
+  content: '\201C';
+}
+
+.article__content blockquote p:first-of-type:after {
+  content: '\201D';
+}
+
+.article__content blockquote cite {
   display: block;
   font-style: normal;
   font-weight: bold;
   margin-top: 0.5rem;
 }
 
-.article__content cite:before {
+.article__content blockquote cite:before {
   content: '\2014';
 }
 
 @media screen and (min-width: 35rem) {
-  .article__content cite,
   .article__content blockquote {
     margin-left: 3rem;
     margin-right: 3rem;
   }
+}
+
+.article__content .reference {
+  margin-left: 0.125rem;
+}
+
+.article__content .reference a:before {
+  content: '[';
+}
+
+.article__content .reference a:after {
+  content: ']';
+}
+
+.article__content .references {
+  border-top: 1px #AAA solid;
+  padding-top: 1.5rem;
 }
 
 /* Don't do this on Android because vh inconsistency due to address bar */

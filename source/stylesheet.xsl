@@ -89,9 +89,47 @@
         <xsl:value-of select="title" />
       </h1>
       <div class="article__content">
-        <xsl:copy-of select="content/node()" />
+        <xsl:apply-templates select="content" />
+        <xsl:apply-templates select="content"  mode="reference" />
       </div>
     </article><!-- /.article -->
+  </xsl:template>
+
+  <!-- The general template for content elements. -->
+  <!-- Given a priority of -1 so it can be overridden. -->
+  <xsl:template match="article/content//*" priority="-1">
+    <xsl:copy>
+      <xsl:copy-of select="@*"/>
+      <xsl:apply-templates />
+    </xsl:copy>
+  </xsl:template>
+
+  <xsl:template match="reference">
+    <sup class="reference">
+      <a href="#{@id}" id="ref-{@id}">
+        <xsl:number level="any" count="reference"/>
+      </a>
+    </sup>
+  </xsl:template>
+
+  <xsl:template match="content" mode="reference">
+    <xsl:if test="count(/document//reference) &gt; 0">
+      <ol class="references">
+        <xsl:apply-templates select=".//reference" mode="reference" />
+      </ol>
+    </xsl:if>
+  </xsl:template>
+
+  <xsl:template match="reference" mode="reference">
+    <li>
+      <a href="#ref-{@id}" title="Return to reference">^</a>
+      <xsl:text> </xsl:text>
+      <cite class="references__item">
+        <a id="{@id}" href="{@href}" rel="external">
+          <xsl:value-of select="@title" />
+        </a>
+      </cite>
+    </li>
   </xsl:template>
 
   <xsl:template match="document[@type='homepage']/content">
