@@ -90,24 +90,28 @@
       </h1>
       <div class="article__content">
         <xsl:apply-templates select="content" />
-        <xsl:apply-templates select="content"  mode="reference" />
+        <xsl:apply-templates select="content" mode="reference" />
       </div>
     </article><!-- /.article -->
   </xsl:template>
 
-  <!-- The general template for content elements. -->
-  <!-- Given a priority of -1 so it can be overridden. -->
-  <xsl:template match="article/content//*" priority="-1">
+  <!-- The general template for content nodes. -->
+  <!-- In most cases we just want to copy the HTML verbatim. -->
+  <xsl:template match="article/content//*">
     <xsl:copy>
-      <xsl:copy-of select="@*"/>
+      <!-- Also copy any attributes of the current node. -->
+      <xsl:copy-of select="@*" />
+
+      <!-- Continue applying templates to child nodes. -->
       <xsl:apply-templates />
     </xsl:copy>
   </xsl:template>
 
-  <xsl:template match="reference">
+  <!-- Override content processing for references. -->
+  <xsl:template match="content//reference">
     <sup class="reference">
       <a href="#{@id}" id="ref-{@id}">
-        <xsl:number level="any" count="reference"/>
+        <xsl:number level="any" count="reference" />
       </a>
     </sup>
   </xsl:template>
@@ -120,7 +124,7 @@
     </xsl:if>
   </xsl:template>
 
-  <xsl:template match="reference" mode="reference">
+  <xsl:template match="content//reference" mode="reference">
     <li>
       <a href="#ref-{@id}" title="Return to reference">^</a>
       <xsl:text> </xsl:text>
