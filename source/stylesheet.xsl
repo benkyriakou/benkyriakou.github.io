@@ -62,14 +62,17 @@
   <xsl:template name="header">
     <div class="center-wrapper">
       <nav>
-        <div class="site-header__item site-header__item--left">
-          <a href="/">Home</a>
-        </div>
-        <div class="site-header__item site-header__item--right">
-          <a href="//twitter.com/benkyriakou">
-            Twitter
-          </a>
-        </div>
+        <ul class="site-header__items">
+          <li class="site-header__item">
+            <a href="/">Home</a>
+          </li>
+          <li class="site-header__item">
+            <a href="//drupal.org/u/ben.kyriakou">Drupal.org</a>
+          </li>
+          <li class="site-header__item">
+            <a href="//twitter.com/benkyriakou">Twitter</a>
+          </li>
+        </ul>
       </nav>
     </div>
   </xsl:template>
@@ -114,6 +117,24 @@
         <xsl:number level="any" count="reference" />
       </a>
     </sup>
+  </xsl:template>
+
+  <!-- In code blocks, ignore external whitespace nodes and only process -->
+  <!-- lines of code wrapped in a <span> -->
+  <xsl:template match="content//pre/code">
+    <xsl:copy>
+      <xsl:copy-of select="@*" />
+      <xsl:apply-templates select="span" />
+    </xsl:copy>
+  </xsl:template>
+
+  <!-- Add a newline after each line of code in a code block -->
+  <xsl:template match="content//pre/code/span">
+    <xsl:copy>
+      <xsl:copy-of select="@*" />
+      <xsl:apply-templates />
+    </xsl:copy>
+    <xsl:text>&#xa;</xsl:text><!-- \n -->
   </xsl:template>
 
   <xsl:template match="content" mode="reference">
@@ -163,7 +184,7 @@
     <meta property="og:url" content="http://benkyriakou.com{document/slug}" />
     <meta property="og:title" content="{document/title}" />
     <meta property="og:description" content="{document/description}" />
-    <meta property="og:image" content="http://benkyriakou.com/images/global/twitter-card-image.jpg" />
+    <meta property="og:image" content="http://benkyriakou.com/images/global/twitter-card-image.png" />
   </xsl:template>
 
   <xsl:template name="twitter-card">
