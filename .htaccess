@@ -1,0 +1,6 @@
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+
+  RewriteCond %{REQUEST_URI} !\.html$
+  RewriteRule ^(posts/.*) $1\.html [QSA]
+</IfModule>
