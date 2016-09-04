@@ -115,11 +115,15 @@ a:active {
   margin: 0;
 }
 
+.article__content blockquote p+p {
+  margin-top: 1rem;
+}
+
 .article__content blockquote p:first-of-type:before {
   content: '\201C';
 }
 
-.article__content blockquote p:first-of-type:after {
+.article__content blockquote p:last-of-type:after {
   content: '\201D';
 }
 
@@ -256,17 +260,31 @@ html:not(.is-android) .article__content img {
   text-indent: -0.1rem;
 }
 
-.article__date {
+.article__date,
+.article__external {
   color: #777;
-  display: block;
   font-family: 'Trebuchet MS', sans-serif;
+}
+
+.article__date {
+  display: block;
+  float: left;
   font-weight: 400;
   text-transform: uppercase;
+}
+
+.article__date + .article__header {
+  clear: left;
+}
+
+.article__external:before {
+  content: '—';
 }
 
 /* 24rem larger than the max wrapper size */
 @media screen and (min-width: 76rem) {
   .article__date {
+    float: none;
     font-family: 'Trebuchet MS', sans-serif;
     font-size: 1.25rem;
     left: -12rem;
@@ -277,6 +295,20 @@ html:not(.is-android) .article__content img {
     text-align: right;
     top: 0;
     width: 12rem;
+  }
+
+  .article__external {
+    display: block;
+    left: -12rem;
+    padding: 0 1.25rem 0 1rem;
+    position: absolute;
+    text-align: right;
+    top: 2.8125rem;
+    width: 12rem;
+  }
+
+  .article__external:before {
+    content: '';
   }
 }
 
