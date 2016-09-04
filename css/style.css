@@ -59,6 +59,8 @@ a:active {
 /* Article element styles */
 .article__content h2 {
   border-bottom: 1px #AAA solid;
+  line-height: 1.25;
+  margin-bottom: 0.5rem;
 }
 
 .article__content p,
