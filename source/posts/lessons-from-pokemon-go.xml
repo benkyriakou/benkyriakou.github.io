@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!DOCTYPE document [
+  <!ENTITY mdash "&#8212;">
+]>
+
+<document type="article">
+  <title>Lessons from Pokémon Go</title>
+  <description>An outsider's launch postmortem and speculations on Pokémon Go.</description>
+  <slug>/posts/lessons-from-pokemon-go</slug>
+  <content>
+    <article>
+      <title>Lessons from Pokémon Go</title>
+      <date datetime="2016-09">September 2016</date>
+      <content>
+        <p>Pokémon Go has been live in the UK for around a month and a half at this point. The developer, Niantic, has faced their fair share of issues&mdash;from an unprecedented (and likely unexpected) number of users to critical bugs and scaling issues. As reported usage now begins to drop, let's take a look back and see what we've learnt from the launch and subsequent development of Pokémon Go.</p>
+
+        <p>For the record I've been playing since UK release, and am a semi-respectable level 24, This is part technical review and part open letter, inasmuch as I can speculate what's going on behind the scenes.</p>
+
+        <h2>Engage your community</h2>
+
+        <p>Undoubtedly the biggest lesson we've learnt from Pokémon Go is that having a support team that is ready to engage with users at launch is key. Niantic has a reputation for being tight-lipped from their Ingress days, but their lack of response on login issues and general instability at launch was deafening. With speculation that their community relations manager was on maternity leave with no replacement, feedback seemed to be falling on deaf ears.</p>
+
+        <p>Having an advocate ready to engage on social media and Reddit wouldn't have prevented the technical issues at launch, but it would have silenced some of the media fallout. Their sporadic Tweets (such as the infamous <a href="https://twitter.com/nianticlabs/status/755611742550368256">Soulja Boy tweet</a>) and useless release notes ('minor text fixes') didn't help matters, and if anything made users feel that even less attention was being paid to them.</p>
+
+        <p>Niantic have now begun to provide some level of acknowledgement of issues, along with better patch notes, but they're still doing a weak job of making the community feel like they care about the game.</p>
+
+        <h2>Test beyond your expectations</h2>
+
+        <p>Niantic launched Pokémon Go with critial scalability issues: the login servers were quickly overwhelmed at peak times, resulting in many occasions where users were unable to play. Their 'fix' for this was to disable the in-game tracker, freeing up their server resources to handle logins rather than provide Pokémon proximity.</p>
+
+        <p>This suggests two things&mdash;firstly, they didn't test the servers with enough load to anticipate this bottleneck. Secondly, once encountering this bottleneck they were unable to simply add hardware resources to scale the server capacity, likely due to the back-end architecture.</p>
+
+        <p>Since then, they've had further issues with buggy features or regressions being released to the public, most notably when they broke Pokéball throwing mechanics and catch bonuses, and took two days to even tweet that they were working on a fix. They also seem to be guerrilla testing tweaks to Pokéstops and other server-side config in the wild, with odd fluctuations of drop rates of items from Pokéstops among other anomalies.</p>
+
+        <p>This trend generally points to a lack of testing&mdash;I suspect at least partially driven by the dev team being pushed to launch as soon as possible. With a more rigorous testing process, and some additional forethought, some of these issues may have been preventable.</p>
+
+        <h2>Balance the cost/benefit</h2>
+
+        <p>The current reward for catching Pokémon comes in the form of Pokémon candy and xp. This is a standard amount for any Pokémon (100 exp + 3 candy), plus any exp bonuses (throw accuracy, lucky egg, new Pokémon, etc).</p>
+
+        <p>This works fine for low-level common Pokémon (not desirable, but generally easy to catch) and high-level rare Pokémon (desirable, hard to catch), but it falls over when applied to high-level common Pokémon (not desirable, hard to catch). At higher levels you start to encounter more of the latter, and it's not uncommon to pass up catching some rather than waste the number of Pokéballs it will take to catch them.</p>
+
+        <p>This breaks down because the cost is not proportional to the benefit&mdash;an improvement would be to add exp bonuses based on the strength of the Pokémon. This feels like a natural mechanic which wouldn't have a game-breaking impact&mdash;the catch difficulty is already banded (green, yellow, orange, and red), so the exp could be similarly banded (e.g. 100, 110, 130, 160)</p>
+
+        <h2>Gyms</h2>
+
+        <p>Gyms feel incomplete, and were perhaps expected to be built upon quickly after launch. As gyms work they're currently easy to capture, hard to level up, and impossible to hold for long periods of time. They're also not very rewarding (see again cost/benefit balance), and are only really notable for the fact that they're the only way to obtain Pokécoins without shelling out real money.</p>
+
+        <p>The intent is for users to capture gyms for their team to claim reward bonuses (Pokécoins and stardust), and to protect them from other teams. In practice this doesn't work in multiple ways.</p>
+
+        <p>Firstly, gyms are very time-consuming and expensive (in terms of items) to level up and, unless you've got a group of people on the same team, you're only incentivised to level them up enough to add your Pokémon and claim your bonus. Whilst the maximum Gym level is 10, in practice over 90% of the Gyms I see are level 3, with a smattering at level 4 and very few at level 5+.</p>
+
+        <p>Secondly, it's vastly easier to take a gym from the other team than it is to level it up for your own. This makes sense, since it shouldn't be impossible to take them back (and at higher levels, they are a lot harder to beat), but it's another disincentive to spending time levelling up and holding gyms.</p>
+
+        <p>Thirdly, there's no ongoing to benefit to holding a gym. In theory if you hold it for over 21 hours you can re-claim your reward without having to re-visit the gym, but unless it's extremely inaccessible this isn't going to happen. If you pass an opposing team's gym when your cooldown isn't up there's no real reason to take it back, unless you want to waste your time and potions for a pitiful amount of exp.</p>
+
+        <p>Gyms feel like they would benefit from having their mechanics changed to reflect the fact that they're a transitory resource. Give them some kind of team bonus, such as an exp effect or Pokéstop-like behaviour, to encourage teams to claim them. The bonus cooldown won't change any time soon since it would deflate the value of Pokécoins, and having other non-cooldown rewards for claiming gyms would be too easy to farm, but an added team benefit mechanic would make re-taking gyms much more worthwhile.</p>
+
+        <h2>Tracking and GPS</h2>
+
+        <p>Pokémon tracking and GPS accuracy have been ongoing issues since launch, neither of which have been fixed (and if anything have gotten steadily worse).</p>
+
+        <p>Tracking launched with the semi-useful step system&mdash;a summary of nearby Pokémon with a number of steps (1-3) indicating how close they are. Not great, but enough to make you hunt around for a 1- or 2-step spawn. However, it seems this was too much for the back-end servers to handle, and was soon disabled, eventually being replaced with a completely useless summary of Pokémon that are some indeterminate distance from you.</p>
+
+        <p>As a response to the lack of a tracking system, third-party map websites soon started to appear (the most high-profile being PokéVision). These attracted the ire of John Hanke due to the load they placed on Niantic's API, and PokéVision then voluntarily shut down operations. John Hanke published a poorly labelled graph to justify this action, and nothing has been said about it since.</p>
+
+        <p>An interview with Forbes showed his dislike for having maps showing the location of Pokémon spawns:</p>
+
+        <blockquote>
+          <p><strong>Forbes:</strong> How do you feel about Poké Radar and things that tap into the code and show where Pokémon are spawning?</p>
+
+          <p><strong>John Hanke:</strong> Yeah, I don’t really like that. Not a fan.</p>
+
+          <p>We have priorities right now but they might find in the future that those things may not work. People are only hurting themselves because it takes some fun out of the game. People are hacking around trying to take data out of our system and that's against our terms of service.</p>
+
+          <cite><a href="http://www.forbes.com/sites/ryanmac/2016/07/28/pokemon-go-creator-john-hanke-answers-all-your-burning-questions">Forbes interview, 2016</a></cite>
+        </blockquote>
+
+        <p>This comment feels like he's out of touch with how people are playing the game&mdash;a tracking system is a necessary component, and makes the game much more fun to play. It's also ironic given that tracking was obviously always a planned feature, and the pre-release video featured big arrows pointing to where Pokémon had spawned.</p>
+
+        <p>The current state of the tracking system doesn't encourage seeking out Pokémon, which is the entire point of the game. Having a general indication of where the Pokémon has spawned encourages exploration and further play&mdash;if I see a desirable Pokémon on the current in-game tracker there's no way I'm going to waste my time trying to find it, so Niantic have lost an opportunity to engage me in the game.</p>
+
+        <h2>Don't penalise your fans</h2>
+
+        <p>Along with supporting their product at launch, Niantic could also do a much better job of listening to their community and supporting them where needed. Recently Jimmy Derocher live-streamed <a href="http://kotaku.com/Pokémon-go-player-tries-getting-a-million-xp-in-a-day-1785558446">his attempt to farm one million exp</a> over the course of a weekend, even <a href="https://twitter.com/jderoc/status/766128288301355009">reaching out to Niantic</a> to support him. Niantic didn't respond, and after hitting 600k exp he was soft-banned by the cheat-detection system.</p>
+
+        <p>Today's power-users will be the ones who are still playing by the time Generation 2 finally rolls around, and will encourage others to play with them. Supporting them is a good long-term strategy for engaging users, and we've already seen the disinterested early adopters beginning to leave.</p>
+
+        <p>Niantic have already done a good deed in a similar area by adding an in-game version of an IV calculator to evaluate the quality of your Pokémon. Third-party IV calculators were contentious since they were a power-user feature that, in some cases, piggy-backed onto the user's account to ascertain a Pokémon's hidden characteristics (which is an obvious security risk). Adding the in-game feature both safely caters to users' needs and levels the playing field for the average player.</p>
+
+        <p>Of course, there will always be players looking to min/max every game, but improving the level to which the game caters to users' needs will minimise the number of people that will try and find options outside the system (overzealous maps, IV calculators that require account details, etc).</p>
+
+        <h2>Conclusion</h2>
+
+        <p>I could be completely off-base with some of this analysis&mdash;for all I know Niantic have a roadmap that will fix all of the tracker issues, make gyms playable, and launch Generation 2 by the end of the year. However, given what I've seen and how we've experienced the game since launch, I'm not optimistic. I'm not claiming I could do a better job in their shoes, but I hope that Niantic will learn from their mistakes and start making some positive changes before it's too late.</p>
+      </content>
+    </article>
+  </content>
+</document>
