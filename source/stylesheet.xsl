@@ -169,6 +169,9 @@
       <time class="article__date" datetime="{.//article/date/@datetime}">
         <xsl:value-of select=".//article/date" />
       </time>
+      <xsl:if test="@rel and @rel='external'">
+        <span class="article__external">External article</span>
+      </xsl:if>
       <h2 class="article__header">
         <a href="{slug}">
           <xsl:value-of select=".//article/title" />
