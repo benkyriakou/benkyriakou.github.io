@@ -22,6 +22,12 @@ for item in listing:
 
       xml = etree.parse(inpath + '/' + filename)
       xml.xinclude()
+
+      # Don't generate pages for external articles
+      if (len(xml.xpath('/document[@rel="external"]')) > 0):
+        print('Skipping external article ' + filename)
+        continue
+
       result = transform(xml)
 
       print('Generating ' + outpath + '/' + name + '.html')
