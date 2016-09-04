@@ -224,6 +224,7 @@ html:not(.is-android) .article__content img {
   margin: 0.5rem 0;
   overflow: hidden;
   padding: 0;
+  text-align: center;
 }
 
 .site-header__item {
@@ -238,6 +239,7 @@ html:not(.is-android) .article__content img {
 @media screen and (min-width: 25rem) {
   .site-header__items {
     display: block;
+    text-align: left;
   }
 
   .site-header__item {
