@@ -6,6 +6,7 @@
   <description>Expulsions from the mind of Ben Kyriakou. Programming and pedantry.</description>
   <slug></slug>
   <content>
+    <xi:include href="posts/provisioning-circleci-with-ansible.xml" parse="xml" xpointer="xpointer(/document)" />
     <xi:include href="posts/lessons-from-pokemon-go.xml" parse="xml" xpointer="xpointer(/document)" />
     <xi:include href="posts/rock-hall.xml" parse="xml" xpointer="xpointer(/document)" />
     <xi:include href="posts/high-quality-websites.xml" parse="xml" xpointer="xpointer(/document)" />
