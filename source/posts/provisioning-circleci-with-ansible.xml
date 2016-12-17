@@ -39,7 +39,7 @@
 
         <pre><code>
            <span>- sudo apt-get install software-properties-common</span>
-           <span>- sudo apt-add-repository ppa:ansible/ansible</span>
+           <span>- sudo apt-add-repository ppa:ansible/ansible -y</span>
            <span>- sudo apt-get update</span>
            <span>- sudo apt-get install ansible</span>
            <span>- ansible-playbook provisioning/playbook.yml -i circle_hosts --limit circleci</span>
