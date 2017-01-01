@@ -70,6 +70,10 @@ a:active {
   margin: 0 0 1.5rem;
 }
 
+.article__content li ul {
+  margin-bottom: 0;
+}
+
 .article__content > *:last-child {
   margin-bottom: 0;
 }

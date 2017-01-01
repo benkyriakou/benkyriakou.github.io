@@ -1,0 +1,306 @@
+<!DOCTYPE html SYSTEM "about:legacy-compat">
+<html lang="en">
+  <head>
+    <meta charset="utf-8"/>
+    <meta name="theme-color" content="#333"/>
+    <meta name="description" content="Making links usable and accessible for all."/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=1"/>
+    <link rel="canonical" href="http://benkyriakou.com/posts/whats-in-a-link"/>
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon"/>
+    <title>What's in a link? | Ben Kyriakou</title>
+    <link type="text/css" rel="stylesheet" href="/css/style.css" media="all"/>
+    <meta property="og:url" content="http://benkyriakou.com/posts/whats-in-a-link"/>
+    <meta property="og:title" content="What's in a link?"/>
+    <meta property="og:description" content="Making links usable and accessible for all."/>
+    <meta property="og:image" content="http://benkyriakou.com/images/global/twitter-card-image.png"/>
+    <meta name="twitter:card" content="summary"/>
+    <meta name="twitter:site" content="@benkyriakou"/>
+    <meta name="twitter:title" content="What's in a link?"/>
+    <meta name="twitter:description" content="Making links usable and accessible for all."/>
+    <meta name="twitter:image" content="http://benkyriakou.com/images/global/twitter-card-image.jpg"/>
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-64337321-1', 'auto');
+      ga('send', 'pageview');
+    </script>
+  </head>
+  <body>
+    <div class="wrapper">
+      <header class="site-header">
+        <div class="center-wrapper">
+          <nav>
+            <ul class="site-header__items">
+              <li class="site-header__item">
+                <a href="/">Home</a>
+              </li>
+              <li class="site-header__item">
+                <a href="//drupal.org/u/ben.kyriakou">Drupal.org</a>
+              </li>
+              <li class="site-header__item">
+                <a href="//twitter.com/benkyriakou">Twitter</a>
+              </li>
+            </ul>
+          </nav>
+        </div>
+      </header>
+      <main class="center-wrapper">
+    <article class="article"><time class="article__date" datetime="2017-01">January 2017</time><h1 class="article__header">What's in a link</h1><div class="article__content">
+        <p>Links make the web work&#8212;they're a basic component of every website, and join individual pages together to create a complex content network. As web-designers and developers it is our job to create links that work well for all users of our website, and I want to help make that job simpler.</p>
+
+        <p>I've spent a lot of time researching how to create good, usable links, and realised two things&#8212;it's a very hard thing to do, and the relevant information is spread out all over the web. What I wanted was a single document that drew together all of these recommendations based on user research and web standards to help web-developers and designers make their sites more accessible for everyone.</p>
+
+        <h2>The job of a link</h2>
+
+        <p>Our links should be easily usable and accessible to as many people using our website as humanly possible. Much of the web is 'accessible by default', and links are no exception to this rule&#8212;without any extra work, an HTML document will have links which are;</p>
+
+        <ul>
+          <li>Visually recognisable (blue, underlined)</li>
+          <li>Accessible with the keyboard (tabindex)</li>
+          <li>Denoted on hover (cursor)</li>
+          <li>Denoted on focus (outline)</li>
+          <li>Denoted as visited (purple)</li>
+          <li>Denoted as active (red)</li>
+        </ul>
+
+        <p>They work equally well on desktop and on mobile, are simple, obvious, and stand out from the surrounding content. If nothing else is achieved, maintaining these properties will make your site remarkably accessible.</p>
+
+        <p>So what should we be thinking about when marking up and styling our links?</p>
+
+        <h2>A functional link</h2>
+
+        <p>There are a range of states to show user interaction with links. However, these states are only as useful as the styling associated with them. Using reset stylesheets commonly results in these being stripped away, so use normalise stylesheets instead and make sure any other styling is added back as needed.</p>
+
+        <p>The available states are;</p>
+
+        <ul>
+          <li><strong>:link</strong>&#8212;an unvisited link</li>
+          <li><strong>:visited</strong>&#8212;a visited link</li>
+          <li><strong>:hover</strong>&#8212;a link being interacted with using a pointing device (e.g. a mouse)</li>
+          <li><strong>:focus</strong>&#8212;a link being interacted with using a keyboard or similar non-pointing device</li>
+          <li><strong>:active</strong>&#8212;being activated by the user. In practice this is the time during which a keyboard, mouse button, or touch input is between the relevant down and up events (e.g. keydown and keyup)</li>
+        </ul>
+
+        <p>In addition to these we also have the base state of the link, before any user interaction.</p>
+
+        <p>So what are the best practices for styling links? <a href="//www.nngroup.com/articles/guidelines-for-visualizing-links">Research by the Nielsen Norman Group</a> recommends that links have both a unifying colour and underline to signal their intent. Whilst the underline can be omitted when the links are identified by their context (such as in a menu), for links within content it gives a strong visual cue that separates them from surrounding text and makes them much simpler to scan. My colour-sense isn't the best, and on smaller screens or in poor light I can struggle to pick out non-underlined links from their context without some scrubbing.</p>
+
+        <p>Links within content should also have styles which are sufficiently different from any other text styles. If you're underlining links, then you should avoid defining (or giving your editors) other text styles that use an underline. Another common style to avoid is a dotted underline, since this is the default style for the <code>&lt;abbr&gt;</code> tag in Firefox and Opera.</p>
+
+        <p>For links which aren't nested in content, you have some more flexibility. Additional <a href="//www.nngroup.com/articles/clickable-elements">research on styling clickable elements</a> gives some other great cues: make sure your links are sufficiently distinct from your non-link elements; make all elements (text, images, etc.) associated with a call-to-action clickable; and if in doubt add additional visual clues (such as arrows) to indicate clickability.</p>
+
+        <p>The proliferation of touch-screen devices has changed the way that developers should treat the <code>hover</code> state In the past it has been used to simplify the display of non-content links, often revealing extra information. Touch devices have varying support for the <code>hover</code> state and will primarily use the <code>active</code> state when a link is clicked. As such, avoiding the <code>hover</code> state as a link enhancement for anything more than decoration is encouraged.</p>
+
+        <p>To test the overall accessibility of your pages, there are automatic tools to do a lot of the work. In the past I've used the WAVE accessibility tester, but there are also Grunt plugins and services like <a href="//tenon.io">Tenon.io</a> to allow you increasing levels of automation with CI.</p>
+
+
+        <h2>Pseudo-classes</h2>
+
+        <p>Pseudo-classes are used to target links in different states. Understanding the purpose of different pseudo-classes will let you style links appropriately and predictably for users of your website, improving their usability.</p>
+
+        <p>As noted above, the available pseudo-classes are <code>link</code>, <code>visited</code>, <code>hover</code>, <code>focus</code>, and <code>active</code>. They follow the LHVA (link, hover, visited, active) order of precedence, and should be written in this order in your stylesheet for proper precedence. <code>focus</code> isn't explicitly defined in the order, but should be placed before, after, or with your <code>hover</code> state (as I'll explain below).</p>
+
+        <h3>:link</h3>
+
+        <p>The <code>link</code> pseudo-class targets unvisited links, and is the opposite of <code>visited</code>. For <code>link</code> to apply, the element must have an <code>href</code> attribute. This pseudo-class forms your base styling for links.</p>
+
+        <h3>:visited</h3>
+
+        <p>The <code>visited</code> pseudo-class targets visited links. As with <code>link</code>, <code>visited</code> requires the element to have an <code>href</code> attribute to apply.</p>
+
+        <p>The <code>visited</code> pseudo-class seems to have fallen out of favour in recent times. One reason may be that it's not always useful, and it isn't obvious when it should be used. I'd recommend <code>visited</code> is used for sites with frequent new content, such as blogs or news sites. In this context it is helpful to the user to be able to see at a glance which links they've already visited.</p>
+
+        <p>Conversely, it's not useful for sites or regions with largely static content, such as a brochureware site or your main navigation. These links will be visited repeatedly, and notifying the user that they've visited them before doesn't improve the utility of the site.</p>
+
+        <h3>:hover</h3>
+
+        <p>The most commonly used pseudo-class, <code>hover</code> targets links when the user mouses over them. In recent times the way that developers use <code>hover</code> has changed due to the proliferation of touch-screen devices, which generally don't respect <code>hover</code>.</p>
+
+        <p>The current best practice is that the styling of your <code>hover</code> state should not be used to reveal extra information, since you should assume that some users will not have access to it. <code>hover</code> should instead only be used to highlight the link on interaction with a mouse or pointing device.</p>
+
+        <h3>:focus</h3>
+
+        <p>The least commonly-used (or most misunderstood) pseudo-class, <code>focus</code> targets elements which have focus&#8212;defined as accepting a input event, most commonly from a keyboard or mouse. For links this means that it would activate when hitting return on the keyboard. The simplest ways to give a link <code>focus</code> are to select it by tabbing, or by clicking it (<code>focus</code> is applied after the click).</p>
+
+        <p>The <code>focus</code> pseudo-class is the most important in terms of accessibility, since it affects users navigating the site with a keyboard or other non-pointing device. At minimum I'd recommend that you apply your :hover styling to the link, whilst allowing any browser-specific styles such as outlines to also apply. Ideally the <code>focus</code> state should be slightly more emphasised than :hover, since it should be easily scannable on a page of content. An added outline is the default in most browsers, and I'd recommend this as an additional emphasis in your own CSS.</p>
+
+        <h3>:active</h3>
+
+        <p>The <code>active</code> pseudo-class target an element whilst it is being activated by the user. In practice this is the time during which a keyboard, mouse button, or touch input is between the relevant down and up states (e.g. keydown and keyup).</p>
+
+        <p>In modern web-design, the <code>active</code> state should be considered especially useful for mobile users, as it gives a clear indication when an element is tapped that the input has been registered. It is also important for desktop users, for the same reason.</p>
+
+
+        <h2>Link behaviour</h2>
+
+        <p>Users have a certain expectation of how links should work based on how they work on other people's sites, and you should match it as much as possible to increase the predictability and accessibility of your website. There are also <a href="//www.w3.org/TR/WCAG20/">WCAG guidelines</a> to point you in the right direction.</p>
+
+        <p>In general links should have well defined and tested behaviour for all states except <code>visited</code>, since the utility of this state is situational. For any given link, you should be able to;</p>
+
+        <ul>
+          <li>Access it with a mouse</li>
+          <li>Access it with a keyboard</li>
+          <li>Have an obvious state change for mouse interaction</li>
+          <li>Have an obvious state change for keyboard interaction</li>
+          <li>Have a state change which doesn't reflow surrounding content
+            <ul>
+              <li>e.g. making an inline text link bold on state change is bad practice, as it alters its size</li>
+            </ul>
+          </li>
+          <li>Have sufficient contrast in colour changes</li>
+          <li>Have colour changes accessible for colorblind users</li>
+        </ul>
+
+        <p>You can optionally have;</p>
+
+        <ul>
+          <li>An accompanying physical change for interaction such as underline or outline</li>
+          <li>A <code>visited</code> state style</li>
+        </ul>
+
+        <h3>Tabindex</h3>
+
+        <p>Links that should be activated by the user should have a <code>tabindex</code> value. As per <a href="//w3c.github.io/html/editing.html#the-tabindex-attribute">the W3 specifications</a>, the following elements have an implicit <code>tabindex</code> of 0;</p>
+
+        <ul>
+          <li><code>a</code> with <code>href</code></li>
+          <li><code>link</code> with <code>href</code></li>
+          <li><code>button</code></li>
+          <li><code>input</code> where type is not <code>hidden</code></li>
+          <li><code>select</code></li>
+          <li><code>textarea</code></li>
+          <li><code>menuitem</code></li>
+          <li>elements with a draggable attribute</li>
+          <li>editing hosts (e.g. content editable elements)</li>
+          <li>browsing context containers (e.g. <code>window</code>)</li>
+          <li>Sorting interface <code>th</code> elements</li>
+        </ul>
+
+        <p>For all other elements you can set a <code>tabindex</code> in one of three states. A <code>tabindex</code> of zero will set the element's <code>tabindex</code> focus flag, and will make it focusable in the DOM order of the document. A negative <code>tabindex</code> will enable the <code>tabindex</code> focus flag on an element, but will not make it focusable using the tab key. This is useful for elements where you wish to set programmatic focus&#8212;the most common being for skip links. A positive <code>tabindex</code> will set the <code>tabindex</code> focus flag for the element and place it in the tab order before elements with a lower index, regardless of DOM position (subject to the conditions in the spec).</p>
+
+        <p>The main use of a negative <code>tabindex</code> is for features like skip-to-content links. It can also be useful to programmatically control the <code>tabindex</code> of default elements&#8212;the Slick slideshow library uses this to prevent carousel items that are off of the screen from being focusable. I've never come across a use for a positive tabindex, and the <a href="//www.bbc.co.uk/guidelines/futuremedia/accessibility/html/tabindex.shtml">BBC's accessibility guidelines</a> and the <a href="//www.paciellogroup.com/blog/2014/08/using-the-tabindex-attribute">Paciello Group</a> explicitly recommend avoiding them.</p>
+
+        <p><code>tabindex</code> should be set so that elements can be accessed in an intelligent order with the keyboard. In the past this has been achieved with <a href="//alistapart.com/article/negativemargins">negative margins</a>, but would now be better implemented with Flexbox ordering (or simply constructing your HTML in a logical order).</p>
+
+        <h3>Skip-to-content</h3>
+
+        <p>Skip-to-content links should allow users to jump past unnecessary links (such as main menus) and focus directly on the main page content. The <a href="//www.w3.org/TR/WCAG20-TECHS/G1.html">intended behaviour is that</a>;</p>
+
+        <blockquote>
+          <p>Activating the link sets focus beyond the other content to the main content.</p>
+        </blockquote>
+
+        <p>A common issue I've seen with skip-to-content links is that the intended behaviour isn't understood, so the link is implemented with an anchor that skips down the page but doesn't accurately shift the focus;</p>
+
+        <pre><code><span>&lt;a href="#content"&gt;Skip to content&lt;/a&gt;</span>
+<span/>
+<span>&lt;main id="content"&gt;&lt;/main&gt;</span>
+</code></pre>
+
+        <p>As we've learnt, the reason this doesn't shift focus is because the main element isn't in the focus order by default. You can overcome this by setting a negative <code>tabindex</code> on the content element;</p>
+
+        <pre><code><span>&lt;a href="#content"&gt;Skip to content&lt;/a&gt;</span>
+<span/>
+<span>&lt;main id="content" tabindex="-1"&gt;&lt;/main&gt;</span>
+</code></pre>
+
+        <p>The negative <code>tabindex</code> makes the element programmatically focusable, and appropriately shifts the focus when explicitly targeted by the skip-to-content link. However, since it's a negative <code>tabindex</code> it's not placed in the focus navigation order, and will not appear in normal navigation. The <code>name</code> attribute should no longer be used for this in HTML5 <a href="//www.w3.org/TR/html5/obsolete.html#attr-a-name">as it is deprecated</a>&#8212;always use an <code>id</code>.</p>
+
+        <h3>Use of target attribute</h3>
+        <p>The use of the <code>target</code> attribute in links is, and will continue to be, a subjective topic. I'll try to stick to the facts here, but with a little of my own opinion.</p>
+
+        <p><a href="//www.w3.org/TR/WCAG20/#consistent-behavior">Section 3.2 of the WCAG guidelines</a> specify that, for AAA compliance, users should not encounter unpredictable context switches, and should be able to disable them if needed. Applying <code>target="_blank"</code> to a link will force it to open in a new window or tab <a href="//diveintoaccessibility.info/day_16_not_opening_new_windows.html">depending on your browser</a>. For many users this can be confusing behaviour, as it changes their browsing context and breaks the behaviour of the back button. This is an additional impediment for users who rely on screen readers, as it places the onus on the software to declare the behaviour.</p>
+
+        <p>The <code>target</code> attribute was briefly deprecated, but has since been reinstated. I don't think this is a bad thing, as it standardises the behaviour to a single attribute (which browsing software can then detect). The W3 recommendations point to both <a href="//www.w3.org/TR/2015/NOTE-WCAG20-TECHS-20150226/H83">the use of target="_blank"</a> and <a href="//www.w3.org/TR/2015/NOTE-WCAG20-TECHS-20150226/SCR24.html">custom JavaScript solutions</a> (with an option to disable them if necessary). I'd argue that for all implementations you should first be absolutely sure that it's necessary to cause a link to open a new window, and then implement it in a standard way using <code>target="_blank"</code>. If you do cause a link to open in a new window, it should be evident from either the link text or styling that this will be the case before the link is clicked.</p>
+
+        <p>I believe there are some cases where it is appropriate to use <code>target="blank"</code>, and that is where it will improve the usability of the current browsing context. Two examples of where this is used well are Google Docs and Gmail&#8212;in both cases taking you to a new page would disturb your current activity, and make it harder to return to what you were doing. Opening the link in a new window or tab is more considerate of the user's needs.</p>
+
+        <p>There is a trend of opening links to external sites in new windows when they wouldn't offer links back. The solution here is to make sure you can find your way back, indicate visually the link goes to a different site, or not break the back button, e.g. shopping carts.</p>
+
+        <h2>Block links</h2>
+
+        <p>Block-level links were introduced in HTML5 in response to the need for making a more complex element than a text string into a hyperlink. Consider a common website feature&#8212;a rich teaser containing an image, title, and descriptive text. Without block-level links, your choices are to either to link multiple elements to the content (annoying when using a keyboard), have a single link which is progressively enhanced with JavaScript to make the block clickable (which doesn't work well with common actions like middle- or right-clicking to open in a new tab), or using CSS trickery to make a link fill the whole area.</p>
+
+        <p>Block links make this much simpler to implement in a standard way by wrapping all of the child elements in the anchor tag. There are still some styling caveats, but nothing insurmountable. Whilst they are a useful tool, we should be careful, as developers, to use them responsibly.</p>
+
+        <p>Behaviour between screen readers varies according to my research&#8212;some will announce all elements within the link as separate items, and some will combine them into a single item. In any case, minimising the content inside the link is key&#8212;you don't want to bombard the user with large amounts of content.</p>
+
+        <p>With the latest version of Voiceover (at the time of writing), the current behaviour is to read all content in the block. For a basic block link like;</p>
+
+        <pre><code><span>&lt;a href="//example.com"&gt;</span>
+<span>  &lt;img src="//example.com/images/foo.png" alt="A foo" /&gt;</span>
+<span>  &lt;h3&gt;The eating habits of the foo&lt;/h3&gt;</span>
+<span/>
+<span>  &lt;p&gt;The foo is a reclusive creature, with some unusual eating habits.&lt;/p&gt;</span>
+<span>&lt;/a&gt;</span>
+</code></pre>
+
+        <p>The announced text is;</p>
+
+        <blockquote>
+          <p>A foo. The eating habits of the foo. The foo is a reclusive creature, with some unusual eating habits.
+          </p>
+        </blockquote>
+
+        <p>This is fine for this short example, but for multiple links with longer content you're quickly increasing the time taken to navigate the page. If you're going to use block links for major parts of your navigation, be considerate with the length of your content.</p>
+
+        <p>As with anything, there are alternative solutions. The Guardian's homepage blocks straddle the line between block and inline links, using an absolutely positioned anchor block which is overlaid by inline sub-links using z-index. Another potential solution is to use this for progressive enhancement, replicating the link behaviour with JavaScript to make the entire element clickable.</p>
+
+        <h2>Accessibility</h2>
+
+        <p>When styling your links you should also cater to users who may not be interacting with the page as you might expect. This includes, but is not limited to colorblindness or visual impairment, keyboards or screen readers, touch-only devices, non-JavaScript browsers, and non-CSS browsers.</p>
+
+        <h3>Color</h3>
+
+        <p>Colors should have <a href="//www.w3.org/TR/UNDERSTANDING-WCAG20/visual-audio-contrast-contrast.html">sufficient contrast</a> with the background to be legible in low light conditions, and to users with colorblindness or other visual impairments. Any <a href="//www.w3.org/WAI/GL/wiki/Post_WCAG_2#Contrast_of_Hover_and_Link_Text_States">state changes</a> should likewise have sufficient contrast to be discernible from the previous state. You can check the contrast of your links with the <a href="//webaim.org/resources/contrastchecker">WAVE accessibility tool</a>.</p>
+
+        <h3>Touch-only devices</h3>
+
+        <p>As mentioned above, current best practice recommends not using the hover state to present extra information to users due to the difficulty activating it on touch devices. As such, care should be taken that all links are equally usable without a hover state, and that appropriate styling is provided for the active state to give the user a visual clue when they activate a link.</p>
+
+        <h3>Non-JavaScript browsers</h3>
+
+        <p>When providing functionality that uses JavaScript, any fallbacks should ensure that the links have a valid <code>href</code> attribute. A common example of this would be an AJAX pager&#8212;pager links should link to a valid URL so that if JavaScript is not enabled the user is still sent to a valid location. As such, it is generally not advisable to use links without an <code>href</code> attribute or with <code>href=&#8221;#&#8221;</code> unless you can guarantee the user will not see them when JavaScript is disabled.</p>
+
+        <h3>Non-CSS browsers</h3>
+
+        <p>Whilst uncommon, it&#8217;s possible that some users may browse your site without CSS, or with their own stylesheets. As such, it&#8217;s important to ensure that your link markup is always semantic, and doesn&#8217;t rely on CSS to be usable.</p>
+
+        <h3>Link text</h3>
+
+        <p>Link text is a simple consideration to making your links more accessible. It's long been advised to not create links with uninformative text like 'Read more' or 'Click here', as this doesn't make sense in isolation. To make these links more accessible, you can include screen-reader only text using a variety of techniques including <a href="//webaim.org/techniques/css/invisiblecontent">CSS tricks</a> and <a href="//www.paciellogroup.com/blog/2012/05/html5-accessibility-chops-hidden-and-aria-hidden">ARIA attributes</a>, so you might have a markup of the form;</p>
+
+        <pre><code><span>&lt;a class="hidden" href="//example.com"&gt;Read more about foo bar&lt;/a&gt;</span>
+<span/>
+<span>.hidden {</span>
+<span>  position: absolute;</span>
+<span>  clip: rect(1px 1px 1px 1px); /* for Internet Explorer */</span>
+<span>  clip: rect(1px, 1px, 1px, 1px);</span>
+<span>  padding: 0;</span>
+<span>  border: 0;</span>
+<span>  height: 1px;</span>
+<span>  width: 1px;</span>
+<span>  overflow: hidden;</span>
+<span>}</span>
+</code></pre>
+
+        <p>A better method is to make the link content useful by default&#8212;if you're building a CMS, let editors control the link content for calls to action. Or even remove the need for separate calls to action, and make the whole element a link.</p>
+
+        <h2>Go forth, and link</h2>
+
+        <p>Creating a page with a well thought-out link structure and style makes it more usable for everyone. Links are easier to consume in low light, on an old monitor, with poor vision, with a screen-reader, or anything in between. They're more immediately identifiable to a user in a hurry, saving desktop users from scrubbing around with a mouse and tablet users from prodding every corner of the screen to elicit a response. The next time you're designing or theming a web-page, take a step back and consider if that link is going to work well for all of your users&#8212;not just some of them.</p>
+      </div></article>
+  </main>
+    </div>
+    <script>
+          var userAgent = navigator.userAgent || navigator.vendor || window.opera;
+
+          if (userAgent.match(/Android/i)) {
+            document.documentElement.className += ' is-android';
+          }
+        </script>
+  </body>
+</html>
