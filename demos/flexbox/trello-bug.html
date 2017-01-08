@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title></title>
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+
+      html {
+        font-size: 32px;
+      }
+
+      body,
+      html {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+      }
+
+      .grid {
+        display: flex;
+        height: 100vh;
+        padding: 20px;
+      }
+
+      .grid-column {
+        background: #B6EBFF;
+        display: flex;
+        flex-direction: column;
+        flex-shrink: 0;
+        margin-right: 20px;
+      }
+
+      .grid-column--wide {
+        flex-wrap: wrap;
+      }
+
+      .grid-column:last-child {
+        margin-right: 0;
+      }
+
+      .grid-item {
+        background: #007983;
+        border-radius: 0.25rem;
+        flex-shrink: 0;
+        height: 100px;
+        margin: 20px 20px 0 20px;
+        width: 200px;
+      }
+
+      .grid-item:last-child {
+        margin-bottom: 20px;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+    </header>
+    <main>
+      <div class="grid">
+        <div class="grid-column grid-column--wide">
+          <div class="grid-item"></div>
+          <div class="grid-item"></div>
+          <div class="grid-item"></div>
+          <div class="grid-item"></div>
+          <div class="grid-item"></div>
+          <div class="grid-item"></div>
+          <div class="grid-item"></div>
+          <div class="grid-item"></div>
+          <div class="grid-item"></div>
+          <div class="grid-item"></div>
+          <div class="grid-item"></div>
+          <div class="grid-item"></div>
+        </div>
+      </div>
+    </main>
+    <footer>
+    </footer>
+  </body>
+</html>

@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title></title>
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+
+      html {
+        font-size: 32px;
+      }
+
+      body,
+      html {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+      }
+
+      .wrapper {
+        display: flex;
+        flex-direction: column;
+        min-height: 100%;
+      }
+
+      header {
+        background: #007983;
+        height: 100px;
+        width: 100%;
+      }
+
+      footer {
+        background: #007983;
+        height: 100px;
+        width: 100%;
+      }
+
+      main {
+        background: blue;
+        display: flex;
+        flex-grow: 1;
+        width: 100%;
+      }
+
+      .content {
+        background: #B6EBFF;
+        order: 1;
+        flex-grow: 1;
+      }
+
+      .sidebar {
+        background: #E2B0C6;
+        width: 20%;
+      }
+
+      .sidebar--left {
+        order: -1;
+      }
+
+      .sidebar--right {
+        order: 2;
+      }
+
+      .text {
+        margin: 1rem;
+        padding: 0 0.25rem;
+        font: 1rem/1.5 Georgia, sans-serif;
+      }
+
+      .text:focus {
+        background-color: rgba(255, 255, 255, 0.5);
+        outline: none;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="wrapper">
+      <header>
+      </header>
+      <main>
+        <div class="content">
+          <p class="text" contenteditable="true">
+            Edit me to make the page longer
+          </p>
+        </div>
+        <div class="sidebar sidebar--left"></div>
+        <div class="sidebar sidebar--right"></div>
+      </main>
+      <footer>
+      </footer>
+    </div>
+  </body>
+</html>

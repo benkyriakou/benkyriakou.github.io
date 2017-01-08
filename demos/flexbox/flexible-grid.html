@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title></title>
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+
+      body,
+      html {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+      }
+
+      .grid {
+        display: flex;
+        flex-wrap: wrap;
+      }
+
+      .grid-item {
+        height: 200px;
+        margin: 20px;
+      }
+
+      .grid-item--large {
+        background-color: #007983;
+        flex: 2 400px;
+      }
+
+      .grid-item--small {
+        flex: 1 200px;
+        background-color: #B6EBFF;
+      }
+
+      .grid-item--pad {
+        height: 0;
+        flex-grow: 1000000000;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+    </header>
+    <main>
+      <div class="grid">
+        <div class="grid-item grid-item--large"></div>
+        <div class="grid-item grid-item--large"></div>
+        <div class="grid-item grid-item--small"></div>
+        <div class="grid-item grid-item--small"></div>
+        <div class="grid-item grid-item--large"></div>
+        <div class="grid-item grid-item--large"></div>
+        <div class="grid-item grid-item--small"></div>
+        <div class="grid-item grid-item--large"></div>
+        <div class="grid-item grid-item--small"></div>
+        <div class="grid-item grid-item--large"></div>
+        <div class="grid-item grid-item--large"></div>
+        <div class="grid-item grid-item--large"></div>
+        <div class="grid-item grid-item--pad"></div>
+      </div>
+    </main>
+    <footer>
+    </footer>
+  </body>
+</html>

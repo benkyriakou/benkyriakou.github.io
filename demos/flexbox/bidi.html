@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title></title>
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+
+      html {
+        font-size: 16px;
+      }
+
+      body,
+      html {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+      }
+
+      p {
+        margin: 1rem;
+      }
+
+      .instruction {
+        cursor: pointer;
+        display: block;
+        font-size: 1.5rem;
+        margin: 1rem auto;
+        padding: 0.5rem;
+        text-align: center;
+      }
+
+      .grid {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        margin: 0 auto;
+        max-width: 720px;
+      }
+
+      .grid-item {
+        background: #007983;
+        height: 200px;
+        width: 200px;
+        margin: 20px;
+      }
+
+      .grid-item:nth-child(1) {
+        opacity: 1;
+      }
+
+      .grid-item:nth-child(2) {
+        opacity: 0.9;
+      }
+
+      .grid-item:nth-child(3) {
+        opacity: 0.8;
+      }
+
+      .grid-item:nth-child(4) {
+        opacity: 0.7;
+      }
+
+      .grid-item:nth-child(5) {
+        opacity: 0.6;
+      }
+
+      .grid-item:nth-child(6) {
+        opacity: 0.5;
+      }
+
+      .grid-item:nth-child(7) {
+        opacity: 0.4;
+      }
+
+      .grid-item:nth-child(8) {
+        opacity: 0.4;
+      }
+    </style>
+
+    <script type="text/javascript">
+      window.onload = function() {
+
+        document.querySelector('.instruction').onclick = function() {
+          document.body.dir = (document.body.dir == 'ltr') ? 'rtl' : 'ltr';
+        };
+      };
+    </script>
+  </head>
+  <body dir="ltr">
+    <header>
+      <button class="instruction">Click here to invert the content direction</button>
+    </header>
+    <main>
+      <div class="grid">
+        <div class="grid-item">
+          <p>1</p>
+        </div>
+        <div class="grid-item">
+          <p>2</p>
+        </div>
+        <div class="grid-item">
+          <p>3</p>
+        </div>
+        <div class="grid-item">
+          <p>4</p>
+        </div>
+        <div class="grid-item">
+          <p>5</p>
+        </div>
+        <div class="grid-item">
+          <p>6</p>
+        </div>
+      </div>
+    </main>
+    <footer>
+    </footer>
+  </body>
+</html>

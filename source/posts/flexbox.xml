@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!DOCTYPE document [
+  <!ENTITY mdash "&#8212;">
+]>
+
+<document type="article">
+  <title>Flexbox</title>
+  <description>A summary of the CSS flexible box layout mode.</description>
+  <slug>/posts/flexbox</slug>
+  <content>
+    <article>
+      <title>Flexbox</title>
+      <date datetime="2017-01">January 2017</date>
+      <content>
+        <p>I've been using flexbox for over a year for layout in CSS. Unlike its sibling <a href="http://caniuse.com/#feat=css-grid">CSS Grid</a>, flexbox has had <a href="http://caniuse.com/#feat=flexbox">widespread browser support</a> for a long time. This is a short summary of what flexbox does, and some uses for it in practice.</p>
+
+        <h2>What is Flexbox?</h2>
+
+        <p>Flexbox is a layout system which allows you to abstract away a lot of the specifics of laying out items in a grid. It caters to use-cases which have historically been clunky to implement, including creating complex rows and columns, laying out flexible elements, adapting to bidirectionality, and overriding source ordering.</p>
+
+        <p>The best at-a-glance resource I've found for flexbox is the brilliant visual <a href="https://css-tricks.com/snippets/css/a-guide-to-flexbox/">CSS-Tricks guide</a>. Rather than repeat the comprehensive documentation already available elsewhere, here's a brief summary.</p>
+
+        <p>Flexbox layouts are composed of two types of elements&mdash;a parent <strong>flex container</strong>, and a number of <strong>children</strong>. Creating a flex container is as simple as setting <code>display: flex;</code> (or <code>display: inline-flex;</code>) on it. When you set <code>display: flex;</code> on a flex container element, these are the default properties it receives:</p>
+
+        <pre><code>
+          <span><strong>display: flex;</strong></span>
+          <span>flex-direction: row;</span>
+          <span>flex-wrap: nowrap;</span>
+          <span>justify-content: flex-start;</span>
+          <span>align-content: flex-start;</span>
+          <span>align-items: flex-start;</span>
+        </code></pre>
+
+        <ul>
+          <li><code>flex-direction</code> sets the overall flow of the elements in the container</li>
+          <li><code>flex-wrap</code> controls whether elements will wrap if they exceed the size of the container</li>
+          <li><code>justify-content</code> tells the container how to distribute the child elements when there is spare space along the <code>flex-direction</code> axis</li>
+          <li><code>align-content</code> sets the aligment of child elements on the <code>flex-direction</code> axis</li>
+          <li><code>align-items</code> sets the alignment of child elements perpendicular to the <code>flex-direction</code> axis</li>
+        </ul>
+
+        <p>You can also set <code>flex-direction</code> and <code>flex-wrap</code> using the shorthand:</p>
+
+        <pre><code>
+          <span>flex-flow: &lt;'flex-direction'&gt; || &lt;'flex-wrap'&gt;;</span>
+        </code></pre>
+
+        <p>The child elements will have these default properties:</p>
+
+        <pre><code>
+          <span>order: 0;</span>
+          <span>flex-grow: 0;</span>
+          <span>flex-shrink: 1;</span>
+          <span>flex-basis: auto;</span>
+          <span>align-self: flex-start; </span>
+        </code></pre>
+
+        <ul>
+          <li><code>order</code> determines which elements have predecence along the <code>flex-direction</code> axis (similar to <code>z-index</code>)</li>
+          <li><code>flex-grow</code> determines whether an element can expand to fill free space</li>
+          <li><code>flex-shrink</code> determines whether an element can shrink to make space for other children</li>
+          <li><code>flex-basis</code> sets the base size of an element before it grows/shrinks</li>
+          <li><code>align-self</code> allows the child element to override the value set in the parent <code>align-items</code> for a specific element</li>
+        </ul>
+
+        <p>You can also set <code>flex-grow</code>, <code>flex-shrink</code>, and <code>flex-basis</code> using the shorthand:</p>
+
+        <pre><code>
+          <span>flex: none | [ &lt;'flex-grow'&gt; &lt;'flex-shrink'&gt;? || &lt;'flex-basis'&gt; ]</span>
+        </code></pre>
+
+        <p>The great thing about both the parent and child properties is that they are all relative to the <code>flex-direction</code> set on the parent element. This makes it incredibly easy to influence the layout without needing to change other styling. <code>flex-direction</code> is also determined based on the <code>dir</code> attribute, making it even more adaptive.</p>
+
+        <h2>Use cases</h2>
+
+        <h3><a href="/demos/flexbox/holy-grail">Holy grail</a></h3>
+
+        <p>The classic three-column 'holy grail' layout with a sticky footer. This uses <code>flex-direction: column;</code> on the wrapper to create the base layout with <code>flex-grow: 1;</code> set on the content area to expand it to fill the page window, and a standard column layout in the content area with column precedence set using <code>order</code>.</p>
+
+        <h3><a href="/demos/flexbox/bidi">Bidirectional</a></h3>
+
+        <p>A simple bidirectional grid layout which reflows based on the directionality of the <code>&lt;body&gt;</code> element. Since other properties are already set relative to the <code>flex-direction</code>, this is incredibly powerful when used for more complex layouts.</p>
+
+        <h3><a href="/demos/flexbox/trello">Trello</a></h3>
+
+        <p>A basic Trello-like layout of cards in columns. This uses a column layout inside a grid of tall rows to create a card structure. See the Bugs section below for a limitation of this pattern.</p>
+
+        <h3><a href="/demos/flexbox/flexible-grid">Flexible grid</a></h3>
+
+        <p>A simple flexible grid of small and large items, constructed using <code>flex-basis</code> and <code>flex-grow</code> to control the relative sizing of elements. This also features a work-around to prevent rows or orphaned elements expanding to take up the whole row, by placing a zero-height element with a large <code>flex-grow</code> value at the end of the content.</p>
+
+        <h2>Bugs</h2>
+
+        <p>When creating the Trello example I <a href="/demos/flexbox/trello-bug">found a bug</a> in the browser implementation of <code>flex-direction: column;</code> which appears to be widespread (see the <a href="https://bugs.chromium.org/p/chromium/issues/detail?id=507397">Chromium bug report</a> and a <a href="http://stackoverflow.com/questions/33891709/when-flexbox-items-wrap-in-column-mode-container-does-not-grow-its-width">related Stack Overflow post</a>). The issue comes from the browser's calculation of the width of the flex container&mdash;after the first row, the container fails to expand to encapsulate the remaining rows (presumably because container width calculation is traditionally horizontally- rather than vertically-driven). This can be avoided if you can give your column a defined width, but the specific case of having an expanding column layout doesn't yet seem to be supported.</p>
+
+        <h2>Flexbox resources</h2>
+
+        <p>A few resources I've found helpful when learning and using flexbox:</p>
+
+        <ul>
+          <li><a href="http://flexboxfroggy.com/">Flexbox Froggy</a>, a simple game to help you remember what each property does</li>
+          <li><a href="https://css-tricks.com/snippets/css/a-guide-to-flexbox/">A Complete Guide to Flexbox</a> from CSS-tricks</li>
+          <li><a href="https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_Flexible_Box_Layout">The CSS Flexible Box Layout reference</a> from the Mozilla Developer Network</li>
+        </ul>
+      </content>
+    </article>
+  </content>
+</document>
