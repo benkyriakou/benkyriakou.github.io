@@ -192,7 +192,6 @@ html:not(.is-android) .article__content img {
   border-bottom: 1px #CCC solid;
   box-shadow: 0px 0px 2px 2px #EFEFEF;
   margin-bottom: 1.5rem;
-  overflow: hidden;
 }
 
 .site-header a {
@@ -227,9 +226,8 @@ html:not(.is-android) .article__content img {
   display: flex;
   flex-wrap: wrap;
   list-style: none;
-  margin: 0.5rem 0;
-  overflow: hidden;
-  padding: 0;
+  margin: 0;
+  padding: 0.5rem 0;
   text-align: center;
 }
 
@@ -244,12 +242,12 @@ html:not(.is-android) .article__content img {
 
 @media screen and (min-width: 25rem) {
   .site-header__items {
-    display: block;
+    justify-content: flex-start;
     text-align: left;
   }
 
   .site-header__item {
-    float: left;
+    flex-grow: 0;
     font-size: 1.25rem;
     margin: 0 2rem 0 0;
   }
