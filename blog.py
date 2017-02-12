@@ -1,5 +1,6 @@
 import os
 from lxml import etree
+from lxml.etree import XSLTApplyError
 import sass
 
 xsl = etree.parse('./source/stylesheet.xsl')
@@ -30,11 +31,15 @@ for item in listing:
         print('Skipping external article ' + filename)
         continue
 
-      result = transform(xml)
+      try:
+        result = transform(xml)
+        print('Generating ' + outpath + '/' + name + '.html')
+        result.write(outpath + '/' + name + '.html', pretty_print=True)
+      except XSLTApplyError as e:
+        print('Transformation failed')
 
-      print('Generating ' + outpath + '/' + name + '.html')
-
-      result.write(outpath + '/' + name + '.html', pretty_print=True)
+        for error in transform.error_log:
+          print('{!s}: {!s}'.format(error.level_name, error.message))
 
 # Build CSS from SCSS.
 # First get a sorted list of files
@@ -63,4 +68,10 @@ for scss_file in scss_files:
 # # Write the new CSS file
 with open(CSS_FILE, 'w', encoding='utf8') as fh:
   print('Writing CSS to {!s}'.format(CSS_FILE))
+
+  # Strip BOM from string
+  # @todo: Figure out whether this comes from libsass or the pip
+  # package. See https://github.com/dahlia/libsass-python/pull/52.
+  css_string = css_string.replace('\uFEFF', '')
+
   fh.write(css_string)
