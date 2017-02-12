@@ -46,13 +46,13 @@
   <xsl:template match="document">
     <xsl:if test="not(title) or title=''">
       <xsl:message terminate="yes">
-        Document requires a title value.
+        <xsl:text>Document requires a title value.</xsl:text>
       </xsl:message>
     </xsl:if>
 
     <xsl:if test="not(description) or description=''">
       <xsl:message terminate="yes">
-        Document requires a description value.
+        <xsl:text>Document requires a description value.</xsl:text>
       </xsl:message>
     </xsl:if>
 
