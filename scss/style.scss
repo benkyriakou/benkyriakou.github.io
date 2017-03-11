@@ -118,7 +118,7 @@ hr {
     white-space: pre-wrap;
   }
 
-  img {
+  picture {
     border: 0;
     display: block;
     margin: 0 auto 1.5rem;
@@ -126,11 +126,18 @@ hr {
     transition: height 1s, width 1s;
   }
 
+  picture > img,
+  picture > source {
+    display: block;
+    margin: 0 auto;
+    max-width: 100%;
+  }
+
   figure {
     display: block;
     margin: 0 auto 1.5rem;
 
-    img {
+    picture {
       margin-bottom: 0.5rem;
     }
 
@@ -198,20 +205,20 @@ hr {
     padding-top: 0.25rem;
   }
 
-  /* Don't do this on Android because vh inconsistency due to address bar */
-  html:not(.is-android) & img {
+  picture > img,
+  picture > source {
     max-height: 80vh;
   }
 
   /* Scale down images a bit on desktop */
   @media screen and (min-width: 37.5rem) {
-    img {
+    picture {
       max-width: 80%;
     }
   }
 
-  * + img,
-  img + * {
+  * + picture,
+  picture + * {
     margin-top: 1.5rem;
   }
 }

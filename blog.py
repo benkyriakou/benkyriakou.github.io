@@ -1,7 +1,8 @@
 import os
+import sass
+from PIL import Image
 from lxml import etree
 from lxml.etree import XSLTApplyError
-import sass
 
 xsl = etree.parse('./source/stylesheet.xsl')
 transform = etree.XSLT(xsl)
@@ -40,6 +41,21 @@ for item in listing:
 
         for error in transform.error_log:
           print('{!s}: {!s}'.format(error.level_name, error.message))
+
+
+im_derivatives = (760, 320)
+
+# Generate image derivatives
+for image in os.listdir('./images/articles'):
+  im = Image.open(os.path.join('./images/articles', image))
+
+  for derivative in im_derivatives:
+    im_out = im.resize((derivative, int(im.size[1] / (im.size[0] / derivative))), resample=Image.LANCZOS)
+    original_filename, original_extension = os.path.splitext(image)
+    im_outname = original_filename + '_' + str(derivative) + original_extension
+    im_outpath = os.path.join('./images/derivatives', im_outname)
+    im_out.save(im_outpath)
+
 
 # Build CSS from SCSS.
 # First get a sorted list of files

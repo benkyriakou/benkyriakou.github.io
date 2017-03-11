@@ -1,7 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
-  <xsl:output method="html" doctype-system="about:legacy-compat" />
+<xsl:stylesheet version="1.0"
+  xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+  xmlns:str="http://exslt.org/strings"
+  exclude-result-prefixes="str">
+
+  <xsl:output method="html" encoding="utf-8" indent="yes" doctype-system="about:legacy-compat" />
 
   <xsl:template match="/">
     <html lang="en">
@@ -110,6 +114,25 @@
     </xsl:copy>
   </xsl:template>
 
+  <!-- Convert img tags to picture tags -->
+  <xsl:template match="article//img">
+    <xsl:variable name="file_path">
+      <xsl:call-template name="filepath">
+        <xsl:with-param name="path" select="@src" />
+      </xsl:call-template>
+    </xsl:variable>
+
+    <xsl:variable name="derivative_path" select="str:replace($file_path, '/articles/', '/derivatives/')" />
+    <xsl:variable name="file_extension" select="substring(@src, string-length($file_path) + 1)" />
+
+    <picture>
+      <source media="(min-width: 1024px)" srcset="{@src}" />
+      <source media="(min-width: 600px)" srcset="{$derivative_path}_760{$file_extension}" />
+      <img src="{$derivative_path}_320{$file_extension}" alt="{@alt}" title="{@title}" />
+    </picture>
+
+  </xsl:template>
+
   <!-- Override content processing for references. -->
   <xsl:template match="content//reference">
     <sup class="reference">
@@ -208,5 +231,43 @@
       ga('create', 'UA-64337321-1', 'auto');
       ga('send', 'pageview');
     </script>
+  </xsl:template>
+
+  <xsl:template name="filepath">
+    <xsl:param name="path" />
+
+    <xsl:call-template name="get_filepath">
+      <xsl:with-param name="current_path" select="$path" />
+      <xsl:with-param name="original_path" select="$path" />
+    </xsl:call-template>
+  </xsl:template>
+
+  <!-- Split the file path from the file extension -->
+  <xsl:template name="get_filepath">
+    <xsl:param name="current_path" />
+    <xsl:param name="original_path" />
+
+    <xsl:variable name="path_len" select="string-length($current_path)" />
+
+    <!-- Return if we reach the end of the path, or we reach the first period -->
+    <xsl:choose>
+      <!-- When the path length is 0, we've reached the end of the string -->
+      <xsl:when test="$path_len = 0">
+        <xsl:value-of select="''" />
+      </xsl:when>
+
+      <!-- When the last string is a period, we've reached the extension boundary -->
+      <xsl:when test="substring($current_path, $path_len) = '.'">
+        <xsl:value-of select="substring($current_path, 1, $path_len - 1)" />
+      </xsl:when>
+
+      <!-- Otherwise, continue recursing into the string -->
+      <xsl:otherwise>
+        <xsl:call-template name="get_filepath">
+          <xsl:with-param name="current_path" select="substring($current_path, 1, $path_len - 1)" />
+          <xsl:with-param name="original_path" select="$original_path" />
+        </xsl:call-template>
+      </xsl:otherwise>
+    </xsl:choose>
   </xsl:template>
 </xsl:stylesheet>
