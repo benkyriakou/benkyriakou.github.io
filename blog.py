@@ -1,8 +1,13 @@
 import os
 import sass
+import argparse
 from PIL import Image
 from lxml import etree
 from lxml.etree import XSLTApplyError
+
+parser = argparse.ArgumentParser(description="Static blog processor")
+parser.add_argument('--images', action='store_true')
+args = parser.parse_args()
 
 xsl = etree.parse('./source/stylesheet.xsl')
 transform = etree.XSLT(xsl)
@@ -43,18 +48,21 @@ for item in listing:
           print('{!s}: {!s}'.format(error.level_name, error.message))
 
 
-im_derivatives = (760, 320)
+if args.images:
+  im_derivatives = (760, 320)
 
-# Generate image derivatives
-for image in os.listdir('./images/articles'):
-  im = Image.open(os.path.join('./images/articles', image))
+  # Generate image derivatives
+  for image in os.listdir('./images/articles'):
+    print('Generating derivatives for image {!s}'.format(image))
+    im = Image.open(os.path.join('./images/articles', image))
 
-  for derivative in im_derivatives:
-    im_out = im.resize((derivative, int(im.size[1] / (im.size[0] / derivative))), resample=Image.LANCZOS)
-    original_filename, original_extension = os.path.splitext(image)
-    im_outname = original_filename + '_' + str(derivative) + original_extension
-    im_outpath = os.path.join('./images/derivatives', im_outname)
-    im_out.save(im_outpath)
+    for derivative in im_derivatives:
+      im_out_size = (derivative, int(im.size[1] / (im.size[0] / derivative)))
+      im_out = im.resize(im_out_size, resample=Image.LANCZOS)
+      original_filename, original_extension = os.path.splitext(image)
+      im_outname = original_filename + '_' + str(derivative) + original_extension
+      im_outpath = os.path.join('./images/derivatives', im_outname)
+      im_out.save(im_outpath)
 
 
 # Build CSS from SCSS.
