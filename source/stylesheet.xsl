@@ -35,14 +35,6 @@
             <xsl:apply-templates select="document" />
           </main><!-- /main -->
         </div>
-
-        <script>
-          var userAgent = navigator.userAgent || navigator.vendor || window.opera;
-
-          if (userAgent.match(/Android/i)) {
-            document.documentElement.className += ' is-android';
-          }
-        </script>
       </body>
     </html>
   </xsl:template>
