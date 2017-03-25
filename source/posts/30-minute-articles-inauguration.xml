@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!DOCTYPE document [
+  <!ENTITY mdash "&#8212;">
+]>
+
+<document type="article">
+  <title>30 minute articles&mdash;the inauguration</title>
+  <description>An experiment in accelerated publishing.</description>
+  <slug>/posts/30-minute-articles-inauguration</slug>
+  <content>
+    <article>
+      <title>30 minute articles&mdash;the inauguration</title>
+      <date datetime="2017-03">March 2017</date>
+      <content>
+        <p>Writing is easy. Sitting down and putting words on paper (or a screen) is simple.</p>
+
+        <p>Publishing is hard. But it's mostly hard because we make it hard. We have standards that we want to meet by writing, and so things we write are workshopped or drafted to death.</p>
+
+        <p>The aim of this is to serve as a barrier to publishing bad things. The danger is that it becomes a barrier to publishing good things, that then go unsaid. The question is, are you willing to accept this tradeoff to reduce the barrier?</p>
+
+        <p>I'd like to write and publish more, so in the spirit of enforced writing programmes like <a href="http://nanowrimo.org">NaNoWriMo</a> I'm going to start publishing new kinds of articles. They will be marked as 30 minute articles, and will generally be written in a single take, without much editing or review. Some of them might suck, but some of them might not, and I'm comfortable with that tradeoff.</p>
+
+        <p>So this is both an announcement and a warning. Some of these articles may not be great, but some may be really great. I'd like to find those really great ones.</p>
+      </content>
+    </article>
+  </content>
+</document>
