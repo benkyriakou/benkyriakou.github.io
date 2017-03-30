@@ -1,13 +1,150 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<document type="article" rel="external">
+<!DOCTYPE document [
+  <!ENTITY mdash "&#8212;">
+]>
+
+<document type="article">
   <title>How to Rock (&amp; Roll) your Agile website development</title>
   <description>The process we used to deliver a great new site for the Rock &amp; Roll Hall of Fame.</description>
-  <slug>http://www.cogapp.com/blog/how-rock-roll-your-agile-website-development</slug>
+  <slug>/posts/rock-hall</slug>
   <content>
     <article>
       <title>How to Rock (&amp; Roll) your Agile website development</title>
       <date datetime="2016-08">August 2016</date>
+      <content>
+        <p>Projects in the digital industry are always fluid. Requirements change, new obstacles arise, servers crash&mdash;and all before lunch.</p>
+
+        <p>Your process is key to keeping you sane, and a fluid project needs a fluid process.</p>
+
+        <p>We’ve been working with various permutations of Agile for the past few years, and have had some successes (and some failures) in adapting it to fit our needs. We recently launched a new website for the <a href="https://www.rockhall.com/">Rock &amp; Roll Hall of Fame</a> on a tight deadline, and with little room for error. The project went very smoothly, and we reined in our processes to make sure we were doing just enough for it to move along at the fastest pace.</p>
+
+        <p>Compared to previous projects we approached this in a very different way. Rather than trying to stick too closely to the Scrum structure we decided we’d put more faith in our own abilities to work well together, and strip back the process to the bare essentials. Along the way we added in a few improvements of our own, and it worked out really well.</p>
+
+        <p>These are some of the things that we did.</p>
+
+        <h2>Just enough process</h2>
+
+        <p>In the past we’ve found the full Scrum process incredibly time-consuming&mdash;hours of meetings become tedious and unproductive. We approached this project from the opposite direction&mdash;rather than trying to have as much process as possible, how little could we get away with?</p>
+
+        <p>We began with almost nothing&mdash;other than having daily standups, weekly backlog refinement, and a fortnightly demo, we didn’t have any other traditional Scrum meetings.</p>
+
+        <p>After a couple of weeks we decided that we needed to add a light planning meeting to prioritise for the next sprint, and a quick retrospective to fix any problems. Apart from this, most meetings were team-optional&mdash;for example, once the main demo was finished any non-essential attendees were free to leave and continue working.</p>
+
+        <p>The caveat with this process was that it only worked because we were constantly talking to each other, both within the team at Cogapp and to the team at the Rock Hall. With less available communication, or a complex problem domain, more in-depth planning meetings might have been needed to gain clarity on features.</p>
+
+        <h2>Pre-mortem</h2>
+
+        <p>A <a href="https://hbr.org/2007/09/performing-a-project-premortem">project pre-mortem</a> is a meeting held before work begins to encourage the team to imagine what the potential pitfalls will be, and how they can be overcome&mdash;the aim being to proactively implement solutions before you start to experience a problem. This wasn’t something we’d used before, but it sounded like a good idea so we decided to give it a try.</p>
+
+        <p>Our pre-mortem identified a few key areas we anticipated causing issues:</p>
+
+        <ol>
+          <li><strong>Content entry</strong>&mdash;a lot of content had to be created in a fairly short period of time.</li>
+          <li><strong>Scope creep</strong>&mdash;with a tight timescale everyone had to be focussed on the core deliverables, and we needed strategies to prevent scope creep.</li>
+          <li><strong>Inherited code</strong>&mdash;we had inherited code from the Baseball Hall of Fame for this project, but it didn’t have the level of spec or test coverage we’d prefer.</li>
+        </ol>
+
+        <p>To deal with these, we implemented:</p>
+
+        <ol>
+          <li><strong>The content audit</strong>&mdash;a live spreadsheet and burndown graph containing a list of all pages from the old website. Each of these pages had to either have a corresponding page on the new site, or a redirect to the appropriate place. This was constantly updated and flagged in demos so we didn’t lose sight of how content migration was progressing.</li>
+          <li><strong>Regular Pivotal refinement</strong>&mdash;the list of stories in Pivotal was regularly and rigorously refined. Anything non-essential was consigned to the icebox for future development&mdash;‘hardass’ was used more than once to describe our practice.</li>
+          <li><strong>Focus on testing</strong>&mdash;whilst our regular testing practice is no slouch, an extended focus was placed on testing, with the addition of new automated accessibility tests using <a href="http://pa11y.org/">pa11y</a>. We also put added effort into pull requests and code review.</li>
+        </ol>
+
+        <p>This was definitely a net benefit, and I’ll be doing pre-mortems on other projects in the future.</p>
+
+        <h2>Focus on delivery</h2>
+
+        <p>From the start of this project we had very clear objectives and a very clear brief, which both the team at Cogapp and the team at the Rock Hall understood and were on board with. This helped enormously in terms of measuring our ongoing success and the importance of new features.</p>
+
+        <p>We knew we had to:</p>
+
+        <ol>
+          <li>Deliver the website by the 14th of July.</li>
+          <li>Use the work done for the Baseball Hall of Fame as a starting point.</li>
+          <li>Make a platform that the Rock Hall could use to present and manage their content in an awesome way.</li>
+        </ol>
+
+        <p>These tenets guided every step&mdash;time constraints were emphasised by the countdown calendar (more on that below) and the content audit spreadsheet, and each feature was judged against how well it would fit with the existing platform and the need to migrate and present the Rock Hall’s content. Anything that fell remotely foul of these criteria was moved to the backlog.</p>
+
+        <p>This is an approach we could very easily adapt to other areas&mdash;for example, if the driving force is user engagement or profit rather than time, and the goal is to create a shop&mdash;but keeping the guidelines loose enough to adapt the scope and the approach to features is necessary. If we’d been more prescriptive and written a twenty-page spec and brief, we’d have constantly been bogged down by our initial expectations.</p>
+
+        <h2>Fix bugs first</h2>
+
+        <p>We’ve found in the past that small bugs have a tendency to pile up in the backlog if not dealt with immediately, so an addition to our developer contract was that bugs would be a priority at the start of each sprint.</p>
+
+        <p>Rather than create new bugs from testing all bugs would be fixed as part of stories, which further cut down the load. This worked extremely well alongside our rigorous backlog refinement, and post-launch only a few minor fixes were required.</p>
+
+        <h2>Keep talking</h2>
+
+        <p>Always. Keep. Talking.</p>
+
+        <p>The more I work on Agile projects, the more it becomes apparent that planned interruptions (standups, planning meetings, etc.) are necessary to identify issues as soon as possible, and prevent siloing of work.</p>
+
+        <p>The purpose of the daily standup sometimes gets lost as an opportunity for general project conversation&mdash;make sure you’re only covering the tasks at hand, but really digging into how they’re going. If something is causing issues, surfacing those issues sooner rather than later makes it easier to triage.</p>
+
+        <p>More often than not, when someone says, “I’m having a problem with X”, there are multiple suggestions on how to solve the problem.</p>
+
+        <h2>Agree on your process, and stick to it</h2>
+
+        <p>We had a very strong process set out in our developer contract, which helped keep the focus on what we were aiming to achieve in the project.</p>
+
+        <p>For each story we specified the deliverable documentation, as well as what process team members were expected to follow with regards to source control, story status, and quality control.</p>
+
+        <p>Having this explicitly defined and agreed upon meant that there was no ambiguity as to what was expected from the team.</p>
+
+        <p>Remember that defining a developer contract is an ongoing process&mdash;if you make a change as a result of your retrospective, the contract should be updated accordingly.</p>
+
+        <h2>Be flexible</h2>
+
+        <p>Have flexibility in the way you approach and solve problems that arise&mdash;it’s common to try and solve a problem in one way and hit a brick wall. Rather than trying to make the same doomed solution work, sometimes the smartest plan is to change tack.</p>
+
+        <p>This is another occasion where constantly talking to each other can be a benefit&mdash;talking about a problem can help you realise when the solution you’re trying isn’t working, and someone will generally be able to suggest another approach.</p>
+
+        <h2>Timeboxing</h2>
+
+        <p>A common time-sink is a runaway feature or bug that ends up being more complex than it first appears.</p>
+
+        <p>Whilst we try to mitigate this as much as possible at the planning stage, it’s inevitable that some of these will crop up during a project.</p>
+
+        <p>Timeboxing is a great tool for preventing this from happening&mdash;if you’re working on a feature or doing some investigation, put a time limit on how long should be spent before it’s no longer deemed profitable. After that time, reconvene and see what can be done&mdash;is there another way to solve the problem, or at this point is it not worth the time it’s going to take to solve?</p>
+
+        <p>Again, constantly talking is the way to flag up these issues.</p>
+
+        <h2>Countdown calendar</h2>
+
+        <p>The countdown calendar was a physical measure of how much time we had left&mdash;much like having a physical task board, this is a great way to be able to quantify your progress.</p>
+
+        <p>Each day we crossed off a day and announced how many days to go to the team (and the entire studio!). This meant we were all clear on where we were at in the project lifecycle.</p>
+
+        <p>We augmented this by adding coloured dots for each team-member’s holidays, so that we could see upcoming time crunches at a glance.</p>
+
+        <h2>Don’t change the team</h2>
+
+        <p>The team for this project was constant throughout. During weeks when two or more members were away (in a team of four) we considered bringing in additional muscle, but chose not to pull new people into the project and spend days onboarding them.</p>
+
+        <p>This proved to be the right decision, since any productivity gain from adding new temporary members would almost certainly have been lost due to the productivity loss from existing team members in getting them up to speed.</p>
+
+        <h2>Keep refining the backlog</h2>
+
+        <p>After this and similar projects I’m convinced that refining the backlog is a great way to improve the productivity of a project.</p>
+
+        <p>A bloated backlog means more cognitive load to dig through the unnecessary stories to find the relevant material, and throwing questionable stories into the icebox isn’t much better. Each item in the backlog or icebox should be carefully considered, and removed if it’s not necessary.</p>
+
+        <p>By focussing on the core of your project, it’s much easier to identify the important features.</p>
+
+        <h2>Caveats</h2>
+
+        <p>This was something that worked well for us given the type of project we were presented with&mdash;the overall complexity of the project was moderate, so we could focus more on delivery than defining features.</p>
+
+        <p>If you’re working on a very complex or technical problem, having more planning than we have here might be necessary.</p>
+
+        <p>We had one main point of contact at Rock Hall who was empowered and excellent to work with. If you have to communicate with a wide variety of stakeholders who aren’t regularly engaged with the project, more frequent demos might be necessary.</p>
+
+        <p>What I took from this project is that adapting your approach and trusting your team will get you much further than following a pre-set format. We sometimes forget that everyone at Cogapp is very smart, and we don’t need to be overbearing to produce good work. Agile actively encourages adaptation, which is what makes it such a good fit for flexible technical projects. Clear away the impediments to people doing good work, and good things will follow.</p>
+      </content>
     </article>
   </content>
 </document>

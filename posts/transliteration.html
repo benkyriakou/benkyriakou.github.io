@@ -1,0 +1,112 @@
+<!DOCTYPE html SYSTEM "about:legacy-compat">
+<html lang="en">
+  <head>
+    <meta charset="utf-8"/>
+    <meta name="theme-color" content="#333"/>
+    <meta name="description" content="A primer for displaying transliterations accurately on the web."/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=1"/>
+    <link rel="canonical" href="http://benkyriakou.com/posts/transliteration"/>
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon"/>
+    <title>Working with transliterations on the web | Ben Kyriakou</title>
+    <link type="text/css" rel="stylesheet" href="/css/style.css" media="all"/>
+    <meta property="og:url" content="http://benkyriakou.com/posts/transliteration"/>
+    <meta property="og:title" content="Working with transliterations on the web"/>
+    <meta property="og:description" content="A primer for displaying transliterations accurately on the web."/>
+    <meta property="og:image" content="http://benkyriakou.com/images/global/twitter-card-image.png"/>
+    <meta name="twitter:card" content="summary"/>
+    <meta name="twitter:site" content="@benkyriakou"/>
+    <meta name="twitter:title" content="Working with transliterations on the web"/>
+    <meta name="twitter:description" content="A primer for displaying transliterations accurately on the web."/>
+    <meta name="twitter:image" content="http://benkyriakou.com/images/global/twitter-card-image.jpg"/>
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-64337321-1', 'auto');
+      ga('send', 'pageview');
+    </script>
+  </head>
+  <body>
+    <div class="wrapper">
+      <header class="site-header">
+        <div class="center-wrapper">
+          <nav>
+            <ul class="site-header__items">
+              <li class="site-header__item">
+                <a href="/">Home</a>
+              </li>
+              <li class="site-header__item">
+                <a href="/about">About</a>
+              </li>
+              <li class="site-header__item">
+                <a href="//drupal.org/u/ben.kyriakou">Drupal.org</a>
+              </li>
+              <li class="site-header__item">
+                <a href="//twitter.com/benkyriakou">Twitter</a>
+              </li>
+            </ul>
+          </nav>
+        </div>
+      </header>
+      <main class="center-wrapper">
+    <article class="article"><time class="article__date" datetime="2015-10">October 2015</time><h1 class="article__header">Working with transliterations on the web</h1><div class="article__content">
+        <p>Whilst developing a new site for a client with a Yiddish collection, I learnt some interesting things about the limits of modern fonts when dealing with transliterations and rarely-used characters.</p>
+
+        <p>The collection featured both Yiddish and transliterated strings of text in their metadata, and our task was to bring all these into the website and display them correctly and uniformly.</p>
+
+        <h2>What is a transliteration</h2>
+
+        <p>Before I dive in, I should explain what transliteration is, and why you&#8217;d use it. Consider this Yiddish string;</p>
+
+        <p class="text-center"><strong>&#1500;.&#1504; &#1496;&#1488;&#1500;&#1505;&#1496;&#1488;&#1497;</strong></p>
+
+        <p>If you don&#8217;t read Yiddish it&#8217;s hard to figure out how you&#8217;d begin to pronounce or search for this. Most users can read Roman characters (a-z), so converting it from Yiddish glyphs to Roman characters makes it much more legible. With a transliteration we would get this;</p>
+
+        <p class="text-center"><strong>L.N. &#7788;ols&#7789;oy</strong></p>
+
+        <p>Now most users could at least approximate how this would be pronounced, and likely recognise the name as that of Leo Tolstoy. Having this transliterated version in our metadata also makes it more searchable&#8212;it&#8217;s much simpler to match a search for &#8216;Tolstoy&#8217; to &#8216;&#7788;ols&#7789;oy&#8217; than to &#8216;&#1496;&#1488;&#1500;&#1505;&#1496;&#1488;&#1497;&#8217;.</p>
+
+        <p>Transliterations are created using transliteration tables, which have mappings for various languages. These tables are published in various standard forms&#8212;one of the more common is the <a href="http://www.loc.gov/catdir/cpso/roman.html">ALA-LC standard from the Library of Congress</a>.</p>
+
+        <h2>Back to the problem</h2>
+
+        <p>We knew that there would be a large number of transliterated strings, so the first task was to import the metadata and see what it looked like with the chosen font. Immediately problems started cropping up&#8212;some letters looked odd, others were obviously rendered in a different font. After digging into the data, it became apparent we were dealing with two separate problems.</p>
+
+        <h2>Character composition</h2>
+
+        <p>The first problem&#8212;the odd-looking letters&#8212;was caused by the presence of both pre- and de-composed characters in the metadata. Character composition is a feature of Unicode which can be used when rendering characters with diacritics such as &#8216;&#7789;&#8217;. There are two ways to represent this character;</p>
+
+        <p class="text-center">
+          <code>LATIN SMALL LETTER T WITH DOT BELOW (U+1E6D)</code>
+          <br/>
+          <code>LATIN SMALL LETTER T (U+0074) + COMBINING DOT BELOW (U+0323)</code>
+        </p>
+
+        <p>The first representation is known as a pre-composed character (all features are included in a single glyph), and the second as a de-composed character (the letter and diacritic are two separate glyphs). For de-composed characters, the way the character is rendered varies wildly between fonts, and is very dependent on the font design.</p>
+
+        <h2>Testing</h2>
+
+        <p>To identify what the best solution would be, I put together a test-case page containing all of our known diacritic variants, and tested it with a selection of fonts on both Windows and OSX. It was immediately apparent that the pre-composed variant displayed most consistently, so we made the decision to normalise all the strings. As it turned out this was a straightforward transformation&#8212;we were already processing the data with Python, and the <code>unicodedata</code> library lets you do this:</p>
+
+        <p class="text-center"><code>unicodedata.normalize('NFC', 'decomposed_string')</code></p>
+
+        <p>Apart from some edge cases like combining ligatures (a topic for another time) this worked very well.</p>
+
+        <h2>Finding a font</h2>
+
+        <p>The second issue, of characters not rendering in our desired font face, was due to missing characters in the font. This is something to be aware of when venturing into the domain of rarely-used characters&#8212;font designers will rarely include every possible character in their font, but will instead design glyphs for only the most commonly used characters.</p>
+
+        <p>Our client got in touch with the font designer and arranged to have the missing characters added. However, we still had an issue whilst this took place. As an interim solution we looked around for a compatible font&#8212;<a href="https://www.google.com/get/noto/">Google Noto</a> was our final choice, as it supports a huge range of characters, and this worked very well.</p>
+
+        <h2>Lessons learned</h2>
+
+        <p>This was a very interesting process, and I learnt a lot from it: don&#8217;t assume that your font will support all of the glyphs that you require if you&#8217;re working outside of common ASCII characters; test a known set of non-standard characters on all supported platforms; and if you don&#8217;t require de-composed characters for other purposes, pre-composition will help your data display more consistently.</p>
+
+        <p>This is by no means an exhaustive guide to potential issues with fonts and characters&#8212;if this talk of Unicode and ASCII sounds esoteric I&#8217;d recommend <a href="http://www.joelonsoftware.com/articles/Unicode.html">Joel Spolsky&#8217;s guide to character encoding and Unicode</a> (a must-read for all programmers). If you&#8217;ve had similar issues, I&#8217;d love to know how you&#8217;ve solved them&#8212;let me know on Twitter via <a href="https://twitter.com/benkyriakou">@benkyriakou</a>.</p>
+      </div></article>
+  </main>
+    </div>
+  </body>
+</html>

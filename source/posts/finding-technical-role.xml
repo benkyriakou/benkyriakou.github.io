@@ -1,13 +1,109 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<document type="article" rel="external">
+<!DOCTYPE document [
+  <!ENTITY mdash "&#8212;">
+]>
+
+<document type="article">
   <title>Finding a technical role that leads to a lasting career</title>
   <description>A summary of a short talk I gave at Codebar and Talent2017 for people looking to break into the tech industry.</description>
-  <slug>https://blog.cogapp.com/finding-a-technical-role-that-leads-to-a-lasting-career-db2cf445d4b0#.rmzl381zo</slug>
+  <slug>/posts/finding-technical-role</slug>
   <content>
     <article>
       <title>Finding a technical role that leads to a lasting career</title>
       <date datetime="2017-03">March 2017</date>
+      <content>
+        <p><em>This is a summary of a short talk I gave to people looking to break into the tech industry at Codebar and Talent2017.</em></p>
+
+        <p>Here at Cogapp we’d like to think that we’re the kind of place that people would like to work. But why? And how can you determine, when you’re looking for a job, that the place you’re applying to will be a good environment for you.</p>
+
+        <p>People often forget that applying for a job is a two-way street&mdash;you’re not just looking for a place that will accept you, but also one that lives up to your expectations.</p>
+
+        <h2>The You</h2>
+
+        <p>So when applying for a job, what should you do? Essentially, you’re trying to demonstrate a skill overlap with the company you’re applying to. Unless their expectation is that they’ll hire and immediately re-train you, there should be some overlap between what skills you have, and what the company is after. One of the questions I’ll ask myself when looking at someone’s CV is, “what could this person do on day one?”. After all, you need to be able to do <em>something</em>, even if you need some time to get up to speed on the rest.</p>
+
+        <p>As such, I think an important part is demonstrating this skill overlap.</p>
+
+        <p>One thing I wish that more people would do, and that we’ve started explicitly asking for in some applications, is to provide a code sample of their work. This doesn’t have to be extensive, and we understand that a lot of code people write as part of their job isn’t something they can make publicly available, but something indicative is a start.</p>
+
+        <p>As such, I’d recommend that you:</p>
+
+        <blockquote>Have some relevant code that you have written, and that you can talk about</blockquote>
+
+        <p>There are three parts to this:</p>
+
+        <h3>Relevant code</h3>
+
+        <p>The code should be relevant to the skill overlap between yourself and your potential employer, whether this is because of the specific technology or just the domain that they work in.</p>
+
+        <h3>That you have written</h3>
+
+        <p>This one sounds like a no-brainer, but you should have written the code yourself. Using libraries and open-source code is fine, but make sure there’s a clear delineation between code you have written and code that you’ve sourced elsewhere. You don’t want to give the wrong impression, and end up with egg on your face.</p>
+
+        <h3>That you can talk about</h3>
+
+        <p>This is the most interesting part&mdash;have something that you can discuss. At the end of the day, this is a starting point for a conversation about how you approach problems and create technical solutions. You should be able to justify decisions you’ve made architecting and writing this code, and be able to discuss potential alternative solutions.</p>
+
+        <p>So how do you do this?</p>
+
+        <p><a href="http://github.com">GitHub</a> is a great resource for programmers looking for employment, and I’d strongly suggest adding some relevant code samples and including links on your CV. These don’t have to be complete projects, but should be things that fulfil the above criteria.</p>
+
+        <p>This may seem off-putting given the sheer scale of GitHub, and the amount of code that’s out in the public view. What if there are mistakes in your code? What if someone else has done it better? There often seems to be an assumption that there’s a huge gulf in skill between programmers, and whilst this is true in some cases I think it’s often overstated.</p>
+
+        <p>I’d place some blame for this on the notion of the 10x programmer, as popularised by Peopleware. This has been communicated by some readers as suggesting that there are programmers 10x more productive than most of us code-generating serfs, when this is not what the cited study says. What the study actually establishes is that:</p>
+
+        <ul>
+          <li>The <strong>best</strong> programmer surveyed was 10x more productive than the <strong>worst</strong> programmer</li>
+          <li>The <strong>median</strong> programmer was 4x more productive than the <strong>worst</strong> programmer</li>
+          <li>The <strong>best</strong> programmer was 2.5x more productive than the <strong>median</strong> programmer</li>
+        </ul>
+
+        <p>So unless you’re in the lowest skill bracket, there really isn’t a huge gap between you and the next best person.</p>
+
+        <h2>Soft skills</h2>
+        <p>But what if you do want to bridge that gap and make yourself an even more attractive prospect?</p>
+
+        <p>I’d argue that after becoming competent at programming, the skill that will make you more productive and cost-effective is not learning more languages, but learning more soft skills (here I’m defining soft skills as anything that doesn’t directly involve writing code).</p>
+
+        <p>You may say that this sounds like heresy, but hear me out. Steve McConnell has a <a href="http://www.stevemcconnell.com/articles/art08.htm">brilliant graph in Code Complete</a> which illustrates the cost of defects based on when they are introduced into the project. The long and short of this is that the longer a defect hangs around, the more it costs to fix.</p>
+
+        <p>This makes sense&mdash;more people will have done work based on the defect, so more person-hours have to be repeated or thrown away.</p>
+
+        <p>What McConnell’s graph indicates is that past a certain point, programming isn’t the best way to be effective in terms of the overall cost of a project. Sure, you can hone your abilities until you’re a famed überprogrammer, and you never introduce any defects in your code, but looking at that graph you’ll only eliminate the smallest possible defect cost&mdash;that between construction and maintenance.</p>
+
+        <p>A more pragmatic approach would be to get better at the things that come earlier in the process&mdash;improve your ability to write a spec, evaluate a technology platform, and deliver pragmatic decisions to your project manager. Then you can reduce the huge defect curves introduced in the requirements and architecture phases, which are much more tempting targets for any business.</p>
+
+        <p>If I were to pick some soft skills I’d like to see more of, I’d suggest these five:</p>
+
+        <ol>
+          <li>Have a high bar for quality</li>
+          <li>(Know how to) test your own code</li>
+          <li>Be open to (but wary of) new things</li>
+          <li>Know when to ask for help</li>
+          <li>Know what you don’t know</li>
+        </ol>
+
+        <h2>The company</h2>
+
+        <p>The other side of the job transaction is evaluating your potential employer. Once you’ve done your basic due diligence (read their website, done some background research), how can you figure out how good a company really is?</p>
+
+        <p>One way is by having a set of objective measurements. <a href="https://www.joelonsoftware.com/2000/08/09/the-joel-test-12-steps-to-better-code/">The Joel Test</a> is an effective set of quick-and-dirty metrics to evaluate a company’s technical processes and environment. I should say that I don’t agree with 100% of these (especially the efficacy of writing code in an interview as a gauge of technical ability), but they’re a good start.</p>
+
+        <p>One question I’d always advise asking at the end of your interview is this:</p>
+
+        <blockquote>What would a typical day/week look like if I started working here?</blockquote>
+
+        <p>The purpose of this is twofold&mdash;firstly, it should give you a more accurate idea of what the company actually expects from you as an employee. Often job adverts don’t do a great job of representing the reality of a role, so this is an opportunity for your interviewer (who would hopefully be working close to your intended role) to clarify.</p>
+
+        <p>Secondly, you can compare their expectations with yours. After all, not everyone’s ideal job looks alike.</p>
+
+        <h2>The End</h2>
+
+        <p>Hopefully this has given you some useful inspiration in finding your ideal technical job. It can be a bit of a slog at times (both finding the right role, and finding the right candidate), and I hope that implementing some of these would make people’s lives easier on both sides of the table.</p>
+        
+        <p>Good luck!</p>
+      </content>
     </article>
   </content>
 </document>
