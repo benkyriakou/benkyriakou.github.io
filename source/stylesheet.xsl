@@ -213,7 +213,7 @@
     <meta name="twitter:site" content="@benkyriakou" />
     <meta name="twitter:title" content="{document/title}" />
     <meta name="twitter:description" content="{document/description}" />
-    <meta name="twitter:image" content="http://benkyriakou.com/images/global/twitter-card-image.jpg" />
+    <meta name="twitter:image" content="http://benkyriakou.com/images/global/twitter-card-image.png" />
   </xsl:template>
 
   <xsl:template name="google-analytics">
