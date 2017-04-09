@@ -5,5 +5,8 @@
   RewriteRule ^(posts/.*) $1\.html [QSA]
 
   RewriteCond %{REQUEST_URI} !\.html$
+  RewriteRule ^(30-minute-articles/.*) $1\.html [QSA]
+
+  RewriteCond %{REQUEST_URI} !\.html$
   RewriteRule ^(demos/.*) $1\.html [QSA]
 </IfModule>
