@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!DOCTYPE document [
+  <!ENTITY mdash "&#8212;">
+]>
+
+<document type="article">
+  <title>Own your content [30 minute article]</title>
+  <description>An argument for having ownership of the things you create.</description>
+  <slug>/30-minute-articles/own-your-content</slug>
+  <content>
+    <article>
+      <title>Own your content [30 minute article]</title>
+      <date datetime="2017-03">April 2017</date>
+      <content>
+        <p>Today there are many platforms that make creating content on the web easy. In some ways this is a good thing, as it frees you to be creative without having to think about your tools. This has been the explicit mission of software like <a href="https://ia.net/writer/">iA's Writer</a>, which places a limit on its configurability to create a focus on the content.</p>
+
+        <p>The darker side of this freedom is that these platforms will attempt to lock away your content in order to make you dependent on them. A recent example of this is  Google's AMP initiative, which by all counts is a terrible thing for content publishers and serves only to benefit Google. It locks publishers into serving AMP content without any straightforward opt-out, makes it harder to reach the actual website the content is served from, and doesn't do anything in terms of performance that a sufficiently bloat-free website couldn't do already.</p>
+
+        <p>Over-reliance on a specific platform can also cause issues if they take umbrage to what you have created. <a href="https://www.theguardian.com/books/2016/jul/14/dennis-cooper-google-censorship-dc-blog">Dennis Cooper's art blog</a> was removed from Blogger in 2016 with no notice or justification from Google, and was only reinstated after it became a high-profile media story. I would not have high hopes for success if this happens to anyone without the clout to bypass Google's infamously opaque support system.</p>
+
+        <p>Additionally, given the growing importance of privacy on the web in the face of <a href="https://www.theguardian.com/world/2016/nov/29/snoopers-charter-bill-becomes-law-extending-uk-state-surveillance">draconian</a> <a href="https://www.theguardian.com/us-news/the-nsa-files">government</a> <a href="https://www.theguardian.com/us-news/2017/mar/31/us-border-phone-computer-searches-how-to-protect">surveillance</a> and <a href="https://www.theguardian.com/technology/2016/nov/23/censor-non-conventional-sex-acts-online-internet-pornography">censorship</a>, having a higher degree of control over your platform when providing content which may be politically or otherwise sensitive is a great way to protect your users from unwarranted observation.</p>
+
+        <p>So own your content. Control the platform as much as practically possible. Take regular backups of the critical parts so that, in the event of unforseen removal or deletion, you can restore or migrate to a new platform. And implement SSL and strong encryption when dealing with sensitive data.</p>
+
+        <p>Remember&mdash;the only platform which has your best interests at heart is the one you own.</p>
+      </content>
+    </article>
+  </content>
+</document>
