@@ -184,18 +184,18 @@
 
   <xsl:template match="document[@type='article']" mode="teaser">
     <article class="article article--teaser">
-      <time class="article__date" datetime="{.//article/date/@datetime}">
+      <time class="article__date article__date--teaser" datetime="{.//article/date/@datetime}">
         <xsl:value-of select=".//article/date" />
       </time>
       <xsl:if test="@rel and @rel='external'">
         <span class="article__external">External article</span>
       </xsl:if>
-      <h2 class="article__header">
+      <h2 class="article__header article__header--teaser">
         <a href="{slug}">
           <xsl:value-of select=".//article/title" />
         </a>
       </h2>
-      <div class="article__content">
+      <div class="article__content article__content--teaser">
         <p><xsl:value-of select="description" /></p>
       </div>
     </article>
