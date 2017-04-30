@@ -3,7 +3,8 @@
 <xsl:stylesheet version="1.0"
   xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
   xmlns:str="http://exslt.org/strings"
-  exclude-result-prefixes="str">
+  xmlns:xi="http://www.w3.org/2001/XInclude"
+  exclude-result-prefixes="str xi">
 
   <xsl:output method="html" encoding="utf-8" indent="yes" doctype-system="about:legacy-compat" />
 
@@ -19,7 +20,9 @@
 
         <title><xsl:apply-templates select="document/title" /></title>
 
-        <link type="text/css" rel="stylesheet" href="/css/style.css" media="all" />
+        <style type="text/css" media="all">
+          <xi:include href="../css/style.css" parse="text" encoding="utf-8" />
+        </style>
 
         <xsl:call-template name="open-graph" />
         <xsl:call-template name="twitter-card" />

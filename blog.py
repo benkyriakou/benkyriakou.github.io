@@ -19,6 +19,7 @@ IMAGE_DIR = os.path.join(BASE_DIR, 'images')
 
 # Static XSL to HTML transformations.
 xsl = etree.parse(os.path.join(SOURCE_DIR, 'stylesheet.xsl'))
+xsl.xinclude()
 transform = etree.XSLT(xsl)
 
 print('Generating HTML\n')
