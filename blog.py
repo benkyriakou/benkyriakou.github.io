@@ -22,6 +22,42 @@ xsl = etree.parse(os.path.join(SOURCE_DIR, 'stylesheet.xsl'))
 xsl.xinclude()
 transform = etree.XSLT(xsl)
 
+# Build CSS from SCSS.
+if args.all or args.css:
+  print('\nGenerating CSS\n')
+
+  SCSS_BASE = os.path.join(BASE_DIR, 'scss')
+  CSS_FILE = os.path.join(BASE_DIR, 'css', 'style.css')
+
+# First get a sorted list of files for consistency.
+  scss_files = os.listdir(SCSS_BASE)
+  scss_files.sort()
+
+  # Filter out anything without a .scss extension
+  scss_files = [f for f in scss_files if f.endswith('.scss')]
+
+  css_string = ''
+
+  # Build the new compiled file
+  for scss_file in scss_files:
+    print('Processing {!s}'.format(scss_file))
+
+    css_string += sass.compile(
+      filename=os.path.join(SCSS_BASE, scss_file),
+      output_style='compressed'
+    )
+
+  # # Write the new CSS file
+  with open(CSS_FILE, 'w', encoding='utf8') as fh:
+    print('Writing CSS to {!s}'.format(CSS_FILE.replace(BASE_DIR, '')))
+
+    # Strip BOM from string
+    # @todo: Figure out whether this comes from libsass or the pip
+    # package. See https://github.com/dahlia/libsass-python/pull/52.
+    css_string = css_string.replace('\uFEFF', '')
+
+    fh.write(css_string)
+
 print('Generating HTML\n')
 
 # Build the content from XML source.
@@ -81,40 +117,3 @@ if args.all or args.images:
       image_outname = original_filename + '_' + str(derivative_width) + original_extension
       image_outpath = os.path.join(IMAGE_DIR, 'derivatives', image_outname)
       pil_image_out.save(image_outpath)
-
-
-# Build CSS from SCSS.
-if args.all or args.css:
-  print('\nGenerating CSS\n')
-
-  SCSS_BASE = os.path.join(BASE_DIR, 'scss')
-  CSS_FILE = os.path.join(BASE_DIR, 'css', 'style.css')
-
-# First get a sorted list of files for consistency.
-  scss_files = os.listdir(SCSS_BASE)
-  scss_files.sort()
-
-  # Filter out anything without a .scss extension
-  scss_files = [f for f in scss_files if f.endswith('.scss')]
-
-  css_string = ''
-
-  # Build the new compiled file
-  for scss_file in scss_files:
-    print('Processing {!s}'.format(scss_file))
-
-    css_string += sass.compile(
-      filename=os.path.join(SCSS_BASE, scss_file),
-      output_style='compressed'
-    )
-
-  # # Write the new CSS file
-  with open(CSS_FILE, 'w', encoding='utf8') as fh:
-    print('Writing CSS to {!s}'.format(CSS_FILE.replace(BASE_DIR, '')))
-
-    # Strip BOM from string
-    # @todo: Figure out whether this comes from libsass or the pip
-    # package. See https://github.com/dahlia/libsass-python/pull/52.
-    css_string = css_string.replace('\uFEFF', '')
-
-    fh.write(css_string)
