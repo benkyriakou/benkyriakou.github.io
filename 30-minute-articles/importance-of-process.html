@@ -3,21 +3,21 @@
   <head>
     <meta charset="utf-8"/>
     <meta name="theme-color" content="#333"/>
-    <meta name="description" content="How to use local provisioning with Ansible to set up your CircleCI environment."/>
+    <meta name="description" content="How having a process to define your work can help you make better things."/>
     <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=1"/>
-    <link rel="canonical" href="http://benkyriakou.com/posts/provisioning-circleci-with-ansible"/>
+    <link rel="canonical" href="http://benkyriakou.com/30-minute-articles/importance-of-process"/>
     <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon"/>
-    <title>Provisioning CircleCI with Ansible | Ben Kyriakou</title>
+    <title>The importance of process [30 minute article] | Ben Kyriakou</title>
     <style type="text/css" media="all">*{box-sizing:border-box}html{font-family:'Georgia', serif;font-size:16px;line-height:1.5}body{margin:0}h1,h2,h3,h4,h5,h6{font-family:'Arial', sans-serif;font-weight:900;margin-top:0}h2,h3{margin-bottom:0.25rem}h3{font-size:1.25rem}a{color:#341DFF;outline-color:transparent;text-decoration:underline;transition-duration:0.25s;transition-property:background-color, color, outline-color;word-wrap:break-word}a:hover,a:focus{background-color:#341DFF;color:#FFF;outline:2px #341DFF solid;text-decoration:none}a:active{background-color:#897CFF;outline-color:#897CFF}hr{border-bottom-width:3px;border-color:#444;border-style:solid;border-top-width:0;height:0px;margin:0 auto 1.5rem;max-width:50%}.article__content h2{border-bottom:1px #AAA solid;line-height:1.25;margin-bottom:0.5rem}.article__content p,.article__content ul,.article__content ol{font-size:1rem;margin:0 0 1.5rem}.article__content li ul{margin-bottom:0}.article__content&gt;*:last-child{margin-bottom:0}.article__content ul,.article__content ol{padding-left:1.5rem}.article__content ul ul{padding-left:1rem}.article__content li{margin-bottom:0.5rem}@media screen and (min-width: 35rem){.article__content p,.article__content ul,.article__content ol,.article__content blockquote{font-size:1.125rem}}.article__content pre{background-color:#EDEDED;margin:0 0 1.5rem;padding:1rem;white-space:pre-wrap}.article__content picture{border:0;display:block;margin:0 auto 1.5rem;max-width:100%;transition:height 1s, width 1s}.article__content picture&gt;img,.article__content picture&gt;source{display:block;margin:0 auto;max-width:100%}.article__content figure{display:block;margin:0 auto 1.5rem}.article__content figure picture{margin-bottom:0.5rem}.article__content figure figcaption{font-weight:bold;font-variant:italic;margin:0 1rem 1.5rem;text-align:center}.article__content blockquote{font-style:italic;margin:0 0 1.5rem}@media screen and (min-width: 35rem){.article__content blockquote{margin-left:3rem;margin-right:3rem}}.article__content blockquote p{margin:0}.article__content blockquote p+p{margin-top:1rem}.article__content blockquote p:first-of-type:before{content:'\201C'}.article__content blockquote p:last-of-type:after{content:'\201D'}.article__content blockquote cite{display:block;font-style:normal;font-weight:bold;margin-top:0.5rem}.article__content blockquote cite:before{content:'\2014'}.article__content .reference{margin-left:0.125rem}.article__content .reference a:before{content:'['}.article__content .reference a:after{content:']'}.article__content .references{border-top:1px #AAA solid;padding-top:0.25rem}.article__content picture&gt;img,.article__content picture&gt;source{max-height:80vh}@media screen and (min-width: 37.5rem){.article__content picture{max-width:80%}}.article__content *+picture,.article__content picture+*{margin-top:1.5rem}.article__content .checklist{background:#fdf8c4;background:linear-gradient(to bottom right, #fdf8c4, #e0dba2);border:1px #AAA solid;box-shadow:1px 1px 5px rgba(0,0,0,0.8);margin-left:auto;margin-right:auto;padding:0.5rem 1rem 1rem 2.5rem;width:80%}@media screen and (min-width: 35rem){.article__content .checklist{width:50%}}.article__content .checklist li{border-bottom:1px #aaa solid}.article__content .checklist li:last-child{margin-bottom:0}.site-header{background:#333;border-bottom:1px #CCC solid;box-shadow:0px 0px 2px 2px #EFEFEF;margin-bottom:1.5rem}@media print{.site-header{display:none}}.site-header a{color:#FFF;display:block;padding:0.5rem 0;text-decoration:none}.site-header a:hover,.site-header a:focus{color:#333;background-color:#FFF;outline-color:#FFF}.site-header a:active{background-color:#888;outline-color:#888}@media screen and (min-width: 35rem){.site-header a{display:inline;padding:0}.site-header a:hover{background-color:transparent;border-bottom:3px #FFF solid;color:#FFF;outline:none;transition-property:border}}.site-header:last-child{margin-right:0}.site-header__items{display:flex;flex-wrap:wrap;list-style:none;margin:0;padding:0;text-align:center}@media screen and (min-width: 35rem){.site-header__items{justify-content:center;padding:0.5rem 0}}.site-header__item{flex-grow:1;font-family:'Trebuchet MS', sans-serif;font-weight:900;margin:0;padding:0}@media screen and (min-width: 35rem){.site-header__item{flex-grow:0;font-size:1.25rem;margin:0 1rem}}.center-wrapper{margin:0 auto;max-width:52rem;padding:0 1rem}.article{margin-bottom:1.5rem;position:relative}.article--teaser{margin-bottom:1rem}@media screen and (min-width: 35rem){.article--teaser{margin-bottom:1.5rem}}.article__header{line-height:1.25;margin-bottom:0.5rem;margin-top:0;font-size:1.75rem}.article__header--teaser{font-size:1.25rem;margin-bottom:0.25rem}@media screen and (min-width: 35rem){.article__header--teaser{font-size:1.5rem;margin-bottom:0}}.article__date,.article__external{color:#777;font-family:'Trebuchet MS', sans-serif}.article__date{display:block;float:left;font-weight:400;text-transform:uppercase}.article__date+.article__header{clear:left}@media screen and (min-width: 76rem){.article__date{float:none;font-family:'Trebuchet MS', sans-serif;left:-12rem;line-height:1;margin-top:0.3rem;padding:0 1.25rem 0 1rem;position:absolute;text-align:right;top:0;width:12rem}}.article__external:before{content:'&#8212;'}@media screen and (min-width: 76rem){.article__external{display:block;left:-12rem;padding:0 1.25rem 0 1rem;position:absolute;text-align:right;top:2.8125rem;width:12rem}.article__external:before{content:''}}.article__video{display:block;height:150px;margin-left:auto;margin-right:auto;max-width:600px;width:100%}@media screen and (min-width: 35rem){.article__video{height:315px}}.hidden{left:-9999px;position:absolute}.text-center{text-align:center}
 </style>
-    <meta property="og:url" content="http://benkyriakou.com/posts/provisioning-circleci-with-ansible"/>
-    <meta property="og:title" content="Provisioning CircleCI with Ansible"/>
-    <meta property="og:description" content="How to use local provisioning with Ansible to set up your CircleCI environment."/>
+    <meta property="og:url" content="http://benkyriakou.com/30-minute-articles/importance-of-process"/>
+    <meta property="og:title" content="The importance of process [30 minute article]"/>
+    <meta property="og:description" content="How having a process to define your work can help you make better things."/>
     <meta property="og:image" content="http://benkyriakou.com/images/global/twitter-card-image.png"/>
     <meta name="twitter:card" content="summary"/>
     <meta name="twitter:site" content="@benkyriakou"/>
-    <meta name="twitter:title" content="Provisioning CircleCI with Ansible"/>
-    <meta name="twitter:description" content="How to use local provisioning with Ansible to set up your CircleCI environment."/>
+    <meta name="twitter:title" content="The importance of process [30 minute article]"/>
+    <meta name="twitter:description" content="How having a process to define your work can help you make better things."/>
     <meta name="twitter:image" content="http://benkyriakou.com/images/global/twitter-card-image.png"/>
     <script>
       window.onload = function() {
@@ -54,43 +54,37 @@
         </div>
       </header>
       <main class="center-wrapper">
-    <article class="article"><time class="article__date" datetime="2016-12">December 2016</time><h1 class="article__header">Provisioning CircleCI with Ansible</h1><div class="article__content">
-        <p>I've been using Ansible provisioning for a long time to set up production and testing environments, as well as creating local environments with Vagrant. I've also been trying to make more use of CI in projects, most recently with CircleCI. However, I've generally provisioned CircleCI using a simulacrum of the live provisioning script rather than the actual thing.</p>
+    <article class="article"><time class="article__date" datetime="2017-05">May 2017</time><h1 class="article__header">The importance of process [30 minute article]</h1><div class="article__content">
+        <p>In Japan a popular safety practice is the use of <em><a href="https://en.wikipedia.org/wiki/Pointing_and_calling">shisa kanko</a></em> or 'pointing and calling': combining actions with visual and auditory cues. When performing an action, the operator will both point at the object of, and call out, the action that they're performing. This has been <a href="http://www.sciencedirect.com/science/article/pii/S0169814112000728">scientifically proven</a> to reduce inaccuracies by up to 85%, through reinforcing the action and preventing habitual responses.</p>
 
-        <p>In my latest project, I decided to spend the time I would have used to create the CircleCI script to instead see how easy it would be to make Ansible do the work for me. Turns out, it's not that hard. That the Ansible provisioning was written against Debian and the CircleCI environments use Ubuntu definitely helped, but nowadays most Ansible Galaxy roles do a good job of cross-compatibility.</p>
+        <p>The key to this technique is creating active engagement of the individual with the action that they're performing&#8212;the benefit comes not from the process, but from the response the process causes. And, although the process itself is fairly rigid (point at thing, speak out loud), it is applicable to a wide variety of situations.</p>
 
-        <h2>Local provisioning</h2>
+        <p>We can take this lesson (that active engagement improves outcomes) and apply it to other situations. In software development, an area that often lacks proper attention is the writing of specifications. Frankly, it's not a particularly glamorous job, and it's often tempting to gloss over writing a spec, especially if you're writing code as a solo developer.</p>
 
-        <p>The first step was to figure out how to do local provisioning with Ansible. It turns out there are <a href="http://docs.ansible.com/ansible/playbooks_delegation.html#local-playbooks">a bunch of different ways</a> to do this, including specific command-line invocations of <code>ansible-playbook</code> and special playbook variables. I like using <code>group_vars</code> to keep my configuration in one place, so I went with those.</p>
+        <p>However, the value of writing a spec is that it is an exercise in active engagement. Writing collaborative user stories is a great example of how this can be beneficial, since it can often unearth hidden assumptions or differences in opinion as to how a feature will work. Even writing a spec as an individual, it can still be a useful exercise to think through the implementation process, and specs should always be reviewed by a third party before implementation.</p>
 
-        <p>Since I also wanted to create a local provisioner for Vagrant so that I could test this out locally, I opted to split out my CircleCI host to a separate host file. If you have multiple groups in the same hosts file using the same IP Ansible seems to only recognise the first one, leading to all sorts of problems. In my <code>circle_hosts</code> file I placed this configuration;</p>
+        <p>As with shisa kanko, the underlying process is simple; have a checklist of high-level tasks to complete for each feature. This should be a template in your planning system, to prevent items being forgotten, and can always be slimmed down on a per-feature basis. The base checklist might contain such items as:</p>
 
-        <pre><code><span>[circleci]</span>
-<span>127.0.0.1</span>
-</code></pre>
+        <ol class="checklist">
+          <li>Specification</li>
+          <li>Test plan</li>
+          <li>Specification &amp; test plan review</li>
+          <li>Back-end implementation</li>
+          <li>Front-end implementation</li>
+          <li>Behavioural testing</li>
+          <li>Accessibility testing</li>
+          <li>Amendments</li>
+          <li>Documentation</li>
+          <li>Client review</li>
+          <li>Pull request</li>
+          <li>Release</li>
+        </ol>
 
-        <p>Then in my <code>group_vars/circleci</code> file I added;</p>
+        <p>This isn't intended to be prescriptive, and others have written on the potential issues of creating software by rote, but it should provide a framework for development so that developer time isn't wasted fixing preventable issues, and can instead be better used actually creating the software.</p>
 
-        <pre><code><span>---</span>
-<span>ansible_connection: local</span>
-</code></pre>
+        <p>A useful side-effect is that this can also encourage more accurate estimates, since the checklist spells out all of the necessary steps to create a feature. Although features may be small in terms of implementation, you can see from the above list that there are some fixed costs in terms of documentation, testing, and pull request review which need to be taken into account.</p>
 
-        <p>This was all the base configuration that I needed. You can then add any environment-specific configuration to this <code>group_vars</code> file.</p>
-
-        <h2>CircleCI provisioning</h2>
-
-        <p>After setting up my local Ansible provisioning, I just needed to configure CircleCI to run it. To the dependencies section in my <code>circle.yml</code> file I added;</p>
-
-        <pre><code><span>- sudo apt-get install software-properties-common</span>
-<span>- sudo apt-add-repository ppa:ansible/ansible -y</span>
-<span>- sudo apt-get update</span>
-<span>- sudo apt-get install ansible</span>
-<span>- ansible-playbook provisioning/playbook.yml -i circle_hosts --limit circleci</span>
-</code></pre>
-
-        <p>This adds the latest version of Ansible following the <a href="http://docs.ansible.com/ansible/intro_installation.html#latest-releases-via-apt-ubuntu">installation guide</a>, then runs the playbook which lives in the <code>provisioning</code> directory of my repository.</p>
-
-        <p>This was remarkably simple to set up, and worked first time. We now have the advantage of being able to immediately use any dependencies we've provisioned with Ansible in our CI environment, which makes setting up tests that much more straightforward. If you're using Ansible and CircleCI, give this a go for yourself.</p>
+        <p>Give it a go yourself, and see if it makes a difference.</p>
       </div></article>
   </main>
     </div>
