@@ -225,6 +225,31 @@ hr {
   picture + * {
     margin-top: 1.5rem;
   }
+
+  /* Checklist */
+
+  .checklist {
+    background: #fdf8c4;
+    background: linear-gradient(to bottom right, #fdf8c4, #e0dba2);
+    border: 1px #AAA solid;
+    box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.8);
+    margin-left: auto;
+    margin-right: auto;
+    padding: 0.5rem 1rem 1rem 2.5rem;
+    width: 80%;
+
+    @media screen and (min-width: 35rem) {
+      width: 50%;
+    }
+
+    li {
+      border-bottom: 1px #aaa solid;
+    }
+
+    li:last-child {
+      margin-bottom: 0;
+    }
+  }
 }
 
 /* Header styles */

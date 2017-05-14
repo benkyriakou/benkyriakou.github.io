@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!DOCTYPE document [
+  <!ENTITY mdash "&#8212;">
+]>
+
+<document type="article">
+  <title>The importance of process [30 minute article]</title>
+  <description>How having a process to define your work can help you make better things.</description>
+  <slug>/30-minute-articles/importance-of-process</slug>
+  <content>
+    <article>
+      <title>The importance of process [30 minute article]</title>
+      <date datetime="2017-05">May 2017</date>
+      <content>
+        <p>In Japan a popular safety practice is the use of <em><a href="https://en.wikipedia.org/wiki/Pointing_and_calling">shisa kanko</a></em> or 'pointing and calling': combining actions with visual and auditory cues. When performing an action, the operator will both point at the object of, and call out, the action that they're performing. This has been <a href="http://www.sciencedirect.com/science/article/pii/S0169814112000728">scientifically proven</a> to reduce inaccuracies by up to 85%, through reinforcing the action and preventing habitual responses.</p>
+
+        <p>The key to this technique is creating active engagement of the individual with the action that they're performing&mdash;the benefit comes not from the process, but from the response the process causes. And, although the process itself is fairly rigid (point at thing, speak out loud), it is applicable to a wide variety of situations.</p>
+
+        <p>We can take this lesson (that active engagement improves outcomes) and apply it to other situations. In software development, an area that often lacks proper attention is the writing of specifications. Frankly, it's not a particularly glamorous job, and it's often tempting to gloss over writing a spec, especially if you're writing code as a solo developer.</p>
+
+        <p>However, the value of writing a spec is that it is an exercise in active engagement. Writing collaborative user stories is a great example of how this can be beneficial, since it can often unearth hidden assumptions or differences in opinion as to how a feature will work. Even writing a spec as an individual, it can still be a useful exercise to think through the implementation process, and specs should always be reviewed by a third party before implementation.</p>
+
+        <p>As with shisa kanko, the underlying process is simple; have a checklist of high-level tasks to complete for each feature. This should be a template in your planning system, to prevent items being forgotten, and can always be slimmed down on a per-feature basis. The base checklist might contain such items as:</p>
+
+        <ol class="checklist">
+          <li>Specification</li>
+          <li>Test plan</li>
+          <li>Specification &amp; test plan review</li>
+          <li>Back-end implementation</li>
+          <li>Front-end implementation</li>
+          <li>Behavioural testing</li>
+          <li>Accessibility testing</li>
+          <li>Amendments</li>
+          <li>Documentation</li>
+          <li>Client review</li>
+          <li>Pull request</li>
+          <li>Release</li>
+        </ol>
+
+        <p>This isn't intended to be prescriptive, and others have written on the potential issues of creating software by rote, but it should provide a framework for development so that developer time isn't wasted fixing preventable issues, and can instead be better used actually creating the software.</p>
+
+        <p>A useful side-effect is that this can also encourage more accurate estimates, since the checklist spells out all of the necessary steps to create a feature. Although features may be small in terms of implementation, you can see from the above list that there are some fixed costs in terms of documentation, testing, and pull request review which need to be taken into account.</p>
+
+        <p>Give it a go yourself, and see if it makes a difference.</p>
+      </content>
+    </article>
+  </content>
+</document>
