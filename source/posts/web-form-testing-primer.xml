@@ -23,8 +23,8 @@
           <li>Use input whitelisting when processing known values</li>
           <li>Enforce consistent text encoding in input, storage, and output (I'd recommend UTF-8)</li>
           <li>Accept and store un-escaped content, and enforce consistent output escaping (e.g. with a template engine like <a href="https://twig.symfony.com">Twig</a>, or by building then converting native data structures with functions like <code>json_encode()</code>)</li>
-          <li>Use parameterised queries via a library like PDO, and never construct raw SQL or other queries</li>
-          <li>Generally have a layer to do operations like escaping or re-encoding <strong>once</strong>, rather than relying on separate user operations</li>
+          <li>Use parameterised queries via a library like PDO, and never construct raw SQL or other queries with user-supplied content</li>
+          <li>Implement a layer to do operations like escaping or encoding <strong>once</strong>, rather than relying on separate user operations</li>
         </ul>
 
         <h2>A note on escaping</h2>
@@ -54,7 +54,7 @@
 
         <p>Oops&mdash;I've introduced an extra trailing comma with some copy-pasting, which will cause this JSON to be invalid.</p>
 
-        <p>A much more robust method is to pass the data to <code>json_encode()</code> as an array. This will be converted and escaped in one smooth operation, and any structural issues with the array will be picked up by the PHP parser.</p>
+        <p>A much more robust method is to pass the data to <code>json_encode()</code> as an array. This will be converted and escaped in one smooth operation, and any structural issues with the array will be picked up by the PHP parser:</p>
 
         <pre><code>
           <span>$json = json_encode(array('foo' => $bar, 'baz' => $qux));</span>
@@ -97,14 +97,15 @@
 
         <h2>Forms</h2>
 
-        <p>The structure and processing of the form should also be tested using by editing the form using the browser inspector.</p>
+        <p>It is important to cross-browser test forms, since the return values may vary depending on the browser use. This includes testing empty fields, to ensure that the correct defaults are populated. The structure and processing of the form should also be tested using by editing the form using the browser inspector.</p>
 
         <ul>
-          <li>Removing required elements</li>
-          <li>Adding new elements to the form</li>
-          <li>Adding new elements to <code>select</code> elements</li>
-          <li>Altering disabled or hidden form elements</li>
-          <li>ID enumeration in URLs (e.g. https://example.com/form?submission=10)</li>
+          <li>Remove required elements</li>
+          <li>Add new elements to the form</li>
+          <li>Ad new elements to <code>select</code> elements</li>
+          <li>Alter disabled or hidden form elements</li>
+          <li>Check for <a href="https://www.owasp.org/index.php/Forced_browsing">URL enumeration vulnerabilities</a> (e.g. accessing other submissions from a URL format like https://example.com/form?submission=10)</li>
+          <li>Check for <a href="https://www.owasp.org/index.php/Cross-Site_Request_Forgery_(CSRF)_Prevention_Cheat_Sheet">CSRF protection</a> if necessary</li>
         </ul>
       </content>
     </article>
