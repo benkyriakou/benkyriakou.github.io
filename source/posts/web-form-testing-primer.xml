@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!DOCTYPE document [
+  <!ENTITY mdash "&#8212;">
+]>
+
+<document type="article">
+  <title>Web form testing primer</title>
+  <description>A simple guide to fixing common web form issues</description>
+  <slug>/posts/web-form-testing-primer</slug>
+  <content>
+    <article>
+      <title>Web form testing primer</title>
+      <date datetime="2017-12">December 2017</date>
+      <content>
+        <p>Input testing is one of the most important parts of testing web applications. Any opportunity to process user input is an opportunity for improper handling, validation, or output escaping. When constructing and processing web forms you must ensure that all operations are secure and robust, so you don't fall prey to leakage of secure data or presentational issues like double escaping.</p>
+
+        <p>The list below provides a prompt for both manual and automated test cases: it's by no means exhaustive, and you should always consider the particular operations of your application. I would generally advise following <a href="https://en.wikipedia.org/wiki/Robustness_principle">Postel's Law</a>: be liberal with the input you accept, but conservative in how you process and output it.</p>
+
+        <p>Practices that will minimise your attack surface are:</p>
+
+        <ul>
+          <li>Use input whitelisting when processing known values</li>
+          <li>Enforce consistent text encoding in input, storage, and output (I'd recommend UTF-8)</li>
+          <li>Accept and store un-escaped content, and enforce consistent output escaping (e.g. with a template engine like <a href="https://twig.symfony.com">Twig</a>, or by building then converting native data structures with functions like <code>json_encode()</code>)</li>
+          <li>Use parameterised queries via a library like PDO, and never construct raw SQL or other queries</li>
+          <li>Generally have a layer to do operations like escaping or re-encoding <strong>once</strong>, rather than relying on separate user operations</li>
+        </ul>
+
+        <h2>A note on escaping</h2>
+
+        <p>As a simple escaping example, imagine you've done this to construct some JSON in PHP:</p>
+
+        <pre><code>
+          <span>$json = '{"foo": "' . $bar . '"}';</span>
+        </code></pre>
+
+        <p>Hopefully you can see here that we have an immediate issue: values like 'cat' or 'dog' will work fine in this case, but if we passed in 'cat"' the extra double quote won't be escaped, and will break our JSON. This then creates security issues, as the user can inject arbitrary JSON into the output.</p>
+
+        <p>The simplistic way of fixing this would be to wrap <code>$bar</code> in <code>json_encode()</code> like so:</p>
+
+        <pre><code>
+          <span>$json = '{"foo": "' . json_encode($bar) . '"}';</span>
+        </code></pre>
+
+        <p>This is fine in this particular case, but is easily broken if you're consistently constructing JSON as strings. It's also very easy to introduce syntax errors:</p>
+
+        <pre><code>
+          <span>$json = '{';</span>
+          <span>$json .= '"foo": "' . json_encode($bar),';</span>
+          <span>$json .= '"baz": "' . json_encode($qux),';</span>
+          <span>$json .= '}';</span>
+        </code></pre>
+
+        <p>Oops&mdash;I've introduced an extra trailing comma with some copy-pasting, which will cause this JSON to be invalid.</p>
+
+        <p>A much more robust method is to pass the data to <code>json_encode()</code> as an array. This will be converted and escaped in one smooth operation, and any structural issues with the array will be picked up by the PHP parser.</p>
+
+        <pre><code>
+          <span>$json = json_encode(array('foo' => $bar, 'baz' => $qux));</span>
+        </code></pre>
+
+        <p>This also has the side-effect of making the data much easier to manipulate in transit. If I had constructed this as a string in multiple operations, it would be very hard to do anything other than append values to an existing structure. With an array, I can manipulate it as I would any other data structure. I can also rely on <code>json_encode()</code> to format the JSON output, should I wish to add indentation. Try managing that with a string!</p>
+
+        <h2>Strings</h2>
+
+        <p>One of my favourite string testing resources is minimaxir's <a href="https://github.com/minimaxir/big-list-of-naughty-strings/blob/master/blns.txt">Big List of Naughty Strings</a>, which gives you values for a lot of the test cases below.</p>
+
+        <ul>
+          <li>Long, short, empty</li>
+          <li>Multi-byte characters</li>
+          <li>Reserved words e.g. <code>TRUE/FALSE</code>, <code>None</code>, <code>undefined</code></li>
+          <li>Diacritics decomposed/precomposed e.g. café/café</li>
+          <li>Whitespace (spaces, tabs, zero-width spaces, etc.)</li>
+          <li>Syntax-specific escaping e.g.:
+            <ul>
+              <li>For JSON, try <code>[</code>, <code>{</code>, or <code>"</code>.</li>
+              <li>For Solr, try <code>AND</code>, <code>OR</code>, field selection with <code>field:value</code></li>
+              <li>HTML elements or special characters</li>
+              <li>SQL or other query injection</li>
+              <li>JavaScript execution with <code>&lt;script&gt;alert('hello');&lt;/script&gt;</code></li>
+              <li>URL generation, to ensure correct paths and query-strings</li>
+            </ul>
+          </li>
+        </ul>
+
+        <h2>Numbers</h2>
+
+        <ul>
+          <li>Zero</li>
+          <li>Small int/float</li>
+          <li>Large int/float</li>
+          <li>Special values (<code>NaN</code>, <code>Infinity</code>, <code>10e10</code>, <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/parseInt#Octal_interpretations_with_no_radix"><code>08</code></a>)</li>
+          <li>Overflow when number exceeds language limits (e.g. <code>PHP_INT_MIN</code>, <code>PHP_INT_MAX</code>, <code>PHP_FLOAT_MAX</code>, <code>Number.MAX_VALUE</code>)</li>
+        </ul>
+
+
+        <h2>Forms</h2>
+
+        <p>The structure and processing of the form should also be tested using by editing the form using the browser inspector.</p>
+
+        <ul>
+          <li>Removing required elements</li>
+          <li>Adding new elements to the form</li>
+          <li>Adding new elements to <code>select</code> elements</li>
+          <li>Altering disabled or hidden form elements</li>
+          <li>ID enumeration in URLs (e.g. https://example.com/form?submission=10)</li>
+        </ul>
+      </content>
+    </article>
+  </content>
+</document>
+
