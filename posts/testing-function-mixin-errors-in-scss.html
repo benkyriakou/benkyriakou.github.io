@@ -1,0 +1,186 @@
+<!DOCTYPE html SYSTEM "about:legacy-compat">
+<html lang="en">
+  <head>
+    <meta charset="utf-8"/>
+    <meta name="theme-color" content="#333"/>
+    <meta name="description" content="How to write more comprehensive tests for your SCSS."/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=1"/>
+    <link rel="canonical" href="http://benkyriakou.com/posts/testing-function-mixin-errors-in-scss"/>
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon"/>
+    <title>Testing SASS function and mixin errors with True | Ben Kyriakou</title>
+    <style type="text/css" media="all">*{box-sizing:border-box}html{font-family:'Georgia', serif;font-size:16px;line-height:1.5}body{margin:0}h1,h2,h3,h4,h5,h6{font-family:'Arial', sans-serif;font-weight:900;margin-top:0}h2,h3{margin-bottom:0.25rem}h3{font-size:1.25rem}a{color:#341DFF;outline-color:transparent;text-decoration:underline;transition-duration:0.25s;transition-property:background-color, color, outline-color;word-wrap:break-word}a:hover,a:focus{background-color:#341DFF;color:#FFF;outline:2px #341DFF solid;text-decoration:none}a:active{background-color:#897CFF;outline-color:#897CFF}hr{border-bottom-width:3px;border-color:#444;border-style:solid;border-top-width:0;height:0px;margin:0 auto 1.5rem;max-width:50%}.article__content h2{border-bottom:1px #AAA solid;line-height:1.25;margin-bottom:0.5rem}.article__content p,.article__content ul,.article__content ol{font-size:1rem;margin:0 0 1.5rem}.article__content li ul{margin-bottom:0}.article__content&gt;*:last-child{margin-bottom:0}.article__content ul,.article__content ol{padding-left:1.5rem}.article__content ul ul{padding-left:1rem}.article__content li{margin-bottom:0.5rem}@media screen and (min-width: 35rem){.article__content p,.article__content ul,.article__content ol,.article__content blockquote{font-size:1.125rem}}.article__content pre{background-color:#EDEDED;margin:0 0 1.5rem;padding:1rem;white-space:pre-wrap}.article__content picture{border:0;display:block;margin:0 auto 1.5rem;max-width:100%;transition:height 1s, width 1s}.article__content picture&gt;img,.article__content picture&gt;source{display:block;margin:0 auto;max-width:100%}.article__content figure{display:block;margin:0 auto 1.5rem}.article__content figure picture{margin-bottom:0.5rem}.article__content figure figcaption{font-weight:bold;font-variant:italic;margin:0 1rem 1.5rem;text-align:center}.article__content blockquote{font-style:italic;margin:0 0 1.5rem}@media screen and (min-width: 35rem){.article__content blockquote{margin-left:3rem;margin-right:3rem}}.article__content blockquote p{margin:0}.article__content blockquote p+p{margin-top:1rem}.article__content blockquote p:first-of-type:before{content:'\201C'}.article__content blockquote p:last-of-type:after{content:'\201D'}.article__content blockquote cite{display:block;font-style:normal;font-weight:bold;margin-top:0.5rem}.article__content blockquote cite:before{content:'\2014'}.article__content .reference{margin-left:0.125rem}.article__content .reference a:before{content:'['}.article__content .reference a:after{content:']'}.article__content .references{border-top:1px #AAA solid;padding-top:0.25rem}.article__content picture&gt;img,.article__content picture&gt;source{max-height:80vh}@media screen and (min-width: 37.5rem){.article__content picture{max-width:80%}}.article__content *+picture,.article__content picture+*{margin-top:1.5rem}.article__content .checklist{background:#fdf8c4;background:linear-gradient(to bottom right, #fdf8c4, #e0dba2);border:1px #AAA solid;box-shadow:1px 1px 5px rgba(0,0,0,0.8);margin-left:auto;margin-right:auto;padding:0.5rem 1rem 1rem 2.5rem;width:80%}@media screen and (min-width: 35rem){.article__content .checklist{width:50%}}.article__content .checklist li{border-bottom:1px #aaa solid}.article__content .checklist li:last-child{margin-bottom:0}.site-header{background:#333;border-bottom:1px #CCC solid;box-shadow:0px 0px 2px 2px #EFEFEF;margin-bottom:1.5rem}@media print{.site-header{display:none}}.site-header a{color:#FFF;display:block;padding:0.5rem 0;text-decoration:none}.site-header a:hover,.site-header a:focus{color:#333;background-color:#FFF;outline-color:#FFF}.site-header a:active{background-color:#888;outline-color:#888}@media screen and (min-width: 35rem){.site-header a{display:inline;padding:0}.site-header a:hover{background-color:transparent;border-bottom:3px #FFF solid;color:#FFF;outline:none;transition-property:border}}.site-header:last-child{margin-right:0}.site-header__items{display:flex;flex-wrap:wrap;list-style:none;margin:0;padding:0;text-align:center}@media screen and (min-width: 35rem){.site-header__items{justify-content:center;padding:0.5rem 0}}.site-header__item{flex-grow:1;font-family:'Trebuchet MS', sans-serif;font-weight:900;margin:0;padding:0}@media screen and (min-width: 35rem){.site-header__item{flex-grow:0;font-size:1.25rem;margin:0 1rem}}.center-wrapper{margin:0 auto;max-width:52rem;padding:0 1rem}.article{margin-bottom:1.5rem;position:relative}.article--teaser{margin-bottom:1rem}@media screen and (min-width: 35rem){.article--teaser{margin-bottom:1.5rem}}.article__header{line-height:1.25;margin-bottom:0.5rem;margin-top:0;font-size:1.75rem}.article__header--teaser{font-size:1.25rem;margin-bottom:0.25rem}@media screen and (min-width: 35rem){.article__header--teaser{font-size:1.5rem;margin-bottom:0}}.article__date,.article__external{color:#777;font-family:'Trebuchet MS', sans-serif}.article__date{display:block;float:left;font-weight:400;text-transform:uppercase}.article__date+.article__header{clear:left}@media screen and (min-width: 76rem){.article__date{float:none;font-family:'Trebuchet MS', sans-serif;left:-12rem;line-height:1;margin-top:0.3rem;padding:0 1.25rem 0 1rem;position:absolute;text-align:right;top:0;width:12rem}}.article__external:before{content:'&#8212;'}@media screen and (min-width: 76rem){.article__external{display:block;left:-12rem;padding:0 1.25rem 0 1rem;position:absolute;text-align:right;top:2.8125rem;width:12rem}.article__external:before{content:''}}.article__video{display:block;height:150px;margin-left:auto;margin-right:auto;max-width:600px;width:100%}@media screen and (min-width: 35rem){.article__video{height:315px}}.hidden{left:-9999px;position:absolute}.text-center{text-align:center}
+</style>
+    <meta property="og:url" content="http://benkyriakou.com/posts/testing-function-mixin-errors-in-scss"/>
+    <meta property="og:title" content="Testing SASS function and mixin errors with True"/>
+    <meta property="og:description" content="How to write more comprehensive tests for your SCSS."/>
+    <meta property="og:image" content="http://benkyriakou.com/images/global/twitter-card-image.png"/>
+    <meta name="twitter:card" content="summary"/>
+    <meta name="twitter:site" content="@benkyriakou"/>
+    <meta name="twitter:title" content="Testing SASS function and mixin errors with True"/>
+    <meta name="twitter:description" content="How to write more comprehensive tests for your SCSS."/>
+    <meta name="twitter:image" content="http://benkyriakou.com/images/global/twitter-card-image.png"/>
+    <script>
+      window.onload = function() {
+        (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+        (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+        m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+        })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+        ga('create', 'UA-64337321-1', 'auto');
+        ga('send', 'pageview');
+      };
+    </script>
+  </head>
+  <body>
+    <div class="wrapper">
+      <header class="site-header">
+        <div class="center-wrapper">
+          <nav>
+            <ul class="site-header__items">
+              <li class="site-header__item">
+                <a href="/">Home</a>
+              </li>
+              <li class="site-header__item">
+                <a href="/about">About</a>
+              </li>
+              <li class="site-header__item">
+                <a href="//drupal.org/u/ben.kyriakou">Drupal.org</a>
+              </li>
+              <li class="site-header__item">
+                <a href="//twitter.com/benkyriakou">Twitter</a>
+              </li>
+            </ul>
+          </nav>
+        </div>
+      </header>
+      <main class="center-wrapper">
+    <article class="article"><time class="article__date" datetime="2018-03">March 2018</time><h1 class="article__header">Testing SASS function and mixin errors with True</h1><div class="article__content">
+        <p>Recently I wanted to try out some SASS testing, and came across the <a href="https://github.com/oddbird/true">True framework</a> by Miriam Suzanne. It's a fairly small and straightforward framework to learn, but it's not entirely obvious how to use it to test error output since neither True nor the SASS language support catching errors. Here's a write-up of my approach.</p>
+
+        <p>The main reference point for testing errors is the <a href="https://github.com/oddbird/susy/commit/de0c473a95d99117475f1c023f17423803bb7e7b">tests for the Susy library</a> (further explained <a href="https://github.com/oddbird/true/issues/92">in this issue</a>). By passing all function errors through the <code>_susy-error()</code> function, they can either be thrown as regular errors or returned as strings based on the state of <code>$_susy-error-output-override</code>:</p>
+
+        <pre><code><span>@function _susy-error(</span>
+<span>  $message,</span>
+<span>  $source,</span>
+<span>  $override: $_susy-error-output-override</span>
+<span>) {</span>
+<span>  @if $override {</span>
+<span>    @return 'ERROR [#{$source}] #{$message}';</span>
+<span>  }</span>
+<span/>
+<span>  @error '[#{$source}] #{$message}';</span>
+<span>}</span>
+</code></pre>
+
+        <p>This is then simple to implement in your code, by replacing calls to <code>@error 'message';</code> in your functions with calls to your error-wrapping function <code>_susy-error('message');</code>.</p>
+
+        <p>Mixins prevent more of a challenge, since they have to return something CSS-like. This isn't something that Susy provides a template for, since it's primarily function-based, so I've come up with two basic approaches. There may be more!</p>
+
+        <h2>Returning an error value</h2>
+
+        <p>The limitation of mixins is that they have to return something CSS-like, so you can't use the same function-based approach. Instead, you can use a mixin to return a CSS block containing the error:</p>
+
+        <pre><code><span>$_is-test: false !default;</span>
+<span/>
+<span>@mixin _error($error, $override: $_is-test) {</span>
+<span>  @if $override {</span>
+<span>    error: $error;</span>
+<span>  }</span>
+<span>  @else {</span>
+<span>    @error $error;</span>
+<span>  }</span>
+<span>}</span>
+<span/>
+<span>@mixin my-mixin($colour) {</span>
+<span>  @if $colour == 'blue' or $colour == 'orange' {</span>
+<span>    color: #{$colour};</span>
+<span>  }</span>
+<span>  @else {</span>
+<span>    @include _error('This is not a valid colour.');</span>
+<span>  }</span>
+<span>}</span>
+</code></pre>
+
+        <p>Your True test will then look something like this:</p>
+
+        <pre><code><span>$_is-test: true;</span>
+<span/>
+<span>@include describe('mixin test') {</span>
+<span>  @include it('Checks for an error') {</span>
+<span>    @include assert {</span>
+<span>      @include output {</span>
+<span>        @include my-mixin('borange');</span>
+<span>      }</span>
+<span/>
+<span>      @include expect {</span>
+<span>        error: "This is not a valid colour.";</span>
+<span>      }</span>
+<span>    }</span>
+<span>  }</span>
+<span>}</span>
+</code></pre>
+
+        <h2>Setting a global error message</h2>
+
+        <p>Alternatively, instead of returning anything from the mixin you can set a global state variable. In this case, your error mixin will look more like:</p>
+
+        <pre><code><span>$_is-test: false !default;</span>
+<span/>
+<span>$global-error: '';</span>
+<span/>
+<span>@mixin _global-error($error, $override: $_is-test) {</span>
+<span>  @if $override {</span>
+<span>    $global-error: $error !global;</span>
+<span>  }</span>
+<span>  @else {</span>
+<span>    @error $error;</span>
+<span>  }</span>
+<span>}</span>
+<span/>
+<span>@mixin my-mixin($colour) {</span>
+<span>  @if $colour == 'blue' or $colour == 'orange' {</span>
+<span>    color: #{$colour};</span>
+<span>  }</span>
+<span>  @else {</span>
+<span>    @include _global-error('This is not a valid colour.');</span>
+<span>  }</span>
+<span>}</span>
+</code></pre>
+
+        <p>Your True test will then look something like this:</p>
+
+        <pre><code><span>$_is-test: true;</span>
+<span/>
+<span>@include describe('mixin test') {</span>
+<span>  @include it('Checks for an error') {</span>
+<span>    @include my-mixin('borange');</span>
+<span>    @include assert-equal($global-error, 'This is not a valid colour.');</span>
+<span>  }</span>
+<span>}</span>
+</code></pre>
+
+        <p>The error-checking logic can be refactored into a separate assertion mixin if desired:</p>
+
+        <pre><code><span>@mixin assert-raises-error($error) {</span>
+<span>  @include assert-equal($global-error, $error);</span>
+<span>}</span>
+</code></pre>
+
+        <p>On balance I prefer this approach to returning error values since there's explicit separation between values returned from the mixin and error messages, and the tests are a little more compact.</p>
+
+        <h2>The downsides</h2>
+
+        <p>Because of the way that both of these methods work, you have to have a single point of return for errors. If it's possible to return multiple errors, you'll see incorrect values.</p>
+
+        <p>It would be possible to work around this in the global variable scenario by making <code>$global-error</code> append values to a list rather than update a string&#8212;then you could instead handle the case where mutiple errors are returned, even though this wouldn't strictly be possible in the conventional error flow.</p>
+
+        <p>The other way to approach this, as suggested by <a href="https://github.com/oddbird/true/issues/121#issuecomment-369401803">Miriam Suzanne</a>, would be to make your SASS largely function-based, using mixins sparingly. This is effectively the approach Susy takes, which has worked well for them.</p>
+
+        <h2>Appendix</h2>
+
+        <p>For further information on alternative error-handling approaches in SASS see <a href="https://webdesign.tutsplus.com/tutorials/an-introduction-to-error-handling-in-sass--cms-19996">this article by Hugo Giraudel</a>, which I found helpful in playing around with these ideas.</p>
+      </div></article>
+  </main>
+    </div>
+  </body>
+</html>

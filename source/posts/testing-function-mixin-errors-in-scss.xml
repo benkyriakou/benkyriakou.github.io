@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!DOCTYPE document [
+  <!ENTITY mdash "&#8212;">
+]>
+
+<document type="article">
+  <title>Testing SASS function and mixin errors with True</title>
+  <description>How to write more comprehensive tests for your SCSS.</description>
+  <slug>/posts/testing-function-mixin-errors-in-scss</slug>
+  <content>
+    <article>
+      <title>Testing SASS function and mixin errors with True</title>
+      <date datetime="2018-03">March 2018</date>
+      <content>
+        <p>Recently I wanted to try out some SASS testing, and came across the <a href="https://github.com/oddbird/true">True framework</a> by Miriam Suzanne. It's a fairly small and straightforward framework to learn, but it's not entirely obvious how to use it to test error output since neither True nor the SASS language support catching errors. Here's a write-up of my approach.</p>
+
+        <p>The main reference point for testing errors is the <a href="https://github.com/oddbird/susy/commit/de0c473a95d99117475f1c023f17423803bb7e7b">tests for the Susy library</a> (further explained <a href="https://github.com/oddbird/true/issues/92">in this issue</a>). By passing all function errors through the <code>_susy-error()</code> function, they can either be thrown as regular errors or returned as strings based on the state of <code>$_susy-error-output-override</code>:</p>
+
+        <pre><code>
+          <span>@function _susy-error(</span>
+          <span>  $message,</span>
+          <span>  $source,</span>
+          <span>  $override: $_susy-error-output-override</span>
+          <span>) {</span>
+          <span>  @if $override {</span>
+          <span>    @return 'ERROR [#{$source}] #{$message}';</span>
+          <span>  }</span>
+          <span></span>
+          <span>  @error '[#{$source}] #{$message}';</span>
+          <span>}</span>
+        </code></pre>
+
+        <p>This is then simple to implement in your code, by replacing calls to <code>@error 'message';</code> in your functions with calls to your error-wrapping function <code>_susy-error('message');</code>.</p>
+
+        <p>Mixins prevent more of a challenge, since they have to return something CSS-like. This isn't something that Susy provides a template for, since it's primarily function-based, so I've come up with two basic approaches. There may be more!</p>
+
+        <h2>Returning an error value</h2>
+
+        <p>The limitation of mixins is that they have to return something CSS-like, so you can't use the same function-based approach. Instead, you can use a mixin to return a CSS block containing the error:</p>
+
+        <pre><code>
+          <span>$_is-test: false !default;</span>
+          <span></span>
+          <span>@mixin _error($error, $override: $_is-test) {</span>
+          <span>  @if $override {</span>
+          <span>    error: $error;</span>
+          <span>  }</span>
+          <span>  @else {</span>
+          <span>    @error $error;</span>
+          <span>  }</span>
+          <span>}</span>
+          <span></span>
+          <span>@mixin my-mixin($colour) {</span>
+          <span>  @if $colour == 'blue' or $colour == 'orange' {</span>
+          <span>    color: #{$colour};</span>
+          <span>  }</span>
+          <span>  @else {</span>
+          <span>    @include _error('This is not a valid colour.');</span>
+          <span>  }</span>
+          <span>}</span>
+        </code></pre>
+
+        <p>Your True test will then look something like this:</p>
+
+        <pre><code>
+          <span>$_is-test: true;</span>
+          <span></span>
+          <span>@include describe('mixin test') {</span>
+          <span>  @include it('Checks for an error') {</span>
+          <span>    @include assert {</span>
+          <span>      @include output {</span>
+          <span>        @include my-mixin('borange');</span>
+          <span>      }</span>
+          <span></span>
+          <span>      @include expect {</span>
+          <span>        error: "This is not a valid colour.";</span>
+          <span>      }</span>
+          <span>    }</span>
+          <span>  }</span>
+          <span>}</span>
+        </code></pre>
+
+        <h2>Setting a global error message</h2>
+
+        <p>Alternatively, instead of returning anything from the mixin you can set a global state variable. In this case, your error mixin will look more like:</p>
+
+        <pre><code>
+          <span>$_is-test: false !default;</span>
+          <span></span>
+          <span>$global-error: '';</span>
+          <span></span>
+          <span>@mixin _global-error($error, $override: $_is-test) {</span>
+          <span>  @if $override {</span>
+          <span>    $global-error: $error !global;</span>
+          <span>  }</span>
+          <span>  @else {</span>
+          <span>    @error $error;</span>
+          <span>  }</span>
+          <span>}</span>
+          <span></span>
+          <span>@mixin my-mixin($colour) {</span>
+          <span>  @if $colour == 'blue' or $colour == 'orange' {</span>
+          <span>    color: #{$colour};</span>
+          <span>  }</span>
+          <span>  @else {</span>
+          <span>    @include _global-error('This is not a valid colour.');</span>
+          <span>  }</span>
+          <span>}</span>
+        </code></pre>
+
+        <p>Your True test will then look something like this:</p>
+
+        <pre><code>
+          <span>$_is-test: true;</span>
+          <span></span>
+          <span>@include describe('mixin test') {</span>
+          <span>  @include it('Checks for an error') {</span>
+          <span>    @include my-mixin('borange');</span>
+          <span>    @include assert-equal($global-error, 'This is not a valid colour.');</span>
+          <span>  }</span>
+          <span>}</span>
+        </code></pre>
+
+        <p>The error-checking logic can be refactored into a separate assertion mixin if desired:</p>
+
+        <pre><code>
+          <span>@mixin assert-raises-error($error) {</span>
+          <span>  @include assert-equal($global-error, $error);</span>
+          <span>}</span>
+        </code></pre>
+
+        <p>On balance I prefer this approach to returning error values since there's explicit separation between values returned from the mixin and error messages, and the tests are a little more compact.</p>
+
+        <h2>The downsides</h2>
+
+        <p>Because of the way that both of these methods work, you have to have a single point of return for errors. If it's possible to return multiple errors, you'll see incorrect values.</p>
+
+        <p>It would be possible to work around this in the global variable scenario by making <code>$global-error</code> append values to a list rather than update a string&mdash;then you could instead handle the case where mutiple errors are returned, even though this wouldn't strictly be possible in the conventional error flow.</p>
+
+        <p>The other way to approach this, as suggested by <a href="https://github.com/oddbird/true/issues/121#issuecomment-369401803">Miriam Suzanne</a>, would be to make your SASS largely function-based, using mixins sparingly. This is effectively the approach Susy takes, which has worked well for them.</p>
+
+        <h2>Appendix</h2>
+
+        <p>For further information on alternative error-handling approaches in SASS see <a href="https://webdesign.tutsplus.com/tutorials/an-introduction-to-error-handling-in-sass--cms-19996">this article by Hugo Giraudel</a>, which I found helpful in playing around with these ideas.</p>
+      </content>
+    </article>
+  </content>
+</document>
