@@ -6,7 +6,7 @@
 
 <document type="article">
   <title>Web form testing primer</title>
-  <description>A simple guide to fixing common web form issues</description>
+  <description>A simple guide to fixing common web form issues.</description>
   <slug>/posts/web-form-testing-primer</slug>
   <content>
     <article>
@@ -102,7 +102,7 @@
         <ul>
           <li>Remove required elements</li>
           <li>Add new elements to the form</li>
-          <li>Ad new elements to <code>select</code> elements</li>
+          <li>Add new elements to <code>select</code> elements</li>
           <li>Alter disabled or hidden form elements</li>
           <li>Check for <a href="https://www.owasp.org/index.php/Forced_browsing">URL enumeration vulnerabilities</a> (e.g. accessing other submissions from a URL format like https://example.com/form?submission=10)</li>
           <li>Check for <a href="https://www.owasp.org/index.php/Cross-Site_Request_Forgery_(CSRF)_Prevention_Cheat_Sheet">CSRF protection</a> if necessary</li>
