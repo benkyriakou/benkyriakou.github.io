@@ -1,5 +1,6 @@
 /* Variables */
 $link_blue: #341DFF;
+$code_grey: #EDEDED;
 
 /* Core element styles */
 
@@ -116,10 +117,14 @@ hr {
   }
 
   pre {
-    background-color: #EDEDED;
     margin: 0 0 1.5rem;
     padding: 1rem;
     white-space: pre-wrap;
+  }
+
+  pre,
+  code {
+    background-color: $code_grey;
   }
 
   picture {
@@ -229,8 +234,8 @@ hr {
   /* Checklist */
 
   .checklist {
-    background: #fdf8c4;
-    background: linear-gradient(to bottom right, #fdf8c4, #e0dba2);
+    background: #FDF8C4;
+    background: linear-gradient(to bottom right, #FDF8C4, #E0DBA2);
     border: 1px #AAA solid;
     box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.8);
     margin-left: auto;
@@ -243,7 +248,7 @@ hr {
     }
 
     li {
-      border-bottom: 1px #aaa solid;
+      border-bottom: 1px #AAA solid;
     }
 
     li:last-child {
