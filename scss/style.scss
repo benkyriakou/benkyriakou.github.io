@@ -133,13 +133,13 @@ hr {
     margin: 0 auto 1.5rem;
     max-width: 100%;
     transition: height 1s, width 1s;
-  }
 
-  picture > img,
-  picture > source {
-    display: block;
-    margin: 0 auto;
-    max-width: 100%;
+    & img,
+    & source {
+      display: block;
+      margin: 0 auto;
+      max-width: 100%;
+    }
   }
 
   figure {
@@ -157,7 +157,6 @@ hr {
       text-align: center
     }
   }
-
 
   blockquote {
     font-style: italic;
