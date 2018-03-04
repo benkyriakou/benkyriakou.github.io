@@ -20,9 +20,7 @@
 
         <title><xsl:apply-templates select="document/title" /></title>
 
-        <style type="text/css" media="all">
-          <xi:include href="../css/style.css" parse="text" encoding="utf-8" />
-        </style>
+        <link rel="stylesheet" href="/css/style.css" type="text/css" />
 
         <xsl:call-template name="open-graph" />
         <xsl:call-template name="twitter-card" />
