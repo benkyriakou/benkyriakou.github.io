@@ -33,7 +33,7 @@
 
         <p>This is then simple to implement in your code, by replacing calls to <code>@error 'message';</code> in your functions with calls to your error-wrapping function <code>_susy-error('message');</code>.</p>
 
-        <p>Mixins prevent more of a challenge, since they have to return something CSS-like. This isn't something that Susy provides a template for, since it's primarily function-based, so I've come up with two basic approaches. There may be more!</p>
+        <p>Mixins present more of a challenge, since they have to return something CSS-like. This isn't something that Susy provides a template for, since it's primarily function-based, so I've come up with two basic approaches. There may be more!</p>
 
         <h2>Returning an error value</h2>
 
@@ -136,7 +136,7 @@
 
         <p>Because of the way that both of these methods work, you have to have a single point of return for errors. If it's possible to return multiple errors, you'll see incorrect values.</p>
 
-        <p>It would be possible to work around this in the global variable scenario by making <code>$global-error</code> append values to a list rather than update a string&mdash;then you could instead handle the case where mutiple errors are returned, even though this wouldn't strictly be possible in the conventional error flow.</p>
+        <p>It would be possible to work around this in the global variable scenario by making <code>$global-error</code> append values to a list rather than update a string&mdash;then you could instead handle the case where multiple errors are returned, even though this wouldn't strictly be possible in the conventional error flow.</p>
 
         <p>The other way to approach this, as suggested by <a href="https://github.com/oddbird/true/issues/121#issuecomment-369401803">Miriam Suzanne</a>, would be to make your SASS largely function-based, using mixins sparingly. This is effectively the approach Susy takes, which has worked well for them.</p>
 
