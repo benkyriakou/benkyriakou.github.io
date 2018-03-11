@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!DOCTYPE document [
+  <!ENTITY mdash "&#8212;">
+]>
+
+<document type="article">
+  <title>lxml&mdash;the good parts</title>
+  <description>A primer on using the Python lxml library.</description>
+  <slug>/posts/lxml-the-good-parts</slug>
+  <content>
+    <article>
+      <title>lxml&mdash;the good parts</title>
+      <date datetime="2018-03">March 2018</date>
+      <content>
+        <p><em>This is currently a work in progress&mdash;stay tuned for more content.</em></p>
+
+        <p>lxml is an improved version of the core ElementTree API. It is incredibly useful for processing XML in Python, but it can sometimes be confusing to use. This is a primer on the ways to achieve some common tasks.</p>
+
+        <p>The standard I operate to with XML processing is that it should always be:</p>
+
+        <ul>
+          <li>UTF-8 encoded</li>
+          <li>With an XML declaration</li>
+          <li>Pretty-printed for readability</li>
+        </ul>
+
+        <h2>Reading XML from a file</h2>
+
+        <p>Reading XML from a file can be accomplished with the <code>etree.parse()</code> function. This returns a parsed <a href="http://lxml.de/api/xml.etree.ElementTree.ElementTree-class.html">ElementTree</a> containing the contents of the parsed file:</p>
+
+        <pre><code>
+          <span>from lxml import etree</span>
+          <span>etree.parse('myfile.xml')</span>
+        </code></pre>
+
+        <p>As per the documentation, the <code>source</code> argument can be:</p>
+
+        <ul>
+          <li>a file name/path</li>
+          <li>a file object</li>
+          <li>a file-like object</li>
+          <li>a URL using the HTTP or FTP protocol</li>
+        </ul>
+
+        <p>Parsing will generally make sensible decisions regarding encoding, and if you have a correct XML declaration in your source files then you shouldn't have any issues. If you want to specify how the file is parsed, you can call <code>parse()</code> with the optional <code>parser</code> argument, passing an instance of <code><a href="http://lxml.de/api/xml.etree.ElementTree.XMLParser-class.html">etree.XMLParser()</a></code>:</p>
+
+        <pre><code>
+          <span>from lxml import etree</span>
+          <span>parser = etree.XMLParser(encoding='latin1')</span>
+          <span>etree.parse('myfile.xml', parser=parser)</span>
+        </code></pre>
+
+        <h2>Reading XML from a string</h2>
+
+        <p>If you already have a string containing your XML, you can parse it into an <a href="http://lxml.de/api/lxml.etree._Element-class.html">_Element</a> using <code>etree.fromstring(text, parser=None)</code>. As with <code>parse()</code>, you can optionally pass in an <code>XMLParser</code>:</p>
+
+        <pre><code>
+          <span>from lxml import etree</span>
+          <span>etree.fromstring('&lt;root&gt;&lt;elem&gt;foo&lt;/elem&gt;&lt;/root&gt;')</span>
+        </code></pre>
+
+        <p><code>text</code> can either be a byte string or unicode string. As with <code>parse()</code> this will generally make sensible decisions regarding encoding.</p>
+
+        <p>If you'd prefer to have an ElementTree instead of an Element, see Converting Element to ElementTree.</p>
+
+        <h2>Writing XML to a file</h2>
+
+        <p>If you have an ElementTree, you can write the XML to a file using the <code><a href="http://lxml.de/api/lxml.etree._ElementTree-class.html#write">ElementTree.write()</a></code> method. Generally you will want to specify the <code>encoding</code>, <code>xml_declaration</code>, and <code>pretty_print</code> arguments:</p>
+
+        <pre><code>
+          <span>from lxml import etree</span>
+          <span>root = etree.parse('file.xml')</span>
+          <span>&lt;!-- Perform operations here --&gt;</span>
+          <span>root.write('file_out.xml', encoding='utf-8', xml_declaration=True, pretty_print=True)</span>
+        </code></pre>
+
+        <p>This does not support the <code>short_empty_elements</code> argument from <code>xml.etree.ElementTree.write()</code>, and will always output self-closing tags for empty elements. If you need to write full tags, you can instead consider the <code><a href="http://lxml.de/api/lxml.etree._ElementTree-class.html#write_c14n">write_c14n()</a></code> method.</p>
+
+        <h2>Writing XML as a string</h2>
+
+        <p>Unsurprisingly, <code>etree.fromstring()</code> has a corresponding method <code>etree.tostring()</code>. If you have an _ElementTree or _Element, you can convert these to a byte string by passing them to this function:</p>
+
+        <pre><code>
+          <span>from lxml import etree</span>
+          <span>root = etree.parse('file.xml')</span>
+          <span>etree.tostring(root, encoding='utf8')</span>
+        </code></pre>
+
+        <h2>Constructing an XML tree</h2>
+
+        <p>If you don't have a file or string representation of your XML, you might want to construct it from scratch. You can achieve this with <code><a href="https://docs.python.org/3/library/xml.etree.elementtree.html#element-objects">etree.Element()</a></code>:</p>
+
+        <pre><code>
+          <span>from lxml import etree</span>
+          <span>el = etree.Element('foo', name='bar')</span>
+          <span>el.text = 'Hello'</span>
+          <span>subel = el.SubElement('qux')</span>
+          <span>subel.text = 'World'</span>
+        </code></pre>
+
+        <p>This will result in the following XML fragment:</p>
+
+        <pre><code>
+          <span>&lt;foo name="bar"&gt;</span>
+          <span>  Hello&lt;qux&gt;World&lt;/qux&gt;</span>
+          <span>&lt;/foo&gt;</span>
+        </code></pre>
+
+        <p>See <a href="https://docs.python.org/3/library/xml.etree.elementtree.html#element-objects">the Element documentation</a> for other useful methods for manipulating the tree, including <code>append()</code>, <code>insert()</code> and <code>remove()</code>. Note that once again we are working with an Element rather than an ElementTree.</p>
+
+<!--         <h2>Namespaces</h2>
+
+        <p>If your XML content contains a namespace, you can select elements that use it by either:</p>
+
+        <ul>
+          <li>Including the whole URI in the query</li>
+          <li>Including the prefix in the query and supplying a map of namespaces</li>
+          <li>Using the wildcard query syntax to query all namespaces</li>
+        </ul>
+
+        <p>Unfortunately there is no global namespace registry, so the namespace map has to be passed to the method for every query. If you're working with lots of namespaces, consider delegating this to another function or method.</p> -->
+
+        <h2>Other references</h2>
+
+        <ul>
+          <li><a href="https://docs.python.org/3/library/xml.etree.elementtree.html">Python ElementTree documentation</a></li>
+          <li><a href="http://infohost.nmt.edu/tcc/help/pubs/pylxml/web/index.html">John Shipman's lxml guide</a></li>
+          <li><a href="http://effbot.org/zone/element-index.htm">Fredrik Lundh's ElementTree documentation</a></li>
+          <!-- <li>https://github.com/lxml/lxml/tree/master/doc</li> -->
+          <!-- <li>https://github.com/lxml/lxml/tree/master/doc/FAQ.txt</li> -->
+        </ul>
+      </content>
+    </article>
+  </content>
+</document>
