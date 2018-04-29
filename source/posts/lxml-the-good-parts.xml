@@ -62,7 +62,7 @@
 
         <p><code>text</code> can either be a byte string or unicode string. As with <code>parse()</code> this will generally make sensible decisions regarding encoding.</p>
 
-        <p>If you'd prefer to have an ElementTree instead of an Element, see Converting Element to ElementTree.</p>
+        <p>If you'd prefer to have an ElementTree instead of an Element, see <a href="#section-converting-an-element-into-an-elementtree">Converting _Element into an _ElementTree</a>.</p>
 
         <h2>Writing XML to a file</h2>
 
@@ -109,6 +109,26 @@
 
         <p>See <a href="https://docs.python.org/3/library/xml.etree.elementtree.html#element-objects">the Element documentation</a> for other useful methods for manipulating the tree, including <code>append()</code>, <code>insert()</code> and <code>remove()</code>. Note that once again we are working with an Element rather than an ElementTree.</p>
 
+        <h2>Converting an <code>ElementTree</code> into an <code>Element</code></h2>
+
+        <p>Calling the <code>getroot()</code> method of an <code>_ElementTree</code> will return the root <code>_Element</code>:</p>
+
+        <pre><code>
+          <span>from lxml import etree</span>
+          <span>root_element_tree = etree.parse('file.xml')</span>
+          <span>root_element = root_element_tree.getroot()</span>
+        </code></pre>
+
+        <h2>Converting an <code>_Element</code> into an <code>_ElementTree</code></h2>
+
+        <p>Calling the <code>getroottree()</code> method of an <code>_Element</code> will return the root <code>_ElementTree</code>:</p>
+
+        <pre><code>
+          <span>from lxml import etree</span>
+          <span>root_element = etree.Element('foo')</span>
+          <span>root_element_tree = root_element_tree.getroottree()</span>
+        </code></pre>
+
 <!--         <h2>Namespaces</h2>
 
         <p>If your XML content contains a namespace, you can select elements that use it by either:</p>
@@ -129,6 +149,8 @@
           <li><a href="http://effbot.org/zone/element-index.htm">Fredrik Lundh's ElementTree documentation</a></li>
           <!-- <li>https://github.com/lxml/lxml/tree/master/doc</li> -->
           <!-- <li>https://github.com/lxml/lxml/tree/master/doc/FAQ.txt</li> -->
+<!--           http://lxml.de/
+          http://lxml.de/tutorial.html -->
         </ul>
       </content>
     </article>

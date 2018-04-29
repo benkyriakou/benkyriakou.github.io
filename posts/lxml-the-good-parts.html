@@ -66,7 +66,7 @@
           <li>Pretty-printed for readability</li>
         </ul>
 
-        <h2>Reading XML from a file</h2>
+        <h2 id="section-reading-xml-from-a-file">Reading XML from a file</h2>
 
         <p>Reading XML from a file can be accomplished with the <code>etree.parse()</code> function. This returns a parsed <a href="http://lxml.de/api/xml.etree.ElementTree.ElementTree-class.html">ElementTree</a> containing the contents of the parsed file:</p>
 
@@ -90,7 +90,7 @@
 <span>etree.parse('myfile.xml', parser=parser)</span>
 </code></pre>
 
-        <h2>Reading XML from a string</h2>
+        <h2 id="section-reading-xml-from-a-string">Reading XML from a string</h2>
 
         <p>If you already have a string containing your XML, you can parse it into an <a href="http://lxml.de/api/lxml.etree._Element-class.html">_Element</a> using <code>etree.fromstring(text, parser=None)</code>. As with <code>parse()</code>, you can optionally pass in an <code>XMLParser</code>:</p>
 
@@ -100,9 +100,9 @@
 
         <p><code>text</code> can either be a byte string or unicode string. As with <code>parse()</code> this will generally make sensible decisions regarding encoding.</p>
 
-        <p>If you'd prefer to have an ElementTree instead of an Element, see Converting Element to ElementTree.</p>
+        <p>If you'd prefer to have an ElementTree instead of an Element, see <a href="#section-converting-an-element-into-an-elementtree">Converting _Element into an _ElementTree</a>.</p>
 
-        <h2>Writing XML to a file</h2>
+        <h2 id="section-writing-xml-to-a-file">Writing XML to a file</h2>
 
         <p>If you have an ElementTree, you can write the XML to a file using the <code><a href="http://lxml.de/api/lxml.etree._ElementTree-class.html#write">ElementTree.write()</a></code> method. Generally you will want to specify the <code>encoding</code>, <code>xml_declaration</code>, and <code>pretty_print</code> arguments:</p>
 
@@ -114,7 +114,7 @@
 
         <p>This does not support the <code>short_empty_elements</code> argument from <code>xml.etree.ElementTree.write()</code>, and will always output self-closing tags for empty elements. If you need to write full tags, you can instead consider the <code><a href="http://lxml.de/api/lxml.etree._ElementTree-class.html#write_c14n">write_c14n()</a></code> method.</p>
 
-        <h2>Writing XML as a string</h2>
+        <h2 id="section-writing-xml-as-a-string">Writing XML as a string</h2>
 
         <p>Unsurprisingly, <code>etree.fromstring()</code> has a corresponding method <code>etree.tostring()</code>. If you have an _ElementTree or _Element, you can convert these to a byte string by passing them to this function:</p>
 
@@ -123,7 +123,7 @@
 <span>etree.tostring(root, encoding='utf8')</span>
 </code></pre>
 
-        <h2>Constructing an XML tree</h2>
+        <h2 id="section-constructing-an-xml-tree">Constructing an XML tree</h2>
 
         <p>If you don't have a file or string representation of your XML, you might want to construct it from scratch. You can achieve this with <code><a href="https://docs.python.org/3/library/xml.etree.elementtree.html#element-objects">etree.Element()</a></code>:</p>
 
@@ -143,9 +143,27 @@
 
         <p>See <a href="https://docs.python.org/3/library/xml.etree.elementtree.html#element-objects">the Element documentation</a> for other useful methods for manipulating the tree, including <code>append()</code>, <code>insert()</code> and <code>remove()</code>. Note that once again we are working with an Element rather than an ElementTree.</p>
 
+        <h2 id="section-converting-an-elementtree-into-an-element">Converting an <code>ElementTree</code> into an <code>Element</code></h2>
+
+        <p>Calling the <code>getroot()</code> method of an <code>_ElementTree</code> will return the root <code>_Element</code>:</p>
+
+        <pre><code><span>from lxml import etree</span>
+<span>root_element_tree = etree.parse('file.xml')</span>
+<span>root_element = root_element_tree.getroot()</span>
+</code></pre>
+
+        <h2 id="section-converting-an-element-into-an-elementtree">Converting an <code>_Element</code> into an <code>_ElementTree</code></h2>
+
+        <p>Calling the <code>getroottree()</code> method of an <code>_Element</code> will return the root <code>_ElementTree</code>:</p>
+
+        <pre><code><span>from lxml import etree</span>
+<span>root_element = etree.Element('foo')</span>
+<span>root_element_tree = root_element_tree.getroottree()</span>
+</code></pre>
 
 
-        <h2>Other references</h2>
+
+        <h2 id="section-other-references">Other references</h2>
 
         <ul>
           <li><a href="https://docs.python.org/3/library/xml.etree.elementtree.html">Python ElementTree documentation</a></li>
@@ -153,6 +171,7 @@
           <li><a href="http://effbot.org/zone/element-index.htm">Fredrik Lundh's ElementTree documentation</a></li>
           
           
+
         </ul>
       </div></article>
   </main>
