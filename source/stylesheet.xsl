@@ -132,17 +132,39 @@
 
   <!-- Add URL fragment slugs to headings. -->
   <xsl:template match="content//*[re:match(name(), '^h[2-6]$')]">
-    <xsl:variable name="alphanumeric" select="re:replace(string(.), '[^a-z\s]', 'gi', '')" />
-    <xsl:variable name="lowercase" select="translate($alphanumeric, 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz')" />
-    <xsl:variable name="slug" select="re:replace($lowercase, '\s+', 'g', '-')" />
-
     <xsl:copy select=".">
       <xsl:attribute name="id">
         <xsl:text>section-</xsl:text>
-        <xsl:value-of select="$slug" />
+        <xsl:call-template name="slugify">
+          <xsl:with-param name="raw_str" select="string(.)" />
+        </xsl:call-template>
       </xsl:attribute>
       <xsl:apply-templates select="@*|node()"/>
     </xsl:copy>
+  </xsl:template>
+
+  <!-- Add custom index generation. -->
+  <xsl:template match="content//index">
+    <div class="index">
+      <ul class="index-level">
+        <xsl:apply-templates select="following-sibling::h2" mode="index" />
+      </ul>
+    </div>
+  </xsl:template>
+
+  <!-- Simple top-level index template. -->
+  <!-- @todo Extend this to allow multi-level indexes. -->
+  <xsl:template match="h2" mode="index">
+    <xsl:variable name="slug">
+      <xsl:text>section-</xsl:text>
+      <xsl:call-template name="slugify">
+        <xsl:with-param name="raw_str" select="string(.)" />
+      </xsl:call-template>
+    </xsl:variable>
+
+    <li>
+      <a href="#{$slug}"><xsl:value-of select="string(.)" /></a>
+    </li>
   </xsl:template>
 
   <!-- Override content processing for references. -->
@@ -283,5 +305,17 @@
         </xsl:call-template>
       </xsl:otherwise>
     </xsl:choose>
+  </xsl:template>
+
+  <!-- Template to convert arbitrary strings into alphanumeric ASCII URL slugs. -->
+  <!-- @todo This would be much nicer as a function if I can get lxml to play nicely with EXSLT. -->
+  <xsl:template name="slugify">
+    <xsl:param name="raw_str" />
+
+    <xsl:variable name="alphanumeric" select="re:replace($raw_str, '[^a-z0-9\s]', 'gi', '')" />
+    <xsl:variable name="lowercase" select="translate($alphanumeric, 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz')" />
+    <xsl:variable name="slug" select="re:replace($lowercase, '\s+', 'g', '-')" />
+
+    <xsl:value-of select="$slug" />
   </xsl:template>
 </xsl:stylesheet>
