@@ -13,6 +13,7 @@
       <title>lxml&mdash;the good parts</title>
       <date datetime="2018-03">March 2018</date>
       <content>
+
         <p><em>This is currently a work in progress&mdash;stay tuned for more content.</em></p>
 
         <p>lxml is an improved version of the core ElementTree API. It is incredibly useful for processing XML in Python, but it can sometimes be confusing to use. This is a primer on the ways to achieve some common tasks.</p>
@@ -24,6 +25,10 @@
           <li>With an XML declaration</li>
           <li>Pretty-printed for readability</li>
         </ul>
+
+        <h2>Contents</h2>
+
+        <index />
 
         <h2>Reading XML from a file</h2>
 
