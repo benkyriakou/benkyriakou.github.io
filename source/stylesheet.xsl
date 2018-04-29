@@ -3,8 +3,9 @@
 <xsl:stylesheet version="1.0"
   xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
   xmlns:str="http://exslt.org/strings"
+  xmlns:re="http://exslt.org/regular-expressions"
   xmlns:xi="http://www.w3.org/2001/XInclude"
-  exclude-result-prefixes="str xi">
+  exclude-result-prefixes="str xi re">
 
   <xsl:output method="html" encoding="utf-8" indent="yes" doctype-system="about:legacy-compat" />
 
@@ -127,6 +128,21 @@
       <img src="{$derivative_path}_320{$file_extension}" alt="{@alt}" title="{@title}" />
     </picture>
 
+  </xsl:template>
+
+  <!-- Add URL fragment slugs to headings. -->
+  <xsl:template match="content//*[re:match(name(), '^h[2-6]$')]">
+    <xsl:variable name="alphanumeric" select="re:replace(string(.), '[^a-z\s]', 'gi', '')" />
+    <xsl:variable name="lowercase" select="translate($alphanumeric, 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz')" />
+    <xsl:variable name="slug" select="re:replace($lowercase, '\s+', 'g', '-')" />
+
+    <xsl:copy select=".">
+      <xsl:attribute name="id">
+        <xsl:text>section-</xsl:text>
+        <xsl:value-of select="$slug" />
+      </xsl:attribute>
+      <xsl:apply-templates select="@*|node()"/>
+    </xsl:copy>
   </xsl:template>
 
   <!-- Override content processing for references. -->
