@@ -58,7 +58,7 @@
 
         <p>The collection featured both Yiddish and transliterated strings of text in their metadata, and our task was to bring all these into the website and display them correctly and uniformly.</p>
 
-        <h2>What is a transliteration</h2>
+        <h2 id="section-what-is-a-transliteration">What is a transliteration</h2>
 
         <p>Before I dive in, I should explain what transliteration is, and why you&#8217;d use it. Consider this Yiddish string;</p>
 
@@ -72,11 +72,11 @@
 
         <p>Transliterations are created using transliteration tables, which have mappings for various languages. These tables are published in various standard forms&#8212;one of the more common is the <a href="http://www.loc.gov/catdir/cpso/roman.html">ALA-LC standard from the Library of Congress</a>.</p>
 
-        <h2>Back to the problem</h2>
+        <h2 id="section-back-to-the-problem">Back to the problem</h2>
 
         <p>We knew that there would be a large number of transliterated strings, so the first task was to import the metadata and see what it looked like with the chosen font. Immediately problems started cropping up&#8212;some letters looked odd, others were obviously rendered in a different font. After digging into the data, it became apparent we were dealing with two separate problems.</p>
 
-        <h2>Character composition</h2>
+        <h2 id="section-character-composition">Character composition</h2>
 
         <p>The first problem&#8212;the odd-looking letters&#8212;was caused by the presence of both pre- and de-composed characters in the metadata. Character composition is a feature of Unicode which can be used when rendering characters with diacritics such as &#8216;&#7789;&#8217;. There are two ways to represent this character;</p>
 
@@ -88,7 +88,7 @@
 
         <p>The first representation is known as a pre-composed character (all features are included in a single glyph), and the second as a de-composed character (the letter and diacritic are two separate glyphs). For de-composed characters, the way the character is rendered varies wildly between fonts, and is very dependent on the font design.</p>
 
-        <h2>Testing</h2>
+        <h2 id="section-testing">Testing</h2>
 
         <p>To identify what the best solution would be, I put together a test-case page containing all of our known diacritic variants, and tested it with a selection of fonts on both Windows and OSX. It was immediately apparent that the pre-composed variant displayed most consistently, so we made the decision to normalise all the strings. As it turned out this was a straightforward transformation&#8212;we were already processing the data with Python, and the <code>unicodedata</code> library lets you do this:</p>
 
@@ -96,13 +96,13 @@
 
         <p>Apart from some edge cases like combining ligatures (a topic for another time) this worked very well.</p>
 
-        <h2>Finding a font</h2>
+        <h2 id="section-finding-a-font">Finding a font</h2>
 
         <p>The second issue, of characters not rendering in our desired font face, was due to missing characters in the font. This is something to be aware of when venturing into the domain of rarely-used characters&#8212;font designers will rarely include every possible character in their font, but will instead design glyphs for only the most commonly used characters.</p>
 
         <p>Our client got in touch with the font designer and arranged to have the missing characters added. However, we still had an issue whilst this took place. As an interim solution we looked around for a compatible font&#8212;<a href="https://www.google.com/get/noto/">Google Noto</a> was our final choice, as it supports a huge range of characters, and this worked very well.</p>
 
-        <h2>Lessons learned</h2>
+        <h2 id="section-lessons-learned">Lessons learned</h2>
 
         <p>This was a very interesting process, and I learnt a lot from it: don&#8217;t assume that your font will support all of the glyphs that you require if you&#8217;re working outside of common ASCII characters; test a known set of non-standard characters on all supported platforms; and if you don&#8217;t require de-composed characters for other purposes, pre-composition will help your data display more consistently.</p>
 

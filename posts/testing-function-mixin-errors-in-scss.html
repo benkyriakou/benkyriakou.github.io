@@ -75,7 +75,7 @@
 
         <p>Mixins present more of a challenge, since they have to return something CSS-like. This isn't something that Susy provides a template for, since it's primarily function-based, so I've come up with two basic approaches. There may be more!</p>
 
-        <h2>Returning an error value</h2>
+        <h2 id="section-returning-an-error-value">Returning an error value</h2>
 
         <p>The limitation of mixins is that they have to return something CSS-like, so you can't use the same function-based approach. Instead, you can use a mixin to return a CSS block containing the error:</p>
 
@@ -119,7 +119,7 @@
 <span>}</span>
 </code></pre>
 
-        <h2>Setting a global error message</h2>
+        <h2 id="section-setting-a-global-error-message">Setting a global error message</h2>
 
         <p>Alternatively, instead of returning anything from the mixin you can set a global state variable. In this case, your error mixin will look more like:</p>
 
@@ -167,7 +167,7 @@
 
         <p>On balance I prefer this approach to returning error values since there's explicit separation between values returned from the mixin and error messages, and the tests are a little more compact.</p>
 
-        <h2>The downsides</h2>
+        <h2 id="section-the-downsides">The downsides</h2>
 
         <p>Because of the way that both of these methods work, you have to have a single point of return for errors. If it's possible to return multiple errors, you'll see incorrect values.</p>
 
@@ -175,7 +175,7 @@
 
         <p>The other way to approach this, as suggested by <a href="https://github.com/oddbird/true/issues/121#issuecomment-369401803">Miriam Suzanne</a>, would be to make your SASS largely function-based, using mixins sparingly. This is effectively the approach Susy takes, which has worked well for them.</p>
 
-        <h2>Appendix</h2>
+        <h2 id="section-appendix">Appendix</h2>
 
         <p>For further information on alternative error-handling approaches in SASS see <a href="https://webdesign.tutsplus.com/tutorials/an-introduction-to-error-handling-in-sass--cms-19996">this article by Hugo Giraudel</a>, which I found helpful in playing around with these ideas.</p>
       </div></article>

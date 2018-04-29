@@ -58,7 +58,7 @@
 
         <p>In my latest project, I decided to spend the time I would have used to create the CircleCI script to instead see how easy it would be to make Ansible do the work for me. Turns out, it's not that hard. That the Ansible provisioning was written against Debian and the CircleCI environments use Ubuntu definitely helped, but nowadays most Ansible Galaxy roles do a good job of cross-compatibility.</p>
 
-        <h2>Local provisioning</h2>
+        <h2 id="section-local-provisioning">Local provisioning</h2>
 
         <p>The first step was to figure out how to do local provisioning with Ansible. It turns out there are <a href="http://docs.ansible.com/ansible/playbooks_delegation.html#local-playbooks">a bunch of different ways</a> to do this, including specific command-line invocations of <code>ansible-playbook</code> and special playbook variables. I like using <code>group_vars</code> to keep my configuration in one place, so I went with those.</p>
 
@@ -76,7 +76,7 @@
 
         <p>This was all the base configuration that I needed. You can then add any environment-specific configuration to this <code>group_vars</code> file.</p>
 
-        <h2>CircleCI provisioning</h2>
+        <h2 id="section-circleci-provisioning">CircleCI provisioning</h2>
 
         <p>After setting up my local Ansible provisioning, I just needed to configure CircleCI to run it. To the dependencies section in my <code>circle.yml</code> file I added;</p>
 

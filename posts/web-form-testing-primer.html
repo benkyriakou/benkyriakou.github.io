@@ -68,7 +68,7 @@
           <li>Implement a layer to do operations like escaping or encoding <strong>once</strong>, rather than relying on separate user operations</li>
         </ul>
 
-        <h2>A note on escaping</h2>
+        <h2 id="section-a-note-on-escaping">A note on escaping</h2>
 
         <p>As a simple escaping example, imagine you've done this to construct some JSON in PHP:</p>
 
@@ -99,7 +99,7 @@
 
         <p>This also has the side-effect of making the data much easier to manipulate in transit. If I had constructed this as a string in multiple operations, it would be very hard to do anything other than append values to an existing structure. With an array, I can manipulate it as I would any other data structure. I can also rely on <code>json_encode()</code> to format the JSON output, should I wish to add indentation. Try managing that with a string!</p>
 
-        <h2>Strings</h2>
+        <h2 id="section-strings">Strings</h2>
 
         <p>One of my favourite string testing resources is minimaxir's <a href="https://github.com/minimaxir/big-list-of-naughty-strings/blob/master/blns.txt">Big List of Naughty Strings</a>, which gives you values for a lot of the test cases below.</p>
 
@@ -121,7 +121,7 @@
           </li>
         </ul>
 
-        <h2>Numbers</h2>
+        <h2 id="section-numbers">Numbers</h2>
 
         <ul>
           <li>Zero</li>
@@ -132,7 +132,7 @@
         </ul>
 
 
-        <h2>Forms</h2>
+        <h2 id="section-forms">Forms</h2>
 
         <p>It is important to cross-browser test forms, since the return values may vary depending on the browser use. This includes testing empty fields, to ensure that the correct defaults are populated. The structure and processing of the form should also be tested using by editing the form using the browser inspector.</p>
 

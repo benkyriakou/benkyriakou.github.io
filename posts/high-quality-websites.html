@@ -58,17 +58,17 @@
 
         <p>When building a website that will give a client good service for years to come, it's important to have that timeless aspect. Not everyone can afford to rebuild their site every few years, so making pragmatic decisions will benefit the client, the user, and any future developers.</p>
 
-        <h2>Speed</h2>
+        <h2 id="section-speed">Speed</h2>
 
         <p>A website should be fast. Aim for an initial server response in under 200ms, with a complete page load in under 1000ms. To aid this the page weight should be kept small&#8212;most pages should be under 1MB uncached, with a significant drop once shared assets are cached locally.</p>
 
         <p>Speed helps users achieve their goals more quickly and, as Google's research<sup class="reference"><a href="#goog-speed" id="ref-goog-speed">1</a></sup> shows, encourages them to spend more time using a website. It's important to note this is not only a network/server problem; perceived speed can be increased by designing interfaces which don't get in the users' way<sup class="reference"><a href="#goog-latency" id="ref-goog-latency">2</a></sup>.</p>
 
-        <h2>Security</h2>
+        <h2 id="section-security">Security</h2>
 
         <p>Websites should be secure, both for the user and the operator. Secure user data, strive to use SSL and strong encryption everywhere they're needed, and harden infrastructure by keeping software up to date.</p>
 
-        <h2>Code quality</h2>
+        <h2 id="section-code-quality">Code quality</h2>
 
         <p>The quality of the underlying website code should be high. I fully subscribe to Abelson's assertion that programs should primarily be human-readable, and write my code accordingly.</p>
 
@@ -79,17 +79,17 @@
 
         <p>Alongside writing tests, promote high code quality by using linting. Linting not only eliminates fragile programming patterns but also enforces a common standard for formatting, which can minimise nitpicking comments during code review. When experienced programmers like John Carmack endorse linting and static analysis<sup class="reference"><a href="#carmack-linting" id="ref-carmack-linting">3</a></sup> as a valuable method of eliminating bugs, it's worth taking note.</p>
 
-        <h2>Inclusivity</h2>
+        <h2 id="section-inclusivity">Inclusivity</h2>
 
         <p>Websites should be inclusive, catering to as many use cases as practically possible. Inclusivity encompasses a range of concerns, including progressive enhancement (the core functionality of a site <strong>must</strong> work without JavaScript) and accessibility.</p>
 
         <p>Accessibility is often seen as affecting a small portion of a website's audience, but it can improve the experience of a huge spectrum of users. For example: colour contrast. Those subtle grey tones that look great on a designer's screen aren't so helpful on a brightly lit phone. Think of your users' needs, and compromise where needed.</p>
 
-        <h2>Well documented</h2>
+        <h2 id="section-well-documented">Well documented</h2>
 
         <p>All non-trivial code should be well documented. The code itself should have comments to document its functionality, and the system should have documentation related to its usage. "The code is the documentation" is a lazy excuse&#8212;unless you're extending the system it's a wasted exercise to pick apart the code when a simple set of API documentation and examples would give the necessary information in a fraction of the time. Production-ready code is incomplete without documentation.</p>
 
-        <h2>Conclusion</h2>
+        <h2 id="section-conclusion">Conclusion</h2>
 
         <p>This is by no means an exhaustive list, or anything that people haven't said before (Jeremy Keith, in particular, has written and spoken in a similar vein). However, I feel it's a topic worth reiterating, since many sites still seem to miss the basics. Make websites you'll still be proud of in five years, and everyone will be better off.</p>
       <ol class="references"><li><a href="#ref-goog-speed" title="Return to reference">^</a> <cite class="references__item"><a id="goog-speed" href="//googleresearch.blogspot.co.uk/2009/06/speed-matters.html" rel="external">Google Research Blog: Speed Matters (2009)</a></cite></li><li><a href="#ref-goog-latency" title="Return to reference">^</a> <cite class="references__item"><a id="goog-latency" href="//developers.google.com/speed/articles/usability-latency" rel="external">Google Developers: UI messaging and perceived latency</a></cite></li><li><a href="#ref-carmack-linting" title="Return to reference">^</a> <cite class="references__item"><a id="carmack-linting" href="//www.gamasutra.com/view/news/128836/InDepth_Static_Code_Analysis.php" rel="external">John Carmack: Static Code Analysis</a></cite></li></ol></div></article>

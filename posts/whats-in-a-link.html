@@ -58,7 +58,7 @@
 
         <p>I've spent a lot of time researching how to create good, usable links, and realised two things&#8212;it's a very hard thing to do, and the relevant information is spread out all over the web. What I wanted was a single document that drew together all of these recommendations based on user research and web standards to help web-developers and designers make their sites more accessible for everyone.</p>
 
-        <h2>The job of a link</h2>
+        <h2 id="section-the-job-of-a-link">The job of a link</h2>
 
         <p>Our links should be easily usable and accessible to as many people using our website as humanly possible. Much of the web is 'accessible by default', and links are no exception to this rule&#8212;without any extra work, an HTML document will have links which are;</p>
 
@@ -75,7 +75,7 @@
 
         <p>So what should we be thinking about when marking up and styling our links?</p>
 
-        <h2>A functional link</h2>
+        <h2 id="section-a-functional-link">A functional link</h2>
 
         <p>There are a range of states to show user interaction with links. However, these states are only as useful as the styling associated with them. Using reset stylesheets commonly results in these being stripped away, so use normalise stylesheets instead and make sure any other styling is added back as needed.</p>
 
@@ -102,17 +102,17 @@
         <p>To test the overall accessibility of your pages, there are automatic tools to do a lot of the work. In the past I've used the WAVE accessibility tester, but there are also Grunt plugins and services like <a href="//tenon.io">Tenon.io</a> to allow you increasing levels of automation with CI.</p>
 
 
-        <h2>Pseudo-classes</h2>
+        <h2 id="section-pseudoclasses">Pseudo-classes</h2>
 
         <p>Pseudo-classes are used to target links in different states. Understanding the purpose of different pseudo-classes will let you style links appropriately and predictably for users of your website, improving their usability.</p>
 
         <p>As noted above, the available pseudo-classes are <code>link</code>, <code>visited</code>, <code>hover</code>, <code>focus</code>, and <code>active</code>. They follow the LHVA (link, hover, visited, active) order of precedence, and should be written in this order in your stylesheet for proper precedence. <code>focus</code> isn't explicitly defined in the order, but should be placed before, after, or with your <code>hover</code> state (as I'll explain below).</p>
 
-        <h3>:link</h3>
+        <h3 id="section-link">:link</h3>
 
         <p>The <code>link</code> pseudo-class targets unvisited links, and is the opposite of <code>visited</code>. For <code>link</code> to apply, the element must have an <code>href</code> attribute. This pseudo-class forms your base styling for links.</p>
 
-        <h3>:visited</h3>
+        <h3 id="section-visited">:visited</h3>
 
         <p>The <code>visited</code> pseudo-class targets visited links. As with <code>link</code>, <code>visited</code> requires the element to have an <code>href</code> attribute to apply.</p>
 
@@ -120,26 +120,26 @@
 
         <p>Conversely, it's not useful for sites or regions with largely static content, such as a brochureware site or your main navigation. These links will be visited repeatedly, and notifying the user that they've visited them before doesn't improve the utility of the site.</p>
 
-        <h3>:hover</h3>
+        <h3 id="section-hover">:hover</h3>
 
         <p>The most commonly used pseudo-class, <code>hover</code> targets links when the user mouses over them. In recent times the way that developers use <code>hover</code> has changed due to the proliferation of touch-screen devices, which generally don't respect <code>hover</code>.</p>
 
         <p>The current best practice is that the styling of your <code>hover</code> state should not be used to reveal extra information, since you should assume that some users will not have access to it. <code>hover</code> should instead only be used to highlight the link on interaction with a mouse or pointing device.</p>
 
-        <h3>:focus</h3>
+        <h3 id="section-focus">:focus</h3>
 
         <p>The least commonly-used (or most misunderstood) pseudo-class, <code>focus</code> targets elements which have focus&#8212;defined as accepting a input event, most commonly from a keyboard or mouse. For links this means that it would activate when hitting return on the keyboard. The simplest ways to give a link <code>focus</code> are to select it by tabbing, or by clicking it (<code>focus</code> is applied after the click).</p>
 
         <p>The <code>focus</code> pseudo-class is the most important in terms of accessibility, since it affects users navigating the site with a keyboard or other non-pointing device. At minimum I'd recommend that you apply your :hover styling to the link, whilst allowing any browser-specific styles such as outlines to also apply. Ideally the <code>focus</code> state should be slightly more emphasised than :hover, since it should be easily scannable on a page of content. An added outline is the default in most browsers, and I'd recommend this as an additional emphasis in your own CSS.</p>
 
-        <h3>:active</h3>
+        <h3 id="section-active">:active</h3>
 
         <p>The <code>active</code> pseudo-class target an element whilst it is being activated by the user. In practice this is the time during which a keyboard, mouse button, or touch input is between the relevant down and up states (e.g. keydown and keyup).</p>
 
         <p>In modern web-design, the <code>active</code> state should be considered especially useful for mobile users, as it gives a clear indication when an element is tapped that the input has been registered. It is also important for desktop users, for the same reason.</p>
 
 
-        <h2>Link behaviour</h2>
+        <h2 id="section-link-behaviour">Link behaviour</h2>
 
         <p>Users have a certain expectation of how links should work based on how they work on other people's sites, and you should match it as much as possible to increase the predictability and accessibility of your website. There are also <a href="//www.w3.org/TR/WCAG20/">WCAG guidelines</a> to point you in the right direction.</p>
 
@@ -166,7 +166,7 @@
           <li>A <code>visited</code> state style</li>
         </ul>
 
-        <h3>Tabindex</h3>
+        <h3 id="section-tabindex">Tabindex</h3>
 
         <p>Links that should be activated by the user should have a <code>tabindex</code> value. As per <a href="//w3c.github.io/html/editing.html#the-tabindex-attribute">the W3 specifications</a>, the following elements have an implicit <code>tabindex</code> of 0;</p>
 
@@ -190,7 +190,7 @@
 
         <p><code>tabindex</code> should be set so that elements can be accessed in an intelligent order with the keyboard. In the past this has been achieved with <a href="//alistapart.com/article/negativemargins">negative margins</a>, but would now be better implemented with Flexbox ordering (or simply constructing your HTML in a logical order).</p>
 
-        <h3>Skip-to-content</h3>
+        <h3 id="section-skiptocontent">Skip-to-content</h3>
 
         <p>Skip-to-content links should allow users to jump past unnecessary links (such as main menus) and focus directly on the main page content. The <a href="//www.w3.org/TR/WCAG20-TECHS/G1.html">intended behaviour is that</a>;</p>
 
@@ -214,7 +214,7 @@
 
         <p>The negative <code>tabindex</code> makes the element programmatically focusable, and appropriately shifts the focus when explicitly targeted by the skip-to-content link. However, since it's a negative <code>tabindex</code> it's not placed in the focus navigation order, and will not appear in normal navigation. The <code>name</code> attribute should no longer be used for this in HTML5 <a href="//www.w3.org/TR/html5/obsolete.html#attr-a-name">as it is deprecated</a>&#8212;always use an <code>id</code>.</p>
 
-        <h3>Use of target attribute</h3>
+        <h3 id="section-use-of-target-attribute">Use of target attribute</h3>
         <p>The use of the <code>target</code> attribute in links is, and will continue to be, a subjective topic. I'll try to stick to the facts here, but with a little of my own opinion.</p>
 
         <p><a href="//www.w3.org/TR/WCAG20/#consistent-behavior">Section 3.2 of the WCAG guidelines</a> specify that, for AAA compliance, users should not encounter unpredictable context switches, and should be able to disable them if needed. Applying <code>target="_blank"</code> to a link will force it to open in a new window or tab <a href="//diveintoaccessibility.info/day_16_not_opening_new_windows.html">depending on your browser</a>. For many users this can be confusing behaviour, as it changes their browsing context and breaks the behaviour of the back button. This is an additional impediment for users who rely on screen readers, as it places the onus on the software to declare the behaviour.</p>
@@ -225,7 +225,7 @@
 
         <p>There is a trend of opening links to external sites in new windows when they wouldn't offer links back. The solution here is to make sure you can find your way back, indicate visually the link goes to a different site, or not break the back button, e.g. shopping carts.</p>
 
-        <h2>Block links</h2>
+        <h2 id="section-block-links">Block links</h2>
 
         <p>Block-level links were introduced in HTML5 in response to the need for making a more complex element than a text string into a hyperlink. Consider a common website feature&#8212;a rich teaser containing an image, title, and descriptive text. Without block-level links, your choices are to either to link multiple elements to the content (annoying when using a keyboard), have a single link which is progressively enhanced with JavaScript to make the block clickable (which doesn't work well with common actions like middle- or right-clicking to open in a new tab), or using CSS trickery to make a link fill the whole area.</p>
 
@@ -254,27 +254,27 @@
 
         <p>As with anything, there are alternative solutions. The Guardian's homepage blocks straddle the line between block and inline links, using an absolutely positioned anchor block which is overlaid by inline sub-links using z-index. Another potential solution is to use this for progressive enhancement, replicating the link behaviour with JavaScript to make the entire element clickable.</p>
 
-        <h2>Accessibility</h2>
+        <h2 id="section-accessibility">Accessibility</h2>
 
         <p>When styling your links you should also cater to users who may not be interacting with the page as you might expect. This includes, but is not limited to colorblindness or visual impairment, keyboards or screen readers, touch-only devices, non-JavaScript browsers, and non-CSS browsers.</p>
 
-        <h3>Color</h3>
+        <h3 id="section-color">Color</h3>
 
         <p>Colors should have <a href="//www.w3.org/TR/UNDERSTANDING-WCAG20/visual-audio-contrast-contrast.html">sufficient contrast</a> with the background to be legible in low light conditions, and to users with colorblindness or other visual impairments. Any <a href="//www.w3.org/WAI/GL/wiki/Post_WCAG_2#Contrast_of_Hover_and_Link_Text_States">state changes</a> should likewise have sufficient contrast to be discernible from the previous state. You can check the contrast of your links with the <a href="//webaim.org/resources/contrastchecker">WAVE accessibility tool</a>.</p>
 
-        <h3>Touch-only devices</h3>
+        <h3 id="section-touchonly-devices">Touch-only devices</h3>
 
         <p>As mentioned above, current best practice recommends not using the hover state to present extra information to users due to the difficulty activating it on touch devices. As such, care should be taken that all links are equally usable without a hover state, and that appropriate styling is provided for the active state to give the user a visual clue when they activate a link.</p>
 
-        <h3>Non-JavaScript browsers</h3>
+        <h3 id="section-nonjavascript-browsers">Non-JavaScript browsers</h3>
 
         <p>When providing functionality that uses JavaScript, any fallbacks should ensure that the links have a valid <code>href</code> attribute. A common example of this would be an AJAX pager&#8212;pager links should link to a valid URL so that if JavaScript is not enabled the user is still sent to a valid location. As such, it is generally not advisable to use links without an <code>href</code> attribute or with <code>href=&#8221;#&#8221;</code> unless you can guarantee the user will not see them when JavaScript is disabled.</p>
 
-        <h3>Non-CSS browsers</h3>
+        <h3 id="section-noncss-browsers">Non-CSS browsers</h3>
 
         <p>Whilst uncommon, it&#8217;s possible that some users may browse your site without CSS, or with their own stylesheets. As such, it&#8217;s important to ensure that your link markup is always semantic, and doesn&#8217;t rely on CSS to be usable.</p>
 
-        <h3>Link text</h3>
+        <h3 id="section-link-text">Link text</h3>
 
         <p>Link text is a simple consideration to making your links more accessible. It's long been advised to not create links with uninformative text like 'Read more' or 'Click here', as this doesn't make sense in isolation. To make these links more accessible, you can include screen-reader only text using a variety of techniques including <a href="//webaim.org/techniques/css/invisiblecontent">CSS tricks</a> and <a href="//www.paciellogroup.com/blog/2012/05/html5-accessibility-chops-hidden-and-aria-hidden">ARIA attributes</a>, so you might have a markup of the form;</p>
 
@@ -294,7 +294,7 @@
 
         <p>A better method is to make the link content useful by default&#8212;if you're building a CMS, let editors control the link content for calls to action. Or even remove the need for separate calls to action, and make the whole element a link.</p>
 
-        <h2>Go forth, and link</h2>
+        <h2 id="section-go-forth-and-link">Go forth, and link</h2>
 
         <p>Creating a page with a well thought-out link structure and style makes it more usable for everyone. Links are easier to consume in low light, on an old monitor, with poor vision, with a screen-reader, or anything in between. They're more immediately identifiable to a user in a hurry, saving desktop users from scrubbing around with a mouse and tablet users from prodding every corner of the screen to elicit a response. The next time you're designing or theming a web-page, take a step back and consider if that link is going to work well for all of your users&#8212;not just some of them.</p>
       </div></article>

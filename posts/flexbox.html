@@ -56,7 +56,7 @@
     <article class="article"><time class="article__date" datetime="2017-01">January 2017</time><h1 class="article__header">Flexbox</h1><div class="article__content">
         <p>I've been using flexbox for over a year for layout in CSS. Unlike its sibling <a href="http://caniuse.com/#feat=css-grid">CSS Grid</a>, flexbox has had <a href="http://caniuse.com/#feat=flexbox">widespread browser support</a> for a long time. This is a short summary of what flexbox does, and some uses for it in practice.</p>
 
-        <h2>What is Flexbox?</h2>
+        <h2 id="section-what-is-flexbox">What is Flexbox?</h2>
 
         <p>Flexbox is a layout system which allows you to abstract away a lot of the specifics of laying out items in a grid. It caters to use-cases which have historically been clunky to implement, including creating complex rows and columns, laying out flexible elements, adapting to bidirectionality, and overriding source ordering.</p>
 
@@ -109,29 +109,29 @@
 
         <p>The great thing about both the parent and child properties is that they are all relative to the <code>flex-direction</code> set on the parent element. This makes it incredibly easy to influence the layout without needing to change other styling. <code>flex-direction</code> is also determined based on the <code>dir</code> attribute, making it even more adaptive.</p>
 
-        <h2>Use cases</h2>
+        <h2 id="section-use-cases">Use cases</h2>
 
-        <h3><a href="/demos/flexbox/holy-grail">Holy grail</a></h3>
+        <h3 id="section-holy-grail"><a href="/demos/flexbox/holy-grail">Holy grail</a></h3>
 
         <p>The classic three-column 'holy grail' layout with a sticky footer. This uses <code>flex-direction: column;</code> on the wrapper to create the base layout with <code>flex-grow: 1;</code> set on the content area to expand it to fill the page window, and a standard column layout in the content area with column precedence set using <code>order</code>.</p>
 
-        <h3><a href="/demos/flexbox/bidi">Bidirectional</a></h3>
+        <h3 id="section-bidirectional"><a href="/demos/flexbox/bidi">Bidirectional</a></h3>
 
         <p>A simple bidirectional grid layout which reflows based on the directionality of the <code>&lt;body&gt;</code> element. Since other properties are already set relative to the <code>flex-direction</code>, this is incredibly powerful when used for more complex layouts.</p>
 
-        <h3><a href="/demos/flexbox/trello">Trello</a></h3>
+        <h3 id="section-trello"><a href="/demos/flexbox/trello">Trello</a></h3>
 
         <p>A basic Trello-like layout of cards in columns. This uses a column layout inside a grid of tall rows to create a card structure. See the Bugs section below for a limitation of this pattern.</p>
 
-        <h3><a href="/demos/flexbox/flexible-grid">Flexible grid</a></h3>
+        <h3 id="section-flexible-grid"><a href="/demos/flexbox/flexible-grid">Flexible grid</a></h3>
 
         <p>A simple flexible grid of small and large items, constructed using <code>flex-basis</code> and <code>flex-grow</code> to control the relative sizing of elements. This also features a work-around to prevent rows or orphaned elements expanding to take up the whole row, by placing a zero-height element with a large <code>flex-grow</code> value at the end of the content.</p>
 
-        <h2>Bugs</h2>
+        <h2 id="section-bugs">Bugs</h2>
 
         <p>When creating the Trello example I <a href="/demos/flexbox/trello-bug">found a bug</a> in the browser implementation of <code>flex-direction: column;</code> which appears to be widespread (see the <a href="https://bugs.chromium.org/p/chromium/issues/detail?id=507397">Chromium bug report</a> and a <a href="http://stackoverflow.com/questions/33891709/when-flexbox-items-wrap-in-column-mode-container-does-not-grow-its-width">related Stack Overflow post</a>). The issue comes from the browser's calculation of the width of the flex container&#8212;after the first row, the container fails to expand to encapsulate the remaining rows (presumably because container width calculation is traditionally horizontally- rather than vertically-driven). This can be avoided if you can give your column a defined width, but the specific case of having an expanding column layout doesn't yet seem to be supported.</p>
 
-        <h2>Flexbox resources</h2>
+        <h2 id="section-flexbox-resources">Flexbox resources</h2>
 
         <p>A few resources I've found helpful when learning and using flexbox:</p>
 
