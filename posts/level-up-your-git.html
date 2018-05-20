@@ -1,0 +1,362 @@
+<!DOCTYPE html SYSTEM "about:legacy-compat">
+<html lang="en">
+  <head>
+    <meta charset="utf-8"/>
+    <meta name="theme-color" content="#333"/>
+    <meta name="description" content="Making your Git experience a little better."/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=1"/>
+    <link rel="canonical" href="http://benkyriakou.com/posts/level-up-your-git"/>
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon"/>
+    <title>Level up your Git | Ben Kyriakou</title>
+    <link rel="stylesheet" href="/css/style.css" type="text/css"/>
+    <meta property="og:url" content="http://benkyriakou.com/posts/level-up-your-git"/>
+    <meta property="og:title" content="Level up your Git"/>
+    <meta property="og:description" content="Making your Git experience a little better."/>
+    <meta property="og:image" content="http://benkyriakou.com/images/global/twitter-card-image.png"/>
+    <meta name="twitter:card" content="summary"/>
+    <meta name="twitter:site" content="@benkyriakou"/>
+    <meta name="twitter:title" content="Level up your Git"/>
+    <meta name="twitter:description" content="Making your Git experience a little better."/>
+    <meta name="twitter:image" content="http://benkyriakou.com/images/global/twitter-card-image.png"/>
+    <script>
+      window.onload = function() {
+        (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+        (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+        m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+        })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+        ga('create', 'UA-64337321-1', 'auto');
+        ga('send', 'pageview');
+      };
+    </script>
+  </head>
+  <body>
+    <div class="wrapper">
+      <header class="site-header">
+        <div class="center-wrapper">
+          <nav>
+            <ul class="site-header__items">
+              <li class="site-header__item">
+                <a href="/">Home</a>
+              </li>
+              <li class="site-header__item">
+                <a href="/about">About</a>
+              </li>
+              <li class="site-header__item">
+                <a href="//drupal.org/u/ben.kyriakou">Drupal.org</a>
+              </li>
+              <li class="site-header__item">
+                <a href="//twitter.com/benkyriakou">Twitter</a>
+              </li>
+            </ul>
+          </nav>
+        </div>
+      </header>
+      <main class="center-wrapper">
+    <article class="article"><time class="article__date" datetime="2018-05">May 2018</time><h1 class="article__header">Level up your Git</h1><div class="article__content">
+        <div class="index"><ul class="index-level"><li><a href="#section-who-is-this-for">Who is this for?</a></li><li><a href="#section-why-git">Why Git</a></li><li><a href="#section-the-git-workflow">The Git workflow</a><ul class="index-level"><li><a href="#section-common-workflows">Common workflows</a></li></ul></li><li><a href="#section-merging">Merging</a><ul class="index-level"><li><a href="#section-pulling-with-rebase">Pulling with --rebase</a></li></ul></li><li><a href="#section-git-configuration">Git configuration</a><ul class="index-level"><li><a href="#section-autocompletion">Autocompletion</a></li><li><a href="#section-whitespace">Whitespace</a></li><li><a href="#section-ignored-files">Ignored files</a></li><li><a href="#section-merge-tool">Merge tool</a></li></ul></li><li><a href="#section-rebasing">Rebasing</a><ul class="index-level"><li><a href="#section-pulling-with-rebase">Pulling with rebase</a></li><li><a href="#section-rebasing-my-local-commits">Rebasing my local commits</a></li></ul></li><li><a href="#section-example-git-configuration">Example Git configuration</a></li></ul></div>
+
+        <h2 id="section-who-is-this-for">Who is this for?</h2>
+
+        <p>If you consider yourself a Git expert, well-versed in the merge conflict and interactive rebase, this isn't for you. This is for anyone who's been using Git in a basic day-to-day setting, and wants some tips and tricks to make their Git experience a little bit nicer. This article includes some workflow and configuration recommendations that you might not be aware of, based on my personal experience and the kind of issues we encounter at Cogapp.</p>
+
+        <h2 id="section-why-git">Why Git</h2>
+
+        <p>Git is a powerful distributed version-control system that has largely superceded predecessors like SVN and CVS. There are many reasons for this, but the most compelling for me are:</p>
+
+        <ul>
+          <li>Speed</li>
+          <li>Distribution</li>
+          <li>Cheap branching model</li>
+        </ul>
+
+        <p>Speed is important&#8212;we want our tools to help us be as productive as possible, and anyone who has worked on a large svn project will know the pain of waiting for large merges and checkouts. A large proportion of Git's speed goes hand-in-hand with it being a distributed version-control system&#8212;having all of the information about the codebase available locally means that common operations are vastly quicker.</p>
+
+        <p>Distribution can also be helpful in letting you work with your code on the move. The disadvantage of a centralised version-control system like svn is that unless you can talk to the central repository, you can't commit anything. Git allows you to work locally until you can talk to your <code>origin</code> server, making life that much simpler.</p>
+
+        <p>And in any developer workflow, having a cheap (and simple) branching and merging model is a godsend. Although it takes some getting used to after the reflexive fear of merging that comes from using svn, where forgetting to run a single command can spell disaster, Git makes creating and merging feature-branches (largely) issue-free. Because of the distributed model it's also possible to try out your merges locally before having to push them remotely, giving you added peace-of-mind.</p>
+
+        <h2 id="section-the-git-workflow">The Git workflow</h2>
+
+        <p>Any basic team-based workflow in Git will involve using a few core commands:</p>
+
+        <ul>
+          <li><code>git clone</code></li>
+          <li><code>git checkout</code></li>
+          <li><code>git add</code></li>
+          <li><code>git commit</code></li>
+          <li><code>git push</code></li>
+          <li><code>git merge</code></li>
+        </ul>
+
+        <p>Working from a core <code>develop</code> branch, a feature-branch-driven development workflow might look something like:</p>
+
+        <pre><code><span>git clone git://...</span>
+<span>git checkout -b my-feature-branch</span>
+<span>... Write code</span>
+<span>git add .</span>
+<span>git commit</span>
+<span>... Repeat until complete</span>
+<span>git push</span>
+</code></pre>
+
+        <p>Then, as a reviewer merging the feature branch:</p>
+
+        <pre><code><span>git checkout my-feature-branch</span>
+<span>... Review</span>
+<span>git checkout develop</span>
+<span>git pull</span>
+<span>git merge my-feature-branch</span>
+<span>git push</span>
+</code></pre>
+
+        <p>You'll get a long way with this basic set of commands, but there are plenty of things that you can do to make your life easier (both in terms of configuration and process) as your codebase gets larger and more complex. I'm going to cover a few of those here.</p>
+
+        <h3 id="section-common-workflows">Common workflows</h3>
+
+        <p>Having a defined workflow is important to ensure that everyone is working to the same branching model and knows what to do in the case of bugs or hotfixes. We use <a href="https://www.atlassian.com/git/tutorials/comparing-workflows/gitflow-workflow">Gitflow</a> (with a few tweaks), and I'd recommend this as a starting point for anyone that doesn't have a workflow already in place.</p>
+
+        <p>There are also <a href="https://trunkbaseddevelopment.com/">variants of this</a> available following the same general feature-branching model.</p>
+
+        <h2 id="section-merging">Merging</h2>
+
+        <p>Merging is one of the more painful experiences you can have in Git (as in any version-control system) when it goes wrong. In my experience there are a couple of things that are the trickiest to resolve:</p>
+
+        <ol>
+          <li>Large diffs</li>
+          <li>Parallel changes to similar pieces of code</li>
+        </ol>
+
+        <p>Issues with large diffs can be avoided by keeping your feature branches as compact as possible&#8212;if you work on Agile projects this goes hand-in-hand with having small features. Indications that a branch is going to be troubling to merge can be either that it is long-running (has gone for a long period of time without being merged), or that it has a large number of changed lines of code.</p>
+
+        <p>Parallel changes, such as those from merged feature branches, are tricker, and in many cases will require human intervention (i.e. talking to the person who made the other set of changes) in order to resolve. However, there are some configuration changes that you can make which may make this process simpler.</p>
+
+        <p>In the case of refactoring or introduction of similar code, the basic Git diff algorithm can give odd diffs, making it hard to decipher what has actually changed. Take this basic bit of PHP:</p>
+
+        <pre><code><span>&lt;?php</span>
+<span/>
+<span>$config['foo'] = array(</span>
+<span>  'foo',</span>
+<span>  'bar',</span>
+<span>  'baz',</span>
+<span>);</span>
+<span/>
+<span>$config['bar'] = array(</span>
+<span>  'foo',</span>
+<span>  'bar',</span>
+<span>  'baz',</span>
+<span>);</span>
+</code></pre>
+
+        <p>Now imagine we've refactored this by moving <code>bar</code> above <code>foo</code> and adding a new value:</p>
+
+        <pre><code><span>&lt;?php</span>
+<span/>
+<span>$config['bar'] = array(</span>
+<span>  'foo',</span>
+<span>  'bar',</span>
+<span>  'baz',</span>
+<span>);</span>
+<span/>
+<span>$config['foo'] = array(</span>
+<span>  'foo',</span>
+<span>  'bar',</span>
+<span>  'baz',</span>
+<span>  'qux',</span>
+<span>);</span>
+</code></pre>
+
+        <p>A standard <code>git diff</code> for this code doesn't come out quite as you'd expect:</p>
+
+        <pre><code><span>diff --git a/foo.php b/foo.php</span>
+<span>index 954387f..c4916ae 100644</span>
+<span>--- a/foo.php 100644</span>
+<span>+++ b/foo.php</span>
+<span>@@ -1,13 +1,14 @@</span>
+<span> &lt;?php</span>
+<span/>
+<span>-$config['foo'] = array(</span>
+<span>+$config['bar'] = array(</span>
+<span>   'foo',</span>
+<span>   'bar',</span>
+<span>   'baz',</span>
+<span> );</span>
+<span/>
+<span>-$config['bar'] = array(</span>
+<span>+$config['foo'] = array(</span>
+<span>   'foo',</span>
+<span>   'bar',</span>
+<span>   'baz',</span>
+<span>+  'qux',</span>
+<span> );</span>
+</code></pre>
+
+        <p>Whilst it correctly reflects what has physically changed here, it doesn't accurately represent the fact that we've really moved an entire block of code in the file. By using a more advanced diffing algorithm which tries to group together related changes, you can achieve a more human-readable diff. With <code>git diff --histogram</code>:</p>
+
+        <pre><code><span>diff --git a/foo.php b/foo.php</span>
+<span>index 954387f..c4916ae 100644</span>
+<span>--- a/foo.php</span>
+<span>+++ b/foo.php</span>
+<span>@@ -1,13 +1,14 @@</span>
+<span> &lt;?php</span>
+<span/>
+<span>-$config['foo'] = array(</span>
+<span>-  'foo',</span>
+<span>-  'bar',</span>
+<span>-  'baz',</span>
+<span>-);</span>
+<span>-</span>
+<span> $config['bar'] = array(</span>
+<span>   'foo',</span>
+<span>   'bar',</span>
+<span>   'baz',</span>
+<span> );</span>
+<span>+</span>
+<span>+$config['foo'] = array(</span>
+<span>+  'foo',</span>
+<span>+  'bar',</span>
+<span>+  'baz',</span>
+<span>+  'qux',</span>
+<span>+);</span>
+</code></pre>
+
+        <p>This diff, whilst larger than the first, more accurately represents the nature of the change&#8212;instead of changing three disparate lines we can see that an entire block of code has been moved. The downside is that we've now lost the representation of what has changed within <code>$config['foo']</code>, which may be less helpful in larger diffs. However, I'd find this kind of diff much more helpful in many cases to see where blocks of code have been moved or introduced, particularly in the case of auto-generated code which often has these kinds of changes. Small line-by-line changes will still be reflected as such, giving visual clarity to your diff.</p>
+
+        <p>You can set <code>histogram</code> as the default diffing algorithm with:</p>
+
+        <pre><code><span>git config --global diff.algorithm histogram</span>
+</code></pre>
+
+        <p>You can also use it for pulls and merges with:</p>
+
+        <pre><code><span>git merge --strategy=recursive --Xdiff-algorithm=histogram</span>
+<span>git pull --strategy=recursive --Xdiff-algorithm=histogram</span>
+</code></pre>
+
+        <p>I don't believe this can be set as a default&#8212;some answers point to a <code>core.mergeoptions</code> configuration option, but from what I can tell this only exists as <code>branch.&lt;name&gt;.mergeOptions</code>.</p>
+
+        <h3 id="section-pulling-with-rebase">Pulling with <code>--rebase</code></h3>
+
+        <p>When pulling code changes, I'd strongly recommend taking advantage of the <code>--rebase</code> flag and pulling with <code>git pull --rebase</code>. Rebasing can be a scary thing in Git, and I'll talk about it in more detail later on, but it can also make your life simpler if used in a controlled manner and without violating the <a href="#rebase-prime-directive">rebase prime directive</a>.</p>
+
+        <p>The manual <a href="https://git-scm.com/docs/git-rebase">explains rebasing in more detail</a>, but in a nutshell rebasing will place any commits you've made locally onto the tip of the branch ahead of any remote commits that you've not yet pulled down. This means that the branch doesn't become filled with pointless merge commits every time you want to reintegrate remote changes, and gives you the same opportunities to resolve conflicts.</p>
+
+        <h2 id="section-git-configuration">Git configuration</h2>
+
+        <p>Whilst the basic settings that come with Git are perfectly usable, there are some improvements that you can make which will improve your day-to-day experience.</p>
+
+        <h3 id="section-autocompletion">Autocompletion</h3>
+
+        <p>The Git documentation provides an autocompletion script to make your life easier when you can't quite remember the name of the branch you're looking for. You can download and set this up following <a href="https://git-scm.com/book/en/v1/Git-Basics-Tips-and-Tricks#Auto-Completion">the instructions in the documentation</a>.</p>
+
+        <h3 id="section-whitespace">Whitespace</h3>
+
+        <p>Setting <a href="https://git-scm.com/book/en/v2/Customizing-Git-Git-Configuration#_code_core_autocrlf_code"><code>core.autocrlf</code></a> to the correct configuration for your platform will eliminate issues arising from mixed or conflicting line-endings. For my purposes (working on Linux and OSX) I want to enforce newlines as line-endings, so would set:</p>
+
+        <pre><code><span>git config --global core.autocrlf input</span>
+</code></pre>
+
+        <p>Setting <a href="https://git-scm.com/book/en/v2/Customizing-Git-Git-Configuration#_code_core_whitespace_code"><code>core.whitespace</code></a> can help flag up whitespace issues. The default options enabled are <code>blank-at-eol</code>, <code>blank-at-eof</code> and <code>space-before-tab</code>, which will flag whitespace at the end of lines, whitespace at the end of a file, and spaces before tabs at the beginning of a line respectively. If you work with indentation in spaces (and since it's 2018, why wouldn't you?) then you might want to use <code>tab-in-indent</code> instead with something like:</p>
+
+        <pre><code><span>git config --global core.whitespace blank-at-eol,blank-at-eof,tab-in-indent,-space-before-tab</span>
+</code></pre>
+
+        <p>If you're some kind of tab-loving lunatic, you might instead use:</p>
+
+        <pre><code><span>git config --global core.whitespace blank-at-eol,blank-at-eof,indent-with-non-tab,space-before-tab</span>
+</code></pre>
+
+        <p>The <code>space-before-tab</code> is an interesting option as it takes the middle road and lets you use either tabs or spaces with a small amount of sanity-checking if you've started the line with spaces then switched to tabs. However, there are still plenty of ways you could start mixing up indentation so I'd suggest just picking one option and rigorously enforcing it.</p>
+
+        <p>As with all other settings in this document you can set them on a per-project basis by exchanging <code>--global</code> for <code>--local</code>, in case some of your projects use tabs and others use spaces.</p>
+
+        <h3 id="section-ignored-files">Ignored files</h3>
+
+        <p>It's standard practice to create a <code>.gitignore</code> file for your project, but it's also possible to create a global <code>.gitignore</code> file which will apply to every project on your machine. <a href="https://help.github.com/articles/ignoring-files/">GitHub has a guide</a> on creating various kinds of <code>.gitignore</code> files, with some recommended lists of files to exclude. The basic process is:</p>
+
+        <pre><code><span>touch ~/.gitignore_global</span>
+<span>git config --global core.excludesfile ~/.gitignore_global</span>
+</code></pre>
+
+        <p>After this you can add your ignored files to <code>~/.gitignore_global</code> in the same way you would a project <code>.gitignore</code> file.</p>
+
+        <p>It's important to note that these changes will not apply to other developers, so they should only be used for files specific to your system or tools. For example, <code>.DS_Store</code> files if you're on OSX or <code>.idea</code> files if you use PHPStorm, but not <code>*.pyc</code> files if your project is written in Python.</p>
+
+        <h3 id="section-merge-tool">Merge tool</h3>
+
+        <p>If you're resolving merge conflicts without a merge tool or an IDE, you might find it helpful to configure one to use in conjunction with <code>git mergetool</code>. Git supports a range of options out-of-the-box with the <a href="https://git-scm.com/docs/merge-config#merge-config-mergetool"><code>merge.tool</code> config option</a>.</p>
+
+        <h2 id="section-rebasing">Rebasing</h2>
+
+        <p>Broadly speaking, <a href="https://git-scm.com/docs/git-rebase"><code>git rebase</code></a> is a tool that lets you rewrite the history of a branch by moving or modifying commits. It is very powerful, and as with many Git commands can be invoked in ways that cause you tremendous pain. However, if used carefully it can be another tool to make you life a little bit nicer when using Git.</p>
+
+        <p>I would only recommend using <code>git rebase</code> more widely if you've played around with a little, and are happy that you understand the potential side-effects and how to back out of a given rebase operation. Whilst some people will advocate for doing things like branch squashing and rebasing shared branches, where you can have the potential to have an impact on other users, I will instead recommend a single prime directive if you're new to rebasing:</p>
+
+        <blockquote id="rebase-prime-directive">
+          <p>Don't rebase pushed commits</p>
+          <cite>Me, 2018</cite>
+        </blockquote>
+
+        <p>However, there are a couple of cases where I believe rebasing can be very useful in terms of keeping your Git history that little bit saner.</p>
+
+        <h3 id="section-pulling-with-rebase">Pulling with rebase</h3>
+
+        <p>As mentioned above, I will always pull with <code>--rebase</code> if I've made some local commits and I need to integrate commits from the remote branch. This is effectively the same as calling <code>rebase</code> with the remote branch.</p>
+
+        <p>The reason for doing this is to prevent the remote branch becoming full of merge commits from merging into itself. Any merge conflicts I'll have to resolve anyway if I do a regular pull, so it's no extra effort on my part for this extra cleanliness.</p>
+
+        <h3 id="section-rebasing-my-local-commits">Rebasing my local commits</h3>
+
+        <p>I have a very rapid commiting philosophy when working on a piece of code locally, and will make many small, incremental commits once I've gotten something to a useful stage. The only rule is that each part should be commited in isolation&#8212;if I've updated a feature, some documentation, and the tests I'll make a commit for the feature change, a commit for the documentation change, and a commit for the test change.</p>
+
+        <p>Before I push these commits, I'll run back through them with <code>git rebase -i</code> and tidy them up into some logical units. For example, I'll take a series of commits that look like this:</p>
+
+        <pre><code><span>Added specification for Foo widget</span>
+<span>Added test plan for Foo widget</span>
+<span>Added first pass of Foo widget</span>
+<span>Added basic test suite for Foo widget</span>
+<span>Added corner-case handling</span>
+<span>Added additional corner-case handling</span>
+<span>Updated logical flow to speed up case Y</span>
+<span>Updated automated tests</span>
+<span>Fixed linting issues</span>
+<span>Added documentation for Foo widget</span>
+<span>Reverted change X following discussion</span>
+<span>Updated automated tests</span>
+<span>Updated test plan</span>
+</code></pre>
+
+        <p>And squash them down to something like this:</p>
+
+        <pre><code><span>Added specification for Foo widget</span>
+<span>Added test plan for Foo widget</span>
+<span>Added Foo widget and automated test suite</span>
+<span>Added documentation for Foo widget</span>
+</code></pre>
+
+        <p>I've used the fact that I've got many logically different commits to easily squash them together into single related commits. I've even squashed together two different types of commit (feature code and automated tests) since it makes sense to group them together.</p>
+
+        <p>This not only makes more sense visually, but it also makes it vastly simpler for someone reviewing the code to step through each commit and be confident that they're not reviewing something that will change a few commits later because I've made an additional commit with something I forgot.</p>
+
+        <p>There are a couple of caveats with this approach&#8212;it's still limited in that if you push these commits then need to add something else, you're going to have to add a separate commit (with the exception of branches you have sole ownership over, in which case you can rebase the pushed commits). You also want to balance working on something with the frequency you push code, in the case where you can't complete the whole feature locally then push it once it's done.</p>
+
+        <h2 id="section-example-git-configuration">Example Git configuration</h2>
+
+        <p>Bringing together some of the configuration from above, here's a basic set of configuration you may find useful. You should replace the name and email with your relevant configuration from, for example, your GitHub account. Place this in your <code>~/.gitconfig</code> file:</p>
+
+        <pre><code><span>[user]</span>
+<span>  name = Jane Doe</span>
+<span>  email = foo@example.com</span>
+<span/>
+<span>[core]</span>
+<span>  autocrlf = input</span>
+<span>  whitespace = blank-at-eol,blank-at-eof,tab-in-indent,-space-before-tab</span>
+<span/>
+<span>[diff]</span>
+<span>  algorithm = histogram</span>
+</code></pre>
+      </div></article>
+  </main>
+    </div>
+  </body>
+</html>
