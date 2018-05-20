@@ -153,8 +153,7 @@
   </xsl:template>
 
   <!-- Simple top-level index template. -->
-  <!-- @todo Extend this to allow multi-level indexes. -->
-  <xsl:template match="h2" mode="index">
+  <xsl:template match="content//*[re:match(local-name(), '^h[2-6]$')]" mode="index">
     <xsl:variable name="slug">
       <xsl:text>section-</xsl:text>
       <xsl:call-template name="slugify">
@@ -162,9 +161,55 @@
       </xsl:call-template>
     </xsl:variable>
 
+    <xsl:variable name="level" select="number(re:match(local-name(), '\d$'))" />
+    <xsl:variable name="child-tag" select="concat('h', $level + 1)" />
+
     <li>
       <a href="#{$slug}"><xsl:value-of select="string(.)" /></a>
+
+      <xsl:if test="$level &lt; 6">
+        <xsl:variable name="next" select="(following-sibling::*[re:match(local-name(), '^h[2-6]$')])[1]" />
+
+        <xsl:if test="local-name($next) = $child-tag">
+          <xsl:call-template name="headings-wrapper">
+            <xsl:with-param name="first" select="$next" />
+          </xsl:call-template>
+        </xsl:if>
+      </xsl:if>
     </li>
+  </xsl:template>
+
+  <!-- The top-level template for an index parent -->
+  <xsl:template name="headings-wrapper">
+    <!-- The first element in the set. -->
+    <xsl:param name="first" />
+
+    <!-- The heading level to operate at. -->
+    <xsl:variable name="level" select="number(re:match(local-name($first), '\d$'))" />
+
+      <xsl:if test="$level &lt; 6">
+        <ul class="index-level">
+          <xsl:call-template name="headings-children">
+            <xsl:with-param name="current" select="$first" />
+          </xsl:call-template>
+        </ul>
+      </xsl:if>
+  </xsl:template>
+
+  <!-- Iterate along children of a heading, until a different level is reached -->
+  <xsl:template name="headings-children">
+    <xsl:param name="current" />
+
+    <xsl:variable name="next" select="($current/following-sibling::*[re:match(local-name(), '^h[2-6]$')])[1]" />
+
+    <xsl:apply-templates select="$current" mode="index" />
+
+    <!-- Recurse for more likely children -->
+    <xsl:if test="local-name($next) = local-name($current)">
+      <xsl:call-template name="headings-children">
+        <xsl:with-param name="current" select="$next" />
+      </xsl:call-template>
+    </xsl:if>
   </xsl:template>
 
   <!-- Override content processing for references. -->
