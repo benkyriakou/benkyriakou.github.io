@@ -3,7 +3,7 @@ import sass
 import argparse
 from PIL import Image
 from lxml import etree
-from lxml.etree import XSLTApplyError
+from lxml.etree import XSLTApplyError, XSLTParseError
 
 # Command-line arguments.
 parser = argparse.ArgumentParser(description="Static blog processor")
@@ -20,7 +20,16 @@ IMAGE_DIR = os.path.join(BASE_DIR, 'images')
 # Static XSL to HTML transformations.
 xsl = etree.parse(os.path.join(SOURCE_DIR, 'stylesheet.xsl'))
 xsl.xinclude()
-transform = etree.XSLT(xsl)
+
+try:
+  transform = etree.XSLT(xsl)
+except XSLTParseError as e:
+  print('Building transformation failed')
+
+  for error in e.error_log:
+    print('{!s}: {!s}'.format(error.level_name, error.message))
+
+  exit(1)
 
 # Build CSS from SCSS.
 if args.all or args.css:
