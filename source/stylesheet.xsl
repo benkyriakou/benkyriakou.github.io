@@ -275,7 +275,7 @@
         <span class="article__external">External article</span>
       </xsl:if>
       <h2 class="article__header article__header--teaser">
-        <a href="{slug}">
+        <a class="article__link article__link--teaser" href="{slug}">
           <xsl:value-of select=".//article/title" />
         </a>
       </h2>
