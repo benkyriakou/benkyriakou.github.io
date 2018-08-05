@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!DOCTYPE document [
+  <!ENTITY mdash "&#8212;">
+]>
+
+<document type="article">
+  <title>Composer&mdash;an overview</title>
+  <description>An overview of how composer works and what it does.</description>
+  <slug>/posts/composer-an-overview</slug>
+  <content>
+    <article>
+      <title>Composer&mdash;an overview</title>
+      <date datetime="2018-08">August 2018</date>
+      <content>
+        <p><em>At the time of writing the latest version of Composer is 1.6: information may not be entirely accurate for later versions.</em></p>
+
+        <h2>What does it do</h2>
+
+        <p>Composer is the primary PHP package manager, succeeding PEAR for the installation of most PHP packages (with the exception of PECL packages). </p>
+
+        <p>Composer is an object-oriented package manager&mdash;it takes advantage of the PSR-0 and PSR-4 functionality in PHP to implement an autoloader to pull in classes from the <code>vendor</code> directory. One of the first things you have to do if you want to use <code>composer</code> for your project is to include this snippet of code:</p>
+
+        <pre><code>
+          <span>require __DIR__ . '/vendor/autoload.php';</span>
+        </code></pre>
+
+        <p>This then registers its own autoloader via <code>spl_autoload_register()</code>, and handles all loading of <code>composer</code> package code when you try and include something with <code>use</code>.</p>
+
+        <p>Packages are registered via https://packagist.org/. You can create both public and private packages, so if you have code that should only be shared with a small group or within your company you can still host it as a composer package.</p>
+
+        <p>You can also pull in packages directly from <a href="https://getcomposer.org/doc/05-repositories.md#loading-a-package-from-a-vcs-repository">various version-control systems</a>.</p>
+
+        <h2>Creating a package</h2>
+
+        <p>Creating and publishing a basic package is fairly straightforward. First, create an account on <a href="https://packagist.org">packagist.org</a>. I'm going to assume that you have a GitHub account, but it should be fairly straightforward to follow the directions to use this for other code repositories.</p>
+
+        <p>Now, on your machine, create a directory for your package. Then, run <code>composer init</code>. Fill out all of the relevant information, and give your package a sensible name (for example, janedoe/my-first-package). Within your directory, create another directory called <code>src</code>. This is where your package code will live.</p>
+
+        <p>Now edit your <code>composer.json</code>&mdash;you need to manually add the <a href="https://getcomposer.org/doc/01-basic-usage.md#autoloading">autoloading information</a>. Assuming you're using PSR-0, add the <code>autoload</code> section to your metadata. It should look something like this:</p>
+
+        <pre><code>
+          <span>"autoload": {</span>
+          <span>  "psr-4": {</span>
+          <span>    "MyNamespace\\": "src/"</span>
+          <span>  }</span>
+          <span>}</span>
+        </code></pre>
+
+        <p>Replace <code>MyNamespace</code> with your chosen root namespace. Remember to include this in your code.</p>
+
+        <p>Now you can start writing code, following the <a href="https://www.php-fig.org/psr/psr-4/">PSR-4 structure</a>. For example, if you wanted to have a class <code>MyNamespace\Speech\Writer</code>, you would create a directory <code>Speech</code> in <code>src</code> containing the file <code>Writer.php</code>. Inside this file would be:</p>
+
+        <pre><code>
+          <span>&lt;?php</span>
+          <span></span>
+          <span>namespace MyNamespace\Speech;</span>
+          <span></span>
+          <span>class Writer {</span>
+          <span>  public static function write() {</span>
+          <span>    echo "Hello\n";</span>
+          <span>  }</span>
+          <span>}</span>
+        </code></pre>
+
+        <p>Commit your code and push it to your GitHub repository (run <code>composer validate</code> before doing so to pre-empt any validation issues). Create a Release on the Releases page following the <a href="https://semver.org/">semver convention</a>, and then add your package to Packagist using your GitHub URL. You should see the release you created pulled though as the latest version.</p>
+
+        <p>Now you can install your package using <code>composer install</code>. You can then write some code that invokes it. From the same level as your <code>vendor</code> directory, create a file called <code>index.php</code> containing something like:</p>
+
+        <pre><code>
+          <span>&lt;?php</span>
+          <span></span>
+          <span>require __DIR__ . '/vendor/autoload.php';</span>
+          <span></span>
+          <span>use MyNamespace\Speech\Writer;</span>
+          <span></span>
+          <span>Writer::write();</span>
+        </code></pre>
+
+        <p>If you run this script in the terminal, you should see "Hello" returned.</p>
+
+        <p>See <a href="https://github.com/benkyriakou/test-package">this GitHub repository</a> for an example of some basic package code.</p>
+
+        <h2>Language</h2>
+
+        <p>Composer is written in object-oriented PHP.</p>
+
+        <h2>Architecture</h2>
+
+        <p>The architecture of the <code>composer</code> command is fairly straightforward&mdash;in the <code>bin</code> directory of the repository is the main <code>composer</code> file. From here, the composer application (<code>Composer\Console\Application</code>) is started.</p>
+
+        <p>The Application is based on the Symfony <a href="https://api.symfony.com/4.0/Symfony/Component/Console/Application.html">Console Application class</a>, and exposes the classes in <code>src/Console/Commands</code> via the <a href="https://github.com/composer/composer/blob/1.6.2/src/Composer/Console/Application.php#L378"><code>getDefaultCommands()</code> method</a>.</p>
+
+        <p>You can see all individual command classes within the <code>src/Composer/Command</code> directory. These are all <a href="https://api.symfony.com/4.0/Symfony/Component/Console/Command/Command.html">Symfony Console Commands</a>.</p>
+
+        <pre><code>
+          <span>bin/composer</span>
+          <span>└─ src/Composer/Console/Application.php</span>
+          <span>   ├─ src/Composer/Console/Command/AboutCommand.php</span>
+          <span>   ├─ src/Composer/Console/Command/ArchiveCommand.php</span>
+          <span>   ├─ ...</span>
+        </code></pre>
+
+        <p>The <code>composer</code> command is distributed as a <a href="http://php.net/manual/en/intro.phar.php">Phar (PHP Archive)</a>&mdash;a packaged PHP application. This is built using the <code>bin/compile</code> script.</p>
+
+        <h2>Security</h2>
+
+        <p>There are currently no explicit security mechanisms to verify package contents (see this <a href="https://github.com/composer/composer/issues/4022">open GitHub issue</a>).</p>
+
+        <p>As such, your best security measure is to avoid using rolling versions where possible, and instead pin your <code>composer.json</code> to a single version or a fixed range. This will ensure that you must explicitly update packages, rather than having new versions added by <code>composer update</code> as they become available.</p>
+
+        <p>For most casual use cases this is probably overkill, and you can instead rely on your lockfile, but make sure you're checking your <code>composer update</code> with <code>composer update --dry-run</code> and monitoring CHANGELOGs for updated projects.</p>
+
+        <p>If you're distributing your project for others to use, having a maximum package version is probably the way to go to prevent <a href="https://www.drupal.org/project/drupal/issues/2986725">unintended issues</a> when new versions of dependencies are released.</p>
+
+        <p>Since packages are effectively just code repositories a couple of compromised accounts could easily allow a malicious actor to add and distribute code to a popular package, so having a maximum version also serves as a security measure (as even if the release tag is deleted and replaced, the commit hash will differ from the one in your composer.lock file).</p>
+
+        <p>In the same vein it's best to avoid enabling dev packages unless explicitly required, since every commit can then potentially cause changes if you update your packages.</p>
+
+        <h2>Custom repositories</h2>
+
+        <p>Whilst package provides an easily solution to hosting Composer packages, you may want to create your own package repository if you have a large amount of code that you want to have more control over, or to keep private. There are <a href="https://getcomposer.org/doc/05-repositories.md#hosting-your-own">various tools</a> that can help you, but effectively all you need is a manifest (<code>packages.json</code>) describing the available packages and where they can be retrieved. You can then add this to your <code>composer.json</code> in the <code>repositories</code> section. For example, for Drupal packages:</p>
+
+        <pre><code>
+          <span>"repositories": [{</span>
+          <span>  "type": "composer",</span>
+          <span>  "url": "https://packages.drupal.org/8"</span>
+          <span>}],</span>
+        </code></pre>
+
+        <p>Can also use <a href="https://getcomposer.org/doc/04-schema.md#type">custom types</a>:</p>
+
+        <pre><code>
+          <span>composer search token --type=drupal-module</span>
+        </code></pre>
+
+        <h2>Useful commands</h2>
+
+        <p><code>composer require</code> is what you'll call to add packages to your composer.json file and install them to your project. This will also update your composer.lock file.</p>
+
+        <p><code>require</code> will take care of resolving the required package with existing package dependency versions. You can call it with specific versions (e.g. <code>composer require "drush/drush:9.*"</code>). You can also call it without installing the package by passing the <code>--no-update</code> flag.</p>
+
+        <p><code>composer install</code> installs the packages as specified in your <code>composer.lock</code> file (if a lock file doesn't exist it will install based on your <code>composer.json</code> and create a lock file). You should always store your lock file, since it will ensure that all developers are getting the same versions of packages when they run <code>install</code>.</p>
+
+        <p><code>composer update</code> will update your installed packages to their latest compatible versions, and <code>composer.lock</code> file. You can restrict it to a particular package or set of packages by passing the package names as arguments.</p>
+
+        <p><code>update</code> can also be used when your <code>composer.json</code> file changes&mdash;for example, when you've manually updated a version or conflict&mdash;and will take care of resolving dependency issues and updating your <code>composer.lock</code> file accordingly.</p>
+
+        <p><code>composer remove</code> lets you remove packages from your <code>composer.json</code> and <code>composer.lock</code> file.</p>
+
+        <p><code>composer search</code> lets you search your projects package repositories by package name or keyword. By default this will just search Packagist, but you can add other repositories in the <code>repositories</code> section (see above).</p>
+
+        <p><code>composer show</code> lists information about currently installed packages.</p>
+
+        <p><code>composer init</code> helps you generate a composer.json file for a new project.</p>
+
+        <p>There are <a href="https://getcomposer.org/doc/03-cli.md">plenty of other composer commands</a>, but these are the ones I find myself using on a regular basis.</p>
+
+        <h2>Further information</h2>
+
+        <p>http://naderman.de/</p>
+      </content>
+    </article>
+  </content>
+</document>
