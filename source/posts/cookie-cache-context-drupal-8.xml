@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!DOCTYPE document [
+  <!ENTITY mdash "&#8212;">
+]>
+
+<document type="article">
+  <title>Why isn't the "cookies" cache context working in Drupal 8?</title>
+  <description>Some useful information on core Drupal 8 caching.</description>
+  <slug>/posts/cookie-cache-context-drupal-8</slug>
+  <content>
+    <article>
+      <title>Why isn't the "cookies" cache context working in Drupal 8?</title>
+      <date datetime="2019-05">May 2019</date>
+      <content>
+        <p>I discovered something interesting recently about Drupal 8 cache contexts&mdash;if you have the Internal Page Cache module enabled, some of them won't work.</p>
+
+        <p>The way this module works is to cache things based on a key defined in <a href="https://api.drupal.org/api/drupal/core%21modules%21page_cache%21src%21StackMiddleware%21PageCache.php/function/PageCache%3A%3AgetCacheId"><code>PageCache::getCacheId()</code></a></p>
+
+        <pre><code>
+          <span>$cid_parts = [</span>
+          <span>  $request</span>
+          <span>    ->getSchemeAndHttpHost() . $request</span>
+          <span>    ->getRequestUri(),</span>
+          <span>  $request</span>
+          <span>    ->getRequestFormat(NULL),</span>
+          <span>];</span>
+          <span>$this->cid = implode(':', $cid_parts);</span>
+        </code></pre>
+
+        <p>This defines each cache item by its URL (minus the query-string) and format, hence isn't sufficiently granular to separately cache based on cookies.</p>
+
+        <p>By disabling this module and relying on the Dynamic Page Cache module instead, contexts like <code>cookies:</code> will start to work. However, it's recommended to also have another cache in place (such as Varnish) so that you don't end up putting undue load on Drupal.</p>
+
+        <p>Hopefully this saves you the time it took me scratching my head to figure this out.</p>
+      </content>
+    </article>
+  </content>
+</document>

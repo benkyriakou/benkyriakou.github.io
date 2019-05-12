@@ -6,6 +6,7 @@
   <description>Expulsions from the mind of Ben Kyriakou. Programming and pedantry.</description>
   <slug></slug>
   <content>
+    <xi:include href="posts/cookie-cache-context-drupal-8.xml" parse="xml" xpointer="xpointer(/document)" />
     <xi:include href="posts/composer-an-overview.xml" parse="xml" xpointer="xpointer(/document)" />
     <xi:include href="posts/level-up-your-git.xml" parse="xml" xpointer="xpointer(/document)" />
     <xi:include href="posts/lxml-the-good-parts.xml" parse="xml" xpointer="xpointer(/document)" />
