@@ -65,6 +65,9 @@
             <a href="/">Home</a>
           </li>
           <li class="site-header__item">
+            <a href="/pdfs">PDFs</a>
+          </li>
+          <li class="site-header__item">
             <a href="/about">About</a>
           </li>
           <li class="site-header__item">
