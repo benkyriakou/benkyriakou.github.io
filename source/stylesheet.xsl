@@ -16,7 +16,7 @@
         <meta name="theme-color" content="#333" />
         <meta name="description" content="{document/description}" />
         <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=1" />
-        <link rel="canonical" href="http://benkyriakou.com{document/slug}" />
+        <link rel="canonical" href="https://benkyriakou.com{document/slug}" />
         <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
 
         <title><xsl:apply-templates select="document/title" /></title>
