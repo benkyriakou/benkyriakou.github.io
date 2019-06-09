@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!DOCTYPE document [
+  <!ENTITY mdash "&#8212;">
+]>
+
+<document type="article">
+  <title>Why are my Docker ARGs empty?</title>
+  <description>Understanding build stages.</description>
+  <slug>/posts/docker-args-empty</slug>
+  <content>
+    <article>
+      <title>Why are my Docker ARGs empty?</title>
+      <date datetime="2019-06">June 2019</date>
+      <content>
+        <p>If you're running into issues with your Docker <code>ARG</code>s not setting correctly in your Dockerfile, it may be because of where they're placed. Consider this example Dockerfile:</p>
+
+        <pre><code>
+          <span>ARG VERSION=latest</span>
+          <span>ARG FILENAME</span>
+          <span></span>
+          <span>FROM ubuntu:${VERSION}</span>
+          <span></span>
+          <span>COPY ${FILENAME} /home/ubuntu/${FILENAME}</span>
+        </code></pre>
+
+        <p>Say you try and build this with <code>docker build . --tag myimage:latest --build-arg VERSION=18.04 --build-arg FILENAME=foo.txt</code>. You might be surprised if <code>foo.txt</code> isn't copied to your container</p>
+
+        <p>The reason for this is that every <code>FROM</code> in your Dockerfile <a href="https//docs.docker.com/engine/reference/builder/#from">creates a new build stage</a>, which causes values of any <code>ARG</code> from previous stages to be lost. The correct syntax for the above Dockerfile is:</p>
+
+        <pre><code>
+          <span>ARG VERSION=latest</span>
+          <span></span>
+          <span>FROM ubuntu:${VERSION}</span>
+          <span></span>
+          <span>ARG FILENAME</span>
+          <span>COPY ${FILENAME} /home/ubuntu/${FILENAME}</span>
+        </code></pre>
+
+        <p>But what if you want to have your <code>VERSION</code> argument available later on in the build process? Luckily, <a href="https://docs.docker.com/engine/reference/builder/#understand-how-arg-and-from-interact">the documentation provides the answer</a>&mdash;redeclare an empty argument after the <code>FROM</code> statement (i.e. within the next build stage):</p>
+
+        <pre><code>
+          <span>ARG VERSION=latest</span>
+          <span></span>
+          <span>FROM ubuntu:${VERSION}</span>
+          <span></span>
+          <span>ARG VERSION</span>
+          <span>ARG FILENAME</span>
+          <span>COPY ${FILENAME} /home/ubuntu/${FILENAME}</span>
+        </code></pre>
+
+        <p>So there you go&mdash;mystery solved. As long as you're mindful of when each build stage starts, it's a simple matter to make sure you have access to the right <code>ARG</code>s in the right places.</p>
+      </content>
+    </article>
+  </content>
+</document>

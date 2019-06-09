@@ -1,0 +1,98 @@
+<!DOCTYPE html SYSTEM "about:legacy-compat">
+<html lang="en">
+  <head>
+    <meta charset="utf-8"/>
+    <meta name="theme-color" content="#333"/>
+    <meta name="description" content="Understanding build stages."/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=1"/>
+    <link rel="canonical" href="https://benkyriakou.com/posts/docker-args-empty"/>
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon"/>
+    <title>Why are my Docker ARGs empty? | Ben Kyriakou</title>
+    <link rel="stylesheet" href="/css/style.css" type="text/css"/>
+    <meta property="og:url" content="http://benkyriakou.com/posts/docker-args-empty"/>
+    <meta property="og:title" content="Why are my Docker ARGs empty?"/>
+    <meta property="og:description" content="Understanding build stages."/>
+    <meta property="og:image" content="http://benkyriakou.com/images/global/twitter-card-image.png"/>
+    <meta name="twitter:card" content="summary"/>
+    <meta name="twitter:site" content="@benkyriakou"/>
+    <meta name="twitter:title" content="Why are my Docker ARGs empty?"/>
+    <meta name="twitter:description" content="Understanding build stages."/>
+    <meta name="twitter:image" content="http://benkyriakou.com/images/global/twitter-card-image.png"/>
+    <script>
+      window.onload = function() {
+        (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+        (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+        m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+        })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+        ga('create', 'UA-64337321-1', 'auto');
+        ga('send', 'pageview');
+      };
+    </script>
+  </head>
+  <body>
+    <div class="wrapper">
+      <header class="site-header">
+        <div class="center-wrapper">
+          <nav>
+            <ul class="site-header__items">
+              <li class="site-header__item">
+                <a href="/">Home</a>
+              </li>
+              <li class="site-header__item">
+                <a href="/pdfs">PDFs</a>
+              </li>
+              <li class="site-header__item">
+                <a href="/about">About</a>
+              </li>
+              <li class="site-header__item">
+                <a href="//drupal.org/u/ben.kyriakou">Drupal.org</a>
+              </li>
+              <li class="site-header__item">
+                <a href="//twitter.com/benkyriakou">Twitter</a>
+              </li>
+            </ul>
+          </nav>
+        </div>
+      </header>
+      <main class="center-wrapper">
+    <article class="article"><time class="article__date" datetime="2019-06">June 2019</time><h1 class="article__header">Why are my Docker ARGs empty?</h1><div class="article__content">
+        <p>If you're running into issues with your Docker <code>ARG</code>s not setting correctly in your Dockerfile, it may be because of where they're placed. Consider this example Dockerfile:</p>
+
+        <pre><code><span>ARG VERSION=latest</span>
+<span>ARG FILENAME</span>
+<span/>
+<span>FROM ubuntu:${VERSION}</span>
+<span/>
+<span>COPY ${FILENAME} /home/ubuntu/${FILENAME}</span>
+</code></pre>
+
+        <p>Say you try and build this with <code>docker build . --tag myimage:latest --build-arg VERSION=18.04 --build-arg FILENAME=foo.txt</code>. You might be surprised if <code>foo.txt</code> isn't copied to your container</p>
+
+        <p>The reason for this is that every <code>FROM</code> in your Dockerfile <a href="https//docs.docker.com/engine/reference/builder/#from">creates a new build stage</a>, which causes values of any <code>ARG</code> from previous stages to be lost. The correct syntax for the above Dockerfile is:</p>
+
+        <pre><code><span>ARG VERSION=latest</span>
+<span/>
+<span>FROM ubuntu:${VERSION}</span>
+<span/>
+<span>ARG FILENAME</span>
+<span>COPY ${FILENAME} /home/ubuntu/${FILENAME}</span>
+</code></pre>
+
+        <p>But what if you want to have your <code>VERSION</code> argument available later on in the build process? Luckily, <a href="https://docs.docker.com/engine/reference/builder/#understand-how-arg-and-from-interact">the documentation provides the answer</a>&#8212;redeclare an empty argument after the <code>FROM</code> statement (i.e. within the next build stage):</p>
+
+        <pre><code><span>ARG VERSION=latest</span>
+<span/>
+<span>FROM ubuntu:${VERSION}</span>
+<span/>
+<span>ARG VERSION</span>
+<span>ARG FILENAME</span>
+<span>COPY ${FILENAME} /home/ubuntu/${FILENAME}</span>
+</code></pre>
+
+        <p>So there you go&#8212;mystery solved. As long as you're mindful of when each build stage starts, it's a simple matter to make sure you have access to the right <code>ARG</code>s in the right places.</p>
+      </div></article>
+  </main>
+    </div>
+  </body>
+</html>
