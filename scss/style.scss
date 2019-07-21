@@ -70,6 +70,46 @@ hr {
   max-width: 50%;
 }
 
+input,
+button {
+  font-size: 1rem;
+  font-family: 'Arial', sans-serif;
+
+  @media screen and (min-width: 35rem) {
+    font-size: 1.125rem;
+  }
+}
+
+input[type='text'],
+input[type='email'] {
+  border: 1px #333 solid;
+  padding: 0.5rem;
+  transition-duration: 0.25s;
+  transition-property: outline-color;
+
+  &:focus {
+    outline: 2px $link_blue solid;
+  }
+}
+
+input[type='submit'] {
+  background-color: #333;
+  border: none;
+  color: #FFF;
+  cursor: pointer;
+  outline-color: transparent;
+  padding: 0.5rem;
+  transition-duration: 0.25s;
+  transition-property: background-color, color, outline-color;
+  word-wrap: break-word;
+
+  &:hover,
+  &:focus {
+    background-color: $link_blue;
+    outline: none;
+  }
+}
+
 /* Article element styles */
 .article__content {
   h2 {
@@ -453,6 +493,39 @@ $header-colour: #333;
 
   @media screen and (min-width: 35rem) {
     height: 315px;
+  }
+}
+
+/* Footer */
+
+.article-footer {
+  border-top: 3px #000 double;
+  padding: 1.5rem 0;
+
+  p,
+  ul,
+  ol {
+    font-size: 1rem;
+    margin: 0 0 1.5rem;
+  }
+
+  /* 560px */
+  @media screen and (min-width: 35rem) {
+    p,
+    ul,
+    ol {
+      font-size: 1.125rem;
+    }
+  }
+}
+
+.email-signup__form {
+  display: flex;
+  justify-content: center;
+
+  form {
+    display: flex;
+  flex-wrap: wrap;
   }
 }
 

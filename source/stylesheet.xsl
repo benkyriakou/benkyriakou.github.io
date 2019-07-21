@@ -100,6 +100,9 @@
         <xsl:apply-templates select="content" mode="reference" />
       </div>
     </article><!-- /.article -->
+    <footer class="article-footer">
+      <xsl:call-template name="email-signup" />
+    </footer>
   </xsl:template>
 
   <!-- The general template for content nodes. -->
@@ -316,6 +319,24 @@
       };
     </script>
   </xsl:template>
+
+  <xsl:template name="email-signup">
+    <div class="email-signup">
+      <p>Thanks for reading. If you'd like to get notifications when I post new content, please sign up to my mailing list.</p>
+
+      <div class="email-signup__form">
+        <form action="https://gmail.us3.list-manage.com/subscribe/post?u=20b45c0b3f0f59af11c016095&amp;id=64c922ea23" method="post" id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" class="validate" target="_blank" novalidate="novalidate">
+          <input type="email" value="" name="EMAIL" class="email" id="mce-EMAIL" placeholder="email address" required="required" />
+
+          <div style="position: absolute; left: -5000px;" aria-hidden="true">
+            <input type="text" name="b_20b45c0b3f0f59af11c016095_64c922ea23" tabindex="-1" value="" />
+          </div>
+
+          <input type="submit" value="Subscribe" name="subscribe" id="mc-embedded-subscribe" class="button" />
+        </form>
+      </div>
+    </div>
+    </xsl:template>
 
   <xsl:template name="filepath">
     <xsl:param name="path" />
