@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!DOCTYPE document [
+  <!ENTITY mdash "&#8212;">
+]>
+
+<document type="article">
+  <title>Router IP conflict on Ubuntu</title>
+  <description>Debugging intermittent network issues</description>
+  <slug>/posts/ip-conflict-ubuntu</slug>
+  <content>
+    <article>
+      <title>Router IP conflict on Ubuntu</title>
+      <date datetime="2019-12">December 2019</date>
+      <content>
+        <p>I’d been experiencing IP clashes with my router on Ubuntu, which manifested whenever I used a network with a router in the 192.168.0.0/20 block. I’d struggled to narrow down the cause, but after some discussion on the Ubuntu forums, I narrowed it down to particular bridge interface that had been set up on the same block:</p>
+
+        <pre><code>
+          <span>&gt; ip addr | grep inet | grep "192.168.0.1"</span>
+          <span>inet 192.168.0.1/20 brd 192.169.15.255 scope global noprefixroute br-5bf3d35782b1</span>
+        </code></pre>
+
+        <p>Looking at this bridge with <code>nmcli</code> showed that it was using the same block that was causing issues:</p>
+
+        <pre><code>
+          <span>&gt; nmcli connection show br-5bf3d35782b1</span>
+          <span>connection.id:                          br-5bf3d35782b1</span>
+          <span>...</span>
+          <span>ipv4.method:                            manual</span>
+          <span>ipv4.dns:                               --</span>
+          <span>ipv4.dns-search:                        --</span>
+          <span>ipv4.dns-options:                       ""</span>
+          <span>ipv4.dns-priority:                      100</span>
+          <span>ipv4.addresses:                         192.168.0.1/20</span>
+          <span>ipv4.gateway:                           --</span>
+          <span>ipv4.routes:                            --</span>
+          <span>ipv4.route-metric:                      -1</span>
+          <span>ipv4.route-table:                       0 (unspec)</span>
+          <span>ipv4.ignore-auto-routes:                no</span>
+          <span>ipv4.ignore-auto-dns:                   no</span>
+          <span>ipv4.dhcp-client-id:                    --</span>
+          <span>ipv4.dhcp-timeout:                      0 (default)</span>
+          <span>ipv4.dhcp-send-hostname:                yes</span>
+          <span>ipv4.dhcp-hostname:                     --</span>
+          <span>ipv4.dhcp-fqdn:                         --</span>
+          <span>ipv4.never-default:                     no</span>
+          <span>ipv4.may-fail:                          yes</span>
+          <span>ipv4.dad-timeout:                       -1 (default)</span>
+          <span>...</span>
+        </code></pre>
+
+        <p>To see if this was the cause of the problem, I changed the ipv4 block that it was using and restarted <code>network-manager</code>:</p>
+
+        <pre><code>
+          <span>nmcli connection modify br-5bf3d35782b1 ipv4.addresses 192.169.0.1/20</span>
+          <span>sudo service network-manager restart</span>
+        </code></pre>
+
+        <p>This fixed the issue, and checking <code>nmcli</code> showed the updated IP block being used. However, this didn’t resolve what had created the bridge in the first place. <code>ip</code> showed a large number of these bridges, which pointed to something creating them automatically:</p>
+
+        <pre><code>
+          <span>&gt; ip route list | grep "br-"</span>
+          <span>169.254.0.0/16 dev br-02785f378908 scope link metric 1000 linkdown</span>
+          <span>172.18.0.0/16 dev br-d70cef40006f proto kernel scope link src 172.18.0.1 linkdown</span>
+          <span>172.19.0.0/16 dev br-716b9ad47006 proto kernel scope link src 172.19.0.1 linkdown</span>
+          <span>172.20.0.0/16 dev br-f1737ad7487d proto kernel scope link src 172.20.0.1 linkdown</span>
+          <span>172.21.0.0/16 dev br-6b2783d18811 proto kernel scope link src 172.21.0.1 linkdown</span>
+          <span>172.22.0.0/16 dev br-af6549292f3c proto kernel scope link src 172.22.0.1 linkdown</span>
+          <span>172.23.0.0/16 dev br-7eb7b8ce5626 proto kernel scope link src 172.23.0.1 linkdown</span>
+          <span>172.24.0.0/16 dev br-d676325419fd proto kernel scope link src 172.24.0.1 linkdown</span>
+          <span>172.25.0.0/16 dev br-477bad8a9110 proto kernel scope link src 172.25.0.1 linkdown</span>
+          <span>172.26.0.0/16 dev br-77c1ddfe6b3b proto kernel scope link src 172.26.0.1 linkdown</span>
+          <span>172.27.0.0/16 dev br-02785f378908 proto kernel scope link src 172.27.0.1 linkdown</span>
+          <span>172.28.0.0/16 dev br-7a099a029376 proto kernel scope link src 172.28.0.1 linkdown</span>
+          <span>172.29.0.0/16 dev br-adbf9f58bedc proto kernel scope link src 172.29.0.1 linkdown</span>
+          <span>172.30.0.0/16 dev br-d68403733ee3 proto kernel scope link src 172.30.0.1 linkdown</span>
+          <span>172.31.0.0/16 dev br-662ea33fb429 proto kernel scope link src 172.31.0.1 linkdown</span>
+          <span>192.169.0.0/20 dev br-5bf3d35782b1 proto kernel scope link src 192.169.0.1 metric 425 linkdown</span>
+        </code></pre>
+
+        <p>I suspected this was related to Docker, and after checking the documentation and seeing that the default was to use <a href="https://docs.docker.com/network">bridge networking</a> I checked the networks created by Docker:</p>
+
+        <pre><code>
+          <span>&gt; docker network inspect $(docker network ls -q)</span>
+          <span>...</span>
+          <span>{</span>
+          <span>  "Name": "my-project_default",</span>
+          <span>  "Id": "5bf3d35782b1c260bc8382fb168cc77692cba80ad7b6b15026e3e93da35f6ded",</span>
+          <span>  "Created": "2019-10-08T11:46:25.112098915+01:00",</span>
+          <span>  "Scope": "local",</span>
+          <span>  "Driver": "bridge",</span>
+          <span>  "EnableIPv6": false,</span>
+          <span>  "IPAM": {</span>
+          <span>    "Driver": "default",</span>
+          <span>    "Options": null,</span>
+          <span>    "Config": [</span>
+          <span>      {</span>
+          <span>        "Subnet": "192.168.0.0/20",</span>
+          <span>        "Gateway": "192.168.0.1"</span>
+          <span>      }</span>
+          <span>    ]</span>
+          <span>  },</span>
+          <span>  "Internal": false,</span>
+          <span>  "Attachable": true,</span>
+          <span>  "Ingress": false,</span>
+          <span>  "ConfigFrom": {</span>
+          <span>    "Network": ""</span>
+          <span>  },</span>
+          <span>  "ConfigOnly": false,</span>
+          <span>  "Containers": {},</span>
+          <span>  "Options": {},</span>
+          <span>  "Labels": {</span>
+          <span>    "com.docker.compose.network": "default",</span>
+          <span>    "com.docker.compose.project": "my-project"</span>
+          <span>  }</span>
+          <span>}</span>
+          <span>...</span>
+        </code></pre>
+
+        <p>There was one Docker network that perfectly matched, and it turned out that the blocks <code>192.168.[0-240].0/20</code> are part of the default pool that Docker can use <a href="https://github.com/moby/moby/issues/37823">1</a> <a href="https://github.com/moby/moby/blob/0ac8cbf74765ca32e1b82df343bdf52ebb0fb6e2/vendor/github.com/docker/libnetwork/ipamutils/utils.go#L21">2</a>. Presumably at some point I’d spun up a Docker container where the <code>192.168.0.0/20</code> block wasn’t in use, and this then caused conflicts when switching networks.</p>
+
+        <p>To resolve this for future cases, I updated <code>/etc/docker/daemon.json</code> as specified in the GitHub issue to exclude this block from the pool, and removed the old bridge:</p>
+
+        <pre><code>
+          <span>nmcli connection delete "br-5bf3d35782b1"</span>
+          <span>docker network rm "5bf3d35782b1"</span>
+        </code></pre>
+
+        <p>As you can see here, Docker uses the short id of the Docker network as the identifier of the network interface.</p>
+
+        <p>My new<code>/etc/docker/daemon.json</code> simply removes <code>192.168.[0-240].0/20</code> from the available address pools:</p>
+
+        <pre><code>
+          <span>{</span>
+          <span>  "default-address-pools":</span>
+          <span>  [</span>
+          <span>    {</span>
+          <span>      "base": "172.17.0.0/16",</span>
+          <span>      "size": 16</span>
+          <span>    },</span>
+          <span>    {</span>
+          <span>      "base": "172.18.0.0/16",</span>
+          <span>      "size": 16</span>
+          <span>    },</span>
+          <span>    {</span>
+          <span>      "base": "172.19.0.0/16",</span>
+          <span>      "size": 16</span>
+          <span>    },</span>
+          <span>    {</span>
+          <span>      "base": "172.20.0.0/16",</span>
+          <span>      "size": 16</span>
+          <span>    },</span>
+          <span>    {</span>
+          <span>      "base": "172.24.0.0/16",</span>
+          <span>      "size": 16</span>
+          <span>    },</span>
+          <span>    {</span>
+          <span>      "base": "172.28.0.0/16",</span>
+          <span>      "size": 16</span>
+          <span>    }</span>
+          <span>  ]</span>
+          <span>}</span>
+        </code></pre>
+
+        <p>To make Docker recreate the network, I then had to remove the existing containers and recreate them:</p>
+
+        <pre><code>
+          <span>docker-compose rm</span>
+          <span>docker-compose up -d</span>
+        </code></pre>
+
+        <p>After looking at the behaviour of<code>docker-compose down</code>, I believe you could combine the removal of the network and recreation of the Docker containers by instead running<code>docker-compose down</code>, since this remove both the containers and any associated networks:</p>
+
+        <pre><code>
+          <span>&gt; docker-compose help down</span>
+          <span>Stops containers and removes containers, networks, volumes, and images</span>
+          <span>created by `up`.</span>
+          <span></span>
+          <span>By default, the only things removed are:</span>
+          <span></span>
+          <span>- Containers for services defined in the Compose file</span>
+          <span>- Networks defined in the `networks` section of the Compose file</span>
+          <span>- The default network, if one is used</span>
+          <span></span>
+          <span>Networks and volumes defined as `external` are never removed.</span>
+        </code></pre>
+
+        <p>Finally, after these steps, I was back with a working network connection and Docker container.</p>
+      </content>
+    </article>
+  </content>
+</document>
