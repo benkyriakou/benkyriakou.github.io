@@ -10,15 +10,13 @@
       <content>
         <p>My name is Ben. I'm currently a Senior Programmer at <a href="http://cogapp.com" rel="external">Cogapp</a>. I mostly work on web-based projects for museums and cultural institutions.</p>
 
-        <p>Since I'm <a href="/posts/not-on-linkedin">not a fan of LinkedIn</a>, here's an abbreviated CV.</p>
-
         <h2>I've used a lot of</h2>
 
         <ul>
           <li>Drupal</li>
           <li>PHP</li>
           <li>Python</li>
-          <li>CSS</li>
+          <li>(S)CSS</li>
           <li>HTML</li>
         </ul>
 
@@ -27,10 +25,11 @@
         <ul>
           <li>JavaScript</li>
           <li>XSLT</li>
+          <li>Docker</li>
           <li>Ansible</li>
           <li>Vagrant</li>
           <li>CircleCI</li>
-          <li>Grunt</li>
+          <li>Grunt/Gulp</li>
         </ul>
 
         <h2>I'm interested in</h2>
