@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!DOCTYPE document [
+  <!ENTITY mdash "&#8212;">
+]>
+
+<document type="article">
+  <title>Solarium Query Example in Drupal 8</title>
+  <description>How to run a Solarium query with Search API Solr.</description>
+  <slug>/posts/solarium-query-example-drupal-8</slug>
+  <content>
+    <article>
+      <title>Solarium Query Example in Drupal 8</title>
+      <date datetime="2020-05">May 2020</date>
+      <content>
+        <p>When using Search API Solr in Drupal 8, I needed to run some more in-depth queries than were available via the Search API Query, but couldn't find any examples online of how to run a Solarium query directly. After digging around in the module, I found some examples in the <code>SearchApiSolrBackend</code>. If anyone else is looking for the same, here's how to run a basic Solarium query:</p>
+
+      <pre><code>
+        <span>use Drupal\search_api\Entity\Index;</span>
+        <span>use Solarium\QueryType\Select\Query\Query;</span>
+        <span>use Drupal\search_api_solr\Plugin\search_api\backend\SearchApiSolrBackend;</span>
+        <span></span>
+        <span>/** @var Index $index */</span>
+        <span>$index = Index::load('images');</span>
+        <span></span>
+        <span>/** @var SearchApiSolrBackend $backend */</span>
+        <span>$backend = $index->getServerInstance()->getBackend();</span>
+        <span></span>
+        <span>$connector = $backend->getSolrConnector();</span>
+        <span></span>
+        <span>$solarium_query = $connector->getSelectQuery();</span>
+        <span>$solarium_query->createFilterQuery('archive_id')->setQuery('"EAP781-1-1-653"');</span>
+        <span>$solarium_query->addSort('sequence_id', Query::SORT_ASC);</span>
+        <span>$solarium_query->setRows(1);</span>
+        <span></span>
+        <span>$result = $connector->execute($solarium_query);</span>
+        <span></span>
+        <span>// The total number of documents found by Solr.</span>
+        <span>$found = $result->getNumFound();</span>
+        <span></span>
+        <span>// The total number of documents returned from the query.</span>
+        <span>$count = $result->count();</span>
+        <span></span>
+        <span>// Check the Solr response status (not the HTTP status).</span>
+        <span>// Can't find much documentation for this apart from https://lucene.472066.n3.nabble.com/Response-status-td490876.html#a3703172.</span>
+        <span>$status = $result->getStatus();</span>
+        <span></span>
+        <span>// An array of documents. Can also iterate directly on $result.</span>
+        <span>$documents = $result->getDocuments();</span>
+      </code></pre>
+
+      <p>For more information on the query syntax, see the <a href="https://solarium.readthedocs.io/en/stable/">Solarium documentation</a>.</p>
+      </content>
+    </article>
+  </content>
+</document>

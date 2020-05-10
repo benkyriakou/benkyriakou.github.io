@@ -1,0 +1,100 @@
+<!DOCTYPE html SYSTEM "about:legacy-compat">
+<html lang="en">
+  <head>
+    <meta charset="utf-8"/>
+    <meta name="theme-color" content="#333"/>
+    <meta name="description" content="How to run a Solarium query with Search API Solr."/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=1"/>
+    <link rel="canonical" href="https://benkyriakou.com/posts/solarium-query-example-drupal-8"/>
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon"/>
+    <title>Solarium Query Example in Drupal 8 | Ben Kyriakou</title>
+    <link rel="stylesheet" href="/css/style.css" type="text/css"/>
+    <meta property="og:url" content="http://benkyriakou.com/posts/solarium-query-example-drupal-8"/>
+    <meta property="og:title" content="Solarium Query Example in Drupal 8"/>
+    <meta property="og:description" content="How to run a Solarium query with Search API Solr."/>
+    <meta property="og:image" content="http://benkyriakou.com/images/global/twitter-card-image.png"/>
+    <meta name="twitter:card" content="summary"/>
+    <meta name="twitter:site" content="@benkyriakou"/>
+    <meta name="twitter:title" content="Solarium Query Example in Drupal 8"/>
+    <meta name="twitter:description" content="How to run a Solarium query with Search API Solr."/>
+    <meta name="twitter:image" content="http://benkyriakou.com/images/global/twitter-card-image.png"/>
+    <script>
+      window.onload = function() {
+        (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+        (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+        m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+        })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+        ga('create', 'UA-64337321-1', 'auto');
+        ga('send', 'pageview');
+      };
+    </script>
+  </head>
+  <body>
+    <div class="wrapper">
+      <header class="site-header">
+        <div class="center-wrapper">
+          <nav>
+            <ul class="site-header__items">
+              <li class="site-header__item">
+                <a href="/">Home</a>
+              </li>
+              <li class="site-header__item">
+                <a href="/pdfs">PDFs</a>
+              </li>
+              <li class="site-header__item">
+                <a href="/about">About</a>
+              </li>
+              <li class="site-header__item">
+                <a href="//drupal.org/u/ben.kyriakou">Drupal.org</a>
+              </li>
+              <li class="site-header__item">
+                <a href="//twitter.com/benkyriakou">Twitter</a>
+              </li>
+            </ul>
+          </nav>
+        </div>
+      </header>
+      <main class="center-wrapper">
+    <article class="article"><time class="article__date" datetime="2020-05">May 2020</time><h1 class="article__header">Solarium Query Example in Drupal 8</h1><div class="article__content">
+        <p>When using Search API Solr in Drupal 8, I needed to run some more in-depth queries than were available via the Search API Query, but couldn't find any examples online of how to run a Solarium query directly. After digging around in the module, I found some examples in the <code>SearchApiSolrBackend</code>. If anyone else is looking for the same, here's how to run a basic Solarium query:</p>
+
+      <pre><code><span>use Drupal\search_api\Entity\Index;</span>
+<span>use Solarium\QueryType\Select\Query\Query;</span>
+<span>use Drupal\search_api_solr\Plugin\search_api\backend\SearchApiSolrBackend;</span>
+<span/>
+<span>/** @var Index $index */</span>
+<span>$index = Index::load('images');</span>
+<span/>
+<span>/** @var SearchApiSolrBackend $backend */</span>
+<span>$backend = $index-&gt;getServerInstance()-&gt;getBackend();</span>
+<span/>
+<span>$connector = $backend-&gt;getSolrConnector();</span>
+<span/>
+<span>$solarium_query = $connector-&gt;getSelectQuery();</span>
+<span>$solarium_query-&gt;createFilterQuery('archive_id')-&gt;setQuery('"EAP781-1-1-653"');</span>
+<span>$solarium_query-&gt;addSort('sequence_id', Query::SORT_ASC);</span>
+<span>$solarium_query-&gt;setRows(1);</span>
+<span/>
+<span>$result = $connector-&gt;execute($solarium_query);</span>
+<span/>
+<span>// The total number of documents found by Solr.</span>
+<span>$found = $result-&gt;getNumFound();</span>
+<span/>
+<span>// The total number of documents returned from the query.</span>
+<span>$count = $result-&gt;count();</span>
+<span/>
+<span>// Check the Solr response status (not the HTTP status).</span>
+<span>// Can't find much documentation for this apart from https://lucene.472066.n3.nabble.com/Response-status-td490876.html#a3703172.</span>
+<span>$status = $result-&gt;getStatus();</span>
+<span/>
+<span>// An array of documents. Can also iterate directly on $result.</span>
+<span>$documents = $result-&gt;getDocuments();</span>
+</code></pre>
+
+      <p>For more information on the query syntax, see the <a href="https://solarium.readthedocs.io/en/stable/">Solarium documentation</a>.</p>
+      </div></article><footer class="article-footer"><div class="email-signup"><p>Thanks for reading. If you'd like to get notifications when I post new content, please sign up to my mailing list.</p><div class="email-signup__form"><form action="https://gmail.us3.list-manage.com/subscribe/post?u=20b45c0b3f0f59af11c016095&amp;id=64c922ea23" method="post" id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" class="validate" target="_blank" novalidate="novalidate"><input type="email" value="" name="EMAIL" class="email" id="mce-EMAIL" placeholder="email address" required="required"/><div style="position: absolute; left: -5000px;" aria-hidden="true"><input type="text" name="b_20b45c0b3f0f59af11c016095_64c922ea23" tabindex="-1" value=""/></div><input type="submit" value="Subscribe" name="subscribe" id="mc-embedded-subscribe" class="button"/></form></div></div></footer>
+  </main>
+    </div>
+  </body>
+</html>
