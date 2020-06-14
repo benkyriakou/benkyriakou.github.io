@@ -6,6 +6,7 @@
   <description>Expulsions from the mind of Ben Kyriakou. Programming and pedantry.</description>
   <slug></slug>
   <content>
+    <xi:include href="posts/lets-split-keyboard-build.xml" parse="xml" xpointer="xpointer(/document)" />
     <xi:include href="posts/solarium-query-example-drupal-8.xml" parse="xml" xpointer="xpointer(/document)" />
     <xi:include href="posts/ip-conflict-ubuntu.xml" parse="xml" xpointer="xpointer(/document)" />
     <xi:include href="posts/docker-args-empty.xml" parse="xml" xpointer="xpointer(/document)" />

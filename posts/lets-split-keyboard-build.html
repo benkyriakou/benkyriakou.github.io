@@ -1,0 +1,124 @@
+<!DOCTYPE html SYSTEM "about:legacy-compat">
+<html lang="en">
+  <head>
+    <meta charset="utf-8"/>
+    <meta name="theme-color" content="#333"/>
+    <meta name="description" content="A foray into custom mechanical keyboards"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=1"/>
+    <link rel="canonical" href="https://benkyriakou.com/posts/lets-split-keyboard-build"/>
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon"/>
+    <title>Let's Split Keyboard Build | Ben Kyriakou</title>
+    <link rel="stylesheet" href="/css/style.css" type="text/css"/>
+    <meta property="og:url" content="http://benkyriakou.com/posts/lets-split-keyboard-build"/>
+    <meta property="og:title" content="Let's Split Keyboard Build"/>
+    <meta property="og:description" content="A foray into custom mechanical keyboards"/>
+    <meta property="og:image" content="http://benkyriakou.com/images/global/twitter-card-image.png"/>
+    <meta name="twitter:card" content="summary"/>
+    <meta name="twitter:site" content="@benkyriakou"/>
+    <meta name="twitter:title" content="Let's Split Keyboard Build"/>
+    <meta name="twitter:description" content="A foray into custom mechanical keyboards"/>
+    <meta name="twitter:image" content="http://benkyriakou.com/images/global/twitter-card-image.png"/>
+    <script>
+      window.onload = function() {
+        (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+        (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+        m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+        })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+        ga('create', 'UA-64337321-1', 'auto');
+        ga('send', 'pageview');
+      };
+    </script>
+  </head>
+  <body>
+    <div class="wrapper">
+      <header class="site-header">
+        <div class="center-wrapper">
+          <nav>
+            <ul class="site-header__items">
+              <li class="site-header__item">
+                <a href="/">Home</a>
+              </li>
+              <li class="site-header__item">
+                <a href="/pdfs">PDFs</a>
+              </li>
+              <li class="site-header__item">
+                <a href="/about">About</a>
+              </li>
+              <li class="site-header__item">
+                <a href="//drupal.org/u/ben.kyriakou">Drupal.org</a>
+              </li>
+              <li class="site-header__item">
+                <a href="//twitter.com/benkyriakou">Twitter</a>
+              </li>
+            </ul>
+          </nav>
+        </div>
+      </header>
+      <main class="center-wrapper">
+    <article class="article"><time class="article__date" datetime="2020-06">June 2020</time><h1 class="article__header">Let's Split Keyboard Build</h1><div class="article__content">
+        <p><em>This blog post typed (slowly) with the Let's Split</em></p>
+
+        <p>Earlier this year I bought my first mechanical keyboard - a Filco Majestouch TKL with Cherry MX Brown switches. After using it for a few months, I understood the love that the MK community has for the mechanical switch - other keyboards felt limp and smushy in comparison, without the satisfying tactile bump of the mechanical switch.</p>
+
+        <p>After discovering the r/mechanicalkeyboards subreddit I went down the rabbit-hole, and became interested in different keyboard form-factors. A split keyboard interested me, since I've had long-running issues with RSI in my right arm which led me to use TKL keyboards in the first place. I scooped up a Mistel Barocco split keyboard and, after a few speed-bumps, enjoyed the improved hand position. But it wasn't enough - I still felt like I was reaching around too much with my right hand. What I really wanted was a keyboard which treated both hands equally.</p>
+
+        <p>Soon I was looking at other split keyboards, and the Let's Split caught my eye - an inexpensive, evenly split keyboard sounded just like what I was after. Unfortunately I was looking at parts right in the middle of quarantine, so supply was limited, but with some creative thinking soon I had parcels on the way from China, the US, and the UK.</p>
+
+        <p>A few weeks later I had all parts in hand;</p>
+
+        - Gateron brown switches
+        - PBT ortholinear keycaps
+        - Two Let's Split PCBs
+        - An acrylic sandwich case
+        - Two Pro Micro micro-controllers
+        - Diodes and resistors
+        - TRRS cable to connect the two halves
+
+        <h2 id="section-the-build">The build</h2>
+
+        <p>I built the keyboard following the excellent verbose guide, with some help from w00tpatoot's pictures. I hadn't done any soldering for some time, but we had a nice adjustable soldering iron (actually it turned out we had three soldering irons between us), which made the job a lot easier.</p>
+
+        <p>After some initial humps with tip cleaning and iron temperature I was away, and the diodes were soldered in. After that came the TRRS jacks, and then the header pins for the micro-controllers.</p>
+
+        <p>Once these were in place it was time to flash the micro-controllers. I initially tried this on Ubuntu and did not have much success, so switched to OSX and managed to get a flash first time with QMK toolkit. After this I soldered in the two switches under the controller, and the controller itself. Plugged it in and&#8230;success!</p>
+
+        <p>The rest of the master side was simple enough - I soldered in the rest of the switches, put on the keycaps, and it all worked!</p>
+
+        <p>Next up was the slave half. I flashed the micro-controller and repeated the soldering process, but trying it with the TRRS cable gave...no result? After some Googling and a careful re-read of the build guide, I realised I had skipped over the line for bridging the I2C pads. A bit of unscrewing and some solder later, and we had two working halves.</p>
+
+        <p>After soldering in the switches for the slave half, re-soldering a few with dodgy connections, and adding the keycaps and the rest of the case, everything was together and working. Success!</p>
+
+        <p>This was a fun little project, and along with my other lockdown projects has reaffirmed my enjoyment of physical making. I now need to spend some time getting used to the keyboard, but as far as first impressions go I'm enjoying the smaller footprint for my right hand.</p>
+
+        <h2 id="section-lessons-learned">Lessons learned</h2>
+
+        <p>If you don't have flush-cutters, pre-cut the switch pins under the left-hand micro-controller - there is almost no clearance between the micro-USB and the PCB with standard header pins, and very little space to trim them. I also added a piece of electrical tape over the solder joints just to be safe.</p>
+
+        <p>Read the guide one more time. My only major mistake came from skipping over the line about the I2C pads, and I'd read the guide through a few times, so when in doubt read it one more time!</p>
+
+        <p>If you're out of practice with soldering, have a piece you can get set up on first - maybe something with an old or broken PCB you can solder onto. My first few solder joints would have been a lot nicer had I done this.</p>
+
+        <p>Helping hands are nice, but not necessary. I found masking tape and elastic bands more useful. The only step I realy used them for was to thread the diodes through the PCB.</p>
+
+        <p>Leaded solder is unnecessary, but a small diameter is a must. The internet would have you believe that you need 60/40 solder, but I had no problems with .6mm lead-free solder. Any larger diameter though, and I would have struggled to have enough control on some of the smaller solder joints.</p>
+
+        <p>Get a decent soldering iron. I suspect those same people who advocate 60/40 solder are using some cheap 30W soldering iron. In my experience anything under 40W is junk, and you spend most of your time waiting for it to heat up. I'd recommend a 40W or adjustable iron with a fine tip.</p>
+
+        <h2 id="section-other-supplies">Other supplies</h2>
+
+        <p>In addition to parts and obvious tools, some things I found very useful;</p>
+
+        <ul>
+          <li>Brass tip-cleaner for soldering iron</li>
+          <li>A small pair of metal tweezers for bending leads and manipulating components</li>
+          <li>Masking tape and elastic bands for securing and labelling</li>
+          <li>A work board that can take some solder beads and cutting</li>
+          <li>Some small snips for cutting leads</li>
+          <li>A solder sucker for desoldering (I only had to use this a couple of times, but it came in handy)</li>
+        </ul>
+      </div></article><footer class="article-footer"><div class="email-signup"><p>Thanks for reading. If you'd like to get notifications when I post new content, please sign up to my mailing list.</p><div class="email-signup__form"><form action="https://gmail.us3.list-manage.com/subscribe/post?u=20b45c0b3f0f59af11c016095&amp;id=64c922ea23" method="post" id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" class="validate" target="_blank" novalidate="novalidate"><input type="email" value="" name="EMAIL" class="email" id="mce-EMAIL" placeholder="email address" required="required"/><div style="position: absolute; left: -5000px;" aria-hidden="true"><input type="text" name="b_20b45c0b3f0f59af11c016095_64c922ea23" tabindex="-1" value=""/></div><input type="submit" value="Subscribe" name="subscribe" id="mc-embedded-subscribe" class="button"/></form></div></div></footer>
+  </main>
+    </div>
+  </body>
+</html>
