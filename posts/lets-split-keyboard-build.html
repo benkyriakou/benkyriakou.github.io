@@ -81,15 +81,34 @@
 
         <p>I built the keyboard following the excellent verbose guide, with some help from w00tpatoot's pictures. I hadn't done any soldering for some time, but we had a nice adjustable soldering iron (actually it turned out we had three soldering irons between us), which made the job a lot easier.</p>
 
-        <p>After some initial humps with tip cleaning and iron temperature I was away, and the diodes were soldered in. After that came the TRRS jacks, and then the header pins for the micro-controllers.</p>
+        <p>After some initial humps with tip cleaning and iron temperature I was away, and the diodes were soldered in.</p>
+
+        <picture><source media="(min-width: 1024px)" srcset="/images/articles/diodes.jpg"/><source media="(min-width: 600px)" srcset="/images/derivatives/diodes_760.jpg"/><img src="/images/derivatives/diodes_320.jpg" alt="Diodes in the PCB before soldering" title=""/></picture>
+
+        <picture><source media="(min-width: 1024px)" srcset="/images/articles/diodes-soldered.jpg"/><source media="(min-width: 600px)" srcset="/images/derivatives/diodes-soldered_760.jpg"/><img src="/images/derivatives/diodes-soldered_320.jpg" alt="Diodes in the PCB after soldering" title=""/></picture>
+
+        <p>After that came the TRRS jacks, I2C resistors, and the header pins for the micro-controllers.</p>
+
+        <picture><source media="(min-width: 1024px)" srcset="/images/articles/resistors-header-pins.jpg"/><source media="(min-width: 600px)" srcset="/images/derivatives/resistors-header-pins_760.jpg"/><img src="/images/derivatives/resistors-header-pins_320.jpg" alt="Resistors, TRRS jacks, and header pins soldered in the PCB" title=""/></picture>
+
 
         <p>Once these were in place it was time to flash the micro-controllers. I initially tried this on Ubuntu and did not have much success, so switched to OSX and managed to get a flash first time with QMK toolkit. After this I soldered in the two switches under the controller, and the controller itself. Plugged it in and&#8230;success!</p>
 
-        <p>The rest of the master side was simple enough - I soldered in the rest of the switches, put on the keycaps, and it all worked!</p>
+        <picture><source media="(min-width: 1024px)" srcset="/images/articles/first-switches.jpg"/><source media="(min-width: 600px)" srcset="/images/derivatives/first-switches_760.jpg"/><img src="/images/derivatives/first-switches_320.jpg" alt="The first switches in the primary side" title=""/></picture>
 
-        <p>Next up was the slave half. I flashed the micro-controller and repeated the soldering process, but trying it with the TRRS cable gave...no result? After some Googling and a careful re-read of the build guide, I realised I had skipped over the line for bridging the I2C pads. A bit of unscrewing and some solder later, and we had two working halves.</p>
+        <p>The rest of the primary side was simple enough - I soldered in the rest of the switches, put on the keycaps, and it all worked!</p>
 
-        <p>After soldering in the switches for the slave half, re-soldering a few with dodgy connections, and adding the keycaps and the rest of the case, everything was together and working. Success!</p>
+        <picture><source media="(min-width: 1024px)" srcset="/images/articles/all-switches.jpg"/><source media="(min-width: 600px)" srcset="/images/derivatives/all-switches_760.jpg"/><img src="/images/derivatives/all-switches_320.jpg" alt="All switches in the primary side" title=""/></picture>
+
+        <picture><source media="(min-width: 1024px)" srcset="/images/articles/left-side.jpg"/><source media="(min-width: 600px)" srcset="/images/derivatives/left-side_760.jpg"/><img src="/images/derivatives/left-side_320.jpg" alt="Complete primary side" title=""/></picture>
+
+        <p>Next up was the secondary half. I flashed the micro-controller and repeated the soldering process, but trying it with the TRRS cable gave...no result? After some Googling and a careful re-read of the build guide, I realised I had skipped over the line for bridging the I2C pads. A bit of unscrewing and some solder later, and we had two working halves.</p>
+
+        <picture><source media="(min-width: 1024px)" srcset="/images/articles/right-side-switches.jpg"/><source media="(min-width: 600px)" srcset="/images/derivatives/right-side-switches_760.jpg"/><img src="/images/derivatives/right-side-switches_320.jpg" alt="Switches in the secondary side" title=""/></picture>
+
+        <p>After soldering in the switches for the secondary half, re-soldering a few with dodgy connections, and adding the keycaps and the rest of the case, everything was together and working. Success!</p>
+
+        <picture><source media="(min-width: 1024px)" srcset="/images/articles/complete.jpg"/><source media="(min-width: 600px)" srcset="/images/derivatives/complete_760.jpg"/><img src="/images/derivatives/complete_320.jpg" alt="Complete keyboard" title=""/></picture>
 
         <p>This was a fun little project, and along with my other lockdown projects has reaffirmed my enjoyment of physical making. I now need to spend some time getting used to the keyboard, but as far as first impressions go I'm enjoying the smaller footprint for my right hand.</p>
 
