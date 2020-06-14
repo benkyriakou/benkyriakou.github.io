@@ -47,10 +47,13 @@
 
         <img src="/images/articles/resistors-header-pins.jpg" alt="Resistors, TRRS jacks, and header pins soldered in the PCB" />
 
-
         <p>Once these were in place it was time to flash the micro-controllers. I initially tried this on Ubuntu and did not have much success, so switched to OSX and managed to get a flash first time with QMK toolkit. After this I soldered in the two switches under the controller, and the controller itself. Plugged it in and&#8230;success!</p>
 
-        <img src="/images/articles/first-switches.jpg" alt="The first switches in the primary side" />
+        <blockquote class="twitter-tweet">
+          <p lang="en" dir="ltr">This was definitely the most gratifying point in the build! <a href="https://t.co/Bc9RIlgF14">pic.twitter.com/Bc9RIlgF14</a></p>&mdash; Ben Kyriakou (@benkyriakou) <a href="https://twitter.com/benkyriakou/status/1271843413504200707?ref_src=twsrc%5Etfw">June 13, 2020</a>
+        </blockquote>
+
+        <script async="async" src="https://platform.twitter.com/widgets.js" charset="utf-8">//</script>
 
         <p>The rest of the primary side was simple enough - I soldered in the rest of the switches, put on the keycaps, and it all worked!</p>
 
@@ -58,7 +61,7 @@
 
         <img src="/images/articles/left-side.jpg" alt="Complete primary side" />
 
-        <p>Next up was the secondary half. I flashed the micro-controller and repeated the soldering process, but trying it with the TRRS cable gave...no result? After some Googling and a careful re-read of the build guide, I realised I had skipped over the line for bridging the I2C pads. A bit of unscrewing and some solder later, and we had two working halves.</p>
+        <p>Next up was the secondary half. I flashed the micro-controller and repeated the soldering process, but trying it with the TRRS cable gave...no result? After some googling and a careful re-read of the build guide, I realised I had skipped over the line for bridging the I2C pads. A bit of unscrewing and some solder later, and we had two working halves.</p>
 
         <img src="/images/articles/right-side-switches.jpg" alt="Switches in the secondary side" />
 
