@@ -15,11 +15,11 @@
       <content>
         <p><em>This blog post typed (slowly) with the Let's Split</em></p>
 
-        <p>Earlier this year I bought my first mechanical keyboard - a Filco Majestouch TKL with Cherry MX Brown switches. After using it for a few months, I understood the love that the MK community has for the mechanical switch - other keyboards felt limp and mushy in comparison, without the satisfying tactile bump of the mechanical switch.</p>
+        <p>Earlier this year I bought my first mechanical keyboard&mdash;a Filco Majestouch TKL with Cherry MX Brown switches. After using it for a few months, I understood the love that the MK community has for the mechanical switch&mdash;other keyboards felt limp and mushy in comparison, without the satisfying tactile bump of the mechanical switch.</p>
 
-        <p>After discovering the r/mechanicalkeyboards subreddit I went down the rabbit-hole, and became interested in different keyboard form-factors. A split keyboard interested me, since I've had long-running issues with RSI in my right arm which led me to use TKL keyboards in the first place. I scooped up a Mistel Barocco split keyboard and, after a few speed-bumps, enjoyed the improved hand position. But it wasn't enough - I still felt like I was reaching around too much with my right hand. What I really wanted was a keyboard which treated both hands equally.</p>
+        <p>After discovering the r/mechanicalkeyboards subreddit I went down the rabbit-hole, and became interested in different keyboard form-factors. A split keyboard interested me, since I've had long-running issues with RSI in my right arm which led me to use TKL keyboards in the first place. I scooped up a Mistel Barocco split keyboard and, after a few speed-bumps, enjoyed the improved hand position. But it wasn't enough&mdash;I still felt like I was reaching around too much with my right hand. What I really wanted was a keyboard which treated both hands equally.</p>
 
-        <p>Soon I was looking at other split keyboards, and the Let's Split caught my eye - an inexpensive, evenly split keyboard sounded just like what I was after. Unfortunately I was looking at parts right in the middle of quarantine, so supply was limited, but with some creative thinking soon I had parcels on the way from China, the US, and the UK.</p>
+        <p>Soon I was looking at other split keyboards, and the Let's Split caught my eye&mdash;an inexpensive, evenly split keyboard sounded just like what I was after. Unfortunately I was looking at parts right in the middle of quarantine, so supply was limited, but with some creative thinking soon I had parcels on the way from China, the US, and the UK.</p>
 
         <p>A few weeks later I had all parts in hand;</p>
 
@@ -55,7 +55,7 @@
 
         <script async="async" src="https://platform.twitter.com/widgets.js" charset="utf-8">//</script>
 
-        <p>The rest of the primary side was simple enough - I soldered in the rest of the switches, put on the keycaps, and it all worked!</p>
+        <p>The rest of the primary side was simple enough&mdash;I soldered in the rest of the switches, put on the keycaps, and it all worked!</p>
 
         <img src="/images/articles/all-switches.jpg" alt="All switches in the primary side" />
 
@@ -73,11 +73,11 @@
 
         <h2>Lessons learned</h2>
 
-        <p>If you don't have flush-cutters, pre-cut the switch pins under the left-hand micro-controller - there is almost no clearance between the micro-USB and the PCB with standard header pins, and very little space to trim them. I also added a piece of electrical tape over the solder joints just to be safe.</p>
+        <p>If you don't have flush-cutters, pre-cut the switch pins under the left-hand micro-controller&mdash;there is almost no clearance between the micro-USB and the PCB with standard header pins, and very little space to trim them. I also added a piece of electrical tape over the solder joints just to be safe.</p>
 
         <p>Read the guide one more time. My only major mistake came from skipping over the line about the I2C pads, and I'd read the guide through a few times, so when in doubt read it one more time!</p>
 
-        <p>If you're out of practice with soldering, have a piece you can get set up on first - maybe something with an old or broken PCB you can solder onto. My first few solder joints would have been a lot nicer had I done this.</p>
+        <p>If you're out of practice with soldering, have a piece you can get set up on first&mdash;maybe something with an old or broken PCB you can solder onto. My first few solder joints would have been a lot nicer had I done this.</p>
 
         <p>Helping hands are nice, but not necessary. I found masking tape and elastic bands more useful. The only step I really used them for was to thread the diodes through the PCB.</p>
 
