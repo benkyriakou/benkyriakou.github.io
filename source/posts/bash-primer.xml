@@ -1,0 +1,542 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!DOCTYPE document [
+<!ENTITY mdash "&#8212;">
+]>
+
+<document type="article">
+  <title>Bash primer</title>
+  <description>A short primer on Bash.</description>
+  <slug>/posts/bash-primer</slug>
+  <content>
+    <article>
+      <title>Bash primer</title>
+      <date datetime="2020-06">June 2020</date>
+      <content>
+        <p><em>The transcript from a short primer I did on Bash for Cogapp Tech Tuesday. I don't profess to be a Bash guru, so if you spot anything that's incorrect then <a href="https://twitter.com/benkyriakou">tweet at me</a></em></p>
+
+        <index/>
+
+        <h2>What is Bash?</h2>
+
+        <p>Bash is the Bourne Again SHell. It's an extensions of the standard sh shell, and is available pretty ubiquitously on *NIX-based systems.</p>
+
+        <h3>Why Bash?</h3>
+
+        <p>There are lots of things that require some kind of simple processing, and Bash aims to provide a toolkit to let you do this. In theory it's a complete programming language, but in practice I'd use a real scripting language like Python.</p>
+
+        <p>What Bash excels at is integrating with the system, and talking to native utilities.</p>
+
+        <p>The secret sauce of a lot of simple Bash scripting is the pipe&mdash;the Bash philosophy is that commands should do a single thing well, and the pipe lets you send output from one command directly into another.</p>
+
+        <p>Bash is really about text processing, and it's very good at that, but the tools do get quite esoteric.</p>
+
+        <h3>A note on <code>--help</code> and manpages</h3>
+
+        <p>These are documentation.</p>
+
+        <h2>How to Bash?</h2>
+
+        <p>We've said that Bash is available pretty globally. But where does it live? We can see all the available shells on a system with:</p>
+
+        <pre><code>
+          <span>&gt; cat /etc/shells</span>
+          <span># /etc/shells: valid login shells</span>
+          <span>/bin/sh</span>
+          <span>/bin/dash</span>
+          <span>/bin/bash</span>
+          <span>/bin/rbash</span>
+        </code></pre>
+
+        <p>We can see the current shell with <code>echo $SHELL</code>.</p>
+
+        <p>If we run a script we want to make sure it's run with Bash, rather than <code>/bin/sh</code> or another shell, since we might not have access to the commands we need. Fortunately, we can specify what is used to run the script using a hashbang. Let's make a basic script:</p>
+
+        <pre><code>
+          <span>touch script.sh</span>
+          <span>chmod 775 script.sh</span>
+        </code></pre>
+
+        <p>We could add in a conditional:</p>
+
+        <pre><code>
+          <span>if [[ -e "/tmp" ]]</span>
+          <span>then</span>
+          <span>  echo "hello world"</span>
+          <span>fi</span>
+        </code></pre>
+
+        <p>If we run this with <code>/bin/sh</code> it will give:</p>
+
+        <pre><code>
+          <span>&gt; /bin/sh script.sh </span>
+          <span>script.sh: 3: script.sh: [[: not found</span>
+        </code></pre>
+
+        <p>We need to make sure it will always run with <code>/bin/bash</code>, since it may not always be the executing shell:</p>
+
+        <p>We make the contents of the file:</p>
+
+        <pre><code>
+          <span>#!/bin/bash</span>
+          <span>if [[ -e "/tmp" ]]</span>
+          <span>then</span>
+          <span>echo "hello world"</span>
+          <span>fi</span>
+        </code></pre>
+
+        <p>Now this will always be run with <code>/bin/bash</code> if available, no matter what the login shell is.</p>
+
+        <h2>The basics</h2>
+
+        <h3>Variables</h3>
+
+        <p>So to start doing some Bash scripting we need some language constructs.</p>
+
+        <p>Variables can be assigned in Bash like this:</p>
+
+        <pre><code>
+          <span>MYVARIABLE="hello world"</span>
+          <span>echo "$MYVARIABLE"</span>
+        </code></pre>
+
+        <p>Double-quoting is important in Bash, as it acts as an escape mechanism for special characters which may otherwise be interpreted differently. For example;</p>
+
+        <pre><code>
+          <span>&gt; touch cat rat mat</span>
+          <span>&gt; ls</span>
+          <span>cat mat rat</span>
+          <span>&gt; ls *at</span>
+          <span>cat mat rat</span>
+          <span>&gt; ls "*at"</span>
+          <span>ls: cannot access '*at': No such file or directory</span>
+          <span>&gt; ls [cm]at</span>
+          <span>cat mat rat</span>
+          <span>&gt; ls "[cmr]at"</span>
+          <span>ls: cannot access '[cmr]at': No such file or directory</span>
+        </code></pre>
+
+        <p>See the <a href="https://github.com/symfony/http-kernel/blob/4.4/Event/RequestEvent.php">GNU manual entry on shell expansion</a> for more examples.</p>
+
+        <p>For now, just take it for granted that you should always double-quote things unless you have a reason not to.</p>
+
+        <p>If you want to interpolate variables within other strings, you can use curly braces:</p>
+
+        <pre><code>
+          <span>MYVARIABLE="hello world"</span>
+          <span>echo "${MYVARIABLE}s"</span>
+        </code></pre>
+
+        <h3>Types</h3>
+
+        <p>Bash doesn't really have 'types' by default. Variables are untyped strings, but do depend on context. There are informally these types:</p>
+  
+        <ul>
+          <li>String</li>
+          <li>Int</li>
+          <li>List/array</li>
+        </ul>
+
+        <p>Where Ints are just Strings that only contain numbers, and can be used with the arithmetic operator.</p>
+
+        <p>You can use the <code>declare</code> command to more strictly define the types of variables if required (see <code>declare --help</code>).</p>
+
+        <h3>Logical constructs</h3>
+
+        <p>Bash has a few basic logical constructs:</p>
+
+        <pre><code>
+          <span>FOO="hello"</span>
+          <span></span>
+          <span>if [[ "$FOO" = "hello" ]]</span>
+          <span>then</span>
+          <span>  echo "FOO is hello"</span>
+          <span>else</span>
+          <span>  echo "FOO is not hello"</span>
+          <span>fi</span>
+        </code></pre>
+
+        <pre><code>
+          <span>ARR=(1 2 3)</span>
+          <span>for I in "${ARR[@]}"</span>
+          <span>do</span>
+          <span>  echo "$I"</span>
+          <span>done</span>
+        </code></pre>
+
+        <pre><code>
+          <span>I=0</span>
+          <span>while (( I &lt; 10 ))</span>
+          <span>do</span>
+          <span>  echo "$I"</span>
+          <span>  (( I++ ))</span>
+          <span>done</span>
+        </code></pre>
+
+        <pre><code>
+          <span>ARR=("foo" "bar" "baz")</span>
+          <span>for I in "${ARR[@]}"</span>
+          <span>do</span>
+          <span>  case "$I" in</span>
+          <span>    foo )</span>
+          <span>      echo "foo!"</span>
+          <span>      ;;</span>
+          <span>    baz )</span>
+          <span>      echo "baz!"</span>
+          <span>      ;;</span>
+          <span>    * )</span>
+          <span>      echo "dunno!"</span>
+          <span>      ;;</span>
+          <span>  esac</span>
+          <span>done</span>
+        </code></pre>
+
+        <h3>Braces</h3>
+
+        <p>You've seen a couple of types of braces. The single square brace <code>[ ]</code> is an alias for the <code>test</code> command. We can see the manpage with <code>man [</code>.</p>
+
+        <p>As with quoting, the double square brace <code>[[ ]]</code> is the safer choice. You can use <code>[ ]</code>, but it has some <a href="https://www.gnu.org/software/bash/manual/html_node/Conditional-Constructs.html#Conditional-Constructs">expansion and splitting caveats</a>.</p>
+
+        <p>The double brace <code>(( ))</code> is used for arithmetic evaluation, and can be used with variables without using the dollar sign.</p>
+
+        <p>In conditional <code>[[ ]]</code> double square braces there are various different kinds of logical evaluations</p>
+
+        <p>You can do logical and/or with <code>&amp;&amp;</code> and <code>||</code>. You may see literal <code>and</code> and <code>or</code> used sometimes, but this is outdated and should not be used in new code.</p>
+
+        <p>See the <a href="https://www.gnu.org/software/bash/manual/html_node/Bash-Conditional-Expressions.html">Bash Conditional Expressions manual entry</a> for all of the possible conditional operations.</p>
+
+        <h3>Adding a dollar</h3>
+
+        <p>But sometimes we want to evaluate things and save the result of that evaluation for later. Well, if we combine braces with the dollar we can do that.</p>
+
+        <pre><code>
+          <span>#!/bin/bash</span>
+          <span></span>
+          <span>FOO="$(echo "hello world")"</span>
+          <span>echo "$FOO"</span>
+        </code></pre>
+
+        <p>You can also see here that, due to the way <a href="https://www.gnu.org/software/bash/manual/html_node/Shell-Parameter-Expansion.html#Shell-Parameter-Expansion">parameter expansion</a> works, we're free to nest double quotes inside the quoted variable.</p>
+
+        <pre><code>
+          <span>#!/bin/bash</span>
+          <span></span>
+          <span>ONE=1</span>
+          <span>SUM=$(( ONE + 2 ))</span>
+          <span>echo "$SUM"</span>
+        </code></pre>
+
+        <h2>The good stuff</h2>
+
+        <h3>Special and positional parameters</h3>
+
+        <p>So we have a script, and we want to pass arguments to it. How does this work?</p>
+
+        <p>When calling a script (or a function), arguments passed are automatically assigned to the <a href="https://www.gnu.org/software/bash/manual/html_node/Positional-Parameters.html#Positional-Parameters">positional parameters</a> <code>$1</code> onwards. <code>$0</code> is reserved for the name of the script/function.</p>
+
+        <p>For example, we can see arguments passed to the script with:</p>
+
+        <pre><code>
+          <span>#!/bin/bash</span>
+          <span></span>
+          <span>echo "$0"</span>
+          <span>echo "$1"</span>
+          <span>echo "$2"</span>
+        </code></pre>
+
+        <p>This is nice, but what if we want to see all arguments without having to type them out?</p>
+
+        <p>We can use list expansion with the <code>@</code> symbol to do this (you'll see this done with the <code>*</code> symbol too).</p>
+
+        <pre><code>
+          <span>#!/bin/bash</span>
+          <span></span>
+          <span>echo "${@}"</span>
+        </code></pre>
+
+        <p>What if we want to see the number of arguments? We can use <code>#</code>:</p>
+
+        <pre><code>
+          <span>#!/bin/bash</span>
+          <span></span>
+          <span>echo "There are ${#} arguments"</span>
+          <span>echo "${@}"</span>
+        </code></pre>
+
+        <p>These aren't restricted to just these parameters&mdash;we can use them with anything:</p>
+
+        <pre><code>
+          <span>#!/bin/bash</span>
+          <span></span>
+          <span>FOO="hello world"</span>
+          <span>echo "'$FOO' contains ${#FOO} characters"</span>
+        </code></pre>
+
+        <pre><code>
+          <span>#!/bin/bash</span>
+          <span></span>
+          <span>LIST=("hello" "world")</span>
+          <span>echo "The list contains ${#LIST[@]} elements"</span>
+          <span>echo "${LIST[@]}"</span>
+        </code></pre>
+
+        <p>There are some other cool special parameters that use <code>$</code> too.</p>
+
+        <p><code>$$</code> gives the current process ID. You could use this to see your current bash process with <code>ps "$$"</code>, or your open file descriptors with <code>ls "/proc/$$/fd"</code>. You will see this changes when you swap terminal windows because each terminal window starts its own bash process.</p>
+
+        <p><code>$?</code> gives the exit code for the last executed command. This can be useful in scripts if you want to do tests for success/failure. For example, run <code>ls</code> then <code>echo "$?"</code> and you'll see <code>0</code>, which is a successful exit. Running <code>ls zxcv</code> then <code>echo "$?"</code> gives <code>2</code>, which is a serious exit (as defined in <code>man ls</code>). In contrast, <code>cat zxc</code> returns an exit code of <code>1</code>.</p>
+
+        <p>See more of these <a href="https://www.gnu.org/software/bash/manual/html_node/Special-Parameters.html#Special-Parameters">in the manual</a>.</p>
+
+        <h3>Exit codes</h3>
+
+        <p>Now that we know about exit codes, how do we do one? Simple, just use <code>exit &lt;code&gt;</code>.</p>
+
+        <p>We can demonstrate this with our scripts. Other than 0 being the regular 'success' code, you can use whatever exit codes you want. The most basic is 0 for success and 1 for error, but as we saw with ls you can also have multiple error conditions with different exit codes if you want.</p>
+
+        <h3>Pipes</h3>
+
+        <p>Pipes are cool. Most of you probably know about pipes already&mdash;they let us send the result of one command on to be processed by another, e.g. <code>ps | grep bash</code>.</p>
+
+        <p>The pipe passes the contents of stdout to the stdin of the next command, so we can do <code>echo "foo" | cat</code>, but not <code>echo "foo" | cat | echo</code> because <code>echo</code> expects an argument. We can use xargs to fill this void&mdash;this passses the stdout of the previous command as an argument to the next one: <code>echo "foo" | cat | xargs echo</code>.</p>
+
+        <p>See <a href="https://www.gnu.org/savannah-checkouts/gnu/bash/manual/bash.html#Pipelines">the manual</a> for more on pipes.</p>
+
+        <h3>Read</h3>
+
+        <p>It's often useful to read in user input. You can do this with <code>read</code>:</p>
+
+        <pre><code>
+          <span>#!/bin/bash</span>
+          <span></span>
+          <span>read -p "Enter some text &gt; " VAR</span>
+          <span>echo "You entered: $VAR"</span>
+        </code></pre>
+
+        <p>You can also use this for confirmations:</p>
+
+        <pre><code>
+          <span>#!/bin/bash</span>
+          <span></span>
+          <span>read -p "Do you want to do this? (y/n) &gt; " VAR</span>
+          <span></span>
+          <span>if [[ "$VAR" =~ ^(y|yes)$ ]]</span>
+          <span>then</span>
+          <span>  echo "Execute order 66"</span>
+          <span>else</span>
+          <span>  echo "Surrender!"</span>
+          <span>fi</span>
+        </code></pre>
+
+        <h3>Input/output redirection</h3>
+
+        <p>Along with process redirection we can also do input and output redirection. Most of you have probably seen output redirection before: <code>echo "hello" &gt; test.txt</code>. This redirects the output of the <code>echo</code> to the file <code>test.txt.</code> If you run this a bunch of times <code>test.txt</code> will not change, because the single arrow overwrites the file. <code>echo "hello" &gt;&gt; test.txt</code> will append the contents, so you can do this as many times as you want.</p>
+
+        <p>However, this only redirects stdout. If we try <code>cat zxc &gt; foo.txt</code> we'll see foo.txt is empty. This is because the output goes to stderr, and redirection only applies to stdout.</p>
+
+        <p>However, we can also use redirection on our stdout and stderr file descriptors, with this special syntax: <code>1&gt;&amp;2</code>. You've probably seen this before with something like <code>command --arg &gt; /dev/null 2&gt;&amp;1</code>. This redirects both stdout and stderr to <code>/dev/null</code>. In a more verbose form this is really <code>command --arg 1&gt;/dev/null 2&gt;&amp;1</code>, which means redirect stdout to <code>/dev/null</code>, and redirect stderr to the same place as stdout. Ordering is <em>important</em> here&mdash;the other way around will not work because it will redirect stderr to stdout, then redirect stdout to <code>/dev/null</code> afterwards, leaving stderr going to stdout.</p>
+
+        <p>So going back to our previous example, <code>cat zxc &gt; foo.txt 2&gt;&amp;1</code> will dump the error in there.</p>
+
+        <p>But what if we want to redirect the text to the file <strong>and</strong> show it on stdout. Or what if we want to write to a protected file? Applying sudo doesn't work on output redirection&mdash;<code>sudo cat zxc &gt; foo.txt</code> this just runs cat as sudo.</p>
+
+        <p>Enter <code>tee</code>&mdash;like a T in plumbing, it redirects the flow of information in two directions. We use this with a pipe, so we can do <code>cat zxc 2&gt;&amp;1 | sudo tee foo.txt</code>. Again, where we do the output redirection matters&mdash;we have to redirect stderr for cat so it goes to stdin for tee, as the pipe only redirects stdout and not stderr.</p>
+
+        <p>Output redirection is also useful for writing scripts. Remember <code>exit</code>? Well, if we exit with an error then any messages should also go to stderr. We can do this with output redirection:</p>
+
+        <pre><code>
+          <span>echo "Some error message" 1&gt;&amp;2</span>
+        </code></pre>
+
+        <p>Input redirection is less common, but can be useful. It's similar to process redirection, except it only works for files. It lets you redirect the contents of a file to the stdin of a command, which may be useful if you want to send stored data to a command. This is similar to what you can achieve with a pipe&mdash;for example, if we have a file containing this text:</p>
+
+        <pre><code>
+          <span>cat</span>
+          <span>rat</span>
+          <span>dog</span>
+          <span>horse</span>
+          <span>bat</span>
+        </code></pre>
+
+        <p>We could do <code>cat file.txt | grep at</code>, which redirects the contents of the file from stdout to the stdin of grep. However, we can also do this with input redirection without using a pipe <code>grep at &lt; file.txt</code>. This also has the advantage of not using pipes, which as we'll see in a bit may not do exactly what you expect in a script.</p>
+
+        <h3>Process redirection</h3>
+
+        <p>There is another way of passing information to commands that expect a file-like input&mdash;Process Redirection. This creates something called a file descriptor (we saw these earlier when we looked at processes) and passes the output of the invoked command through that.</p>
+
+        <p>For example, <code>cat "hello"</code> doesn't work because <code>cat</code> expects to be passed a file or stdin (see <code>man cat</code>). However, we can do <code>cat &lt;(echo "hello")</code>. Note that the arrow is part of the process redirection syntax.</p>
+
+        <p>Why does this work? Run <code>echo &lt;(echo "hello")</code> and you'll see that instead of the string it returns the path to a file descriptor. Under the hood, this creates the file descriptor and passes it to the command.</p>
+
+        <p>Magic!</p>
+
+        <h2>Safe scripting</h2>
+
+        <p>We can use another special parameter <code>$-</code> to see what shell flags are set at the current time. You'll probably get something like this:</p>
+
+        <pre><code>
+          <span>&gt; echo $-</span>
+          <span>himBHs</span>
+        </code></pre>
+
+        <p>What does that mean? Let's check <code>help set</code>:</p>
+
+        <pre><code>
+          <span>-b Notify of job termination immediately.</span>
+          <span>-h Remember the location of commands as they are looked up.</span>
+          <span>-m Job control is enabled.</span>
+          <span>-B the shell will perform brace expansion</span>
+          <span>by redirection of output.</span>
+          <span>-H Enable ! style history substitution. This flag is on</span>
+          <span></span>
+
+        </code></pre>
+
+        <p>But what about <code>is</code>? Turns out these are flags set by bash itself. From <code>man bash</code>:</p>
+
+        <pre><code>
+          <span>-i  If the -i option is present, the shell is interactive.</span>
+          <span>-s  If the -s option is present, or if no arguments remain after option</span>
+          <span>processing, then commands are read from the standard input. This</span>
+          <span>option allows the positional parameters to be set when invoking an</span>
+          <span>interactive shell or when reading input through a pipe.</span>
+        </code></pre>
+
+        <p>However, there are some other set options that are useful for almost all shell scripts:</p>
+
+        <pre><code>
+          <span>set -o errexit</span>
+          <span>set -o nounset</span>
+          <span>set -o pipefail</span>
+        </code></pre>
+
+        <p><code>errexit</code> is pretty straightforward. Say we have a script like this:</p>
+
+        <pre><code>
+          <span>#!/bin/bash</span>
+          <span></span>
+          <span>echo "hello"</span>
+          <span>ls zxc</span>
+          <span>echo "world"</span>
+        </code></pre>
+
+        <p>We know that <code>ls zxc</code> will be an error if zxc doesn't exist, so we might expect this would do something like:</p>
+
+        <pre><code>
+          <span>"hello"</span>
+          <span>ls: cannot access 'zxc': No such file or directory</span>
+        </code></pre>
+
+        <p>However, by default it will do:</p>
+
+        <pre><code>
+          <span>"hello"</span>
+          <span>ls: cannot access 'zxc': No such file or directory</span>
+          <span>"world"</span>
+        </code></pre>
+
+        <p>This is because errexit is suppressed by default in the shell. And this makes sense&mdash;if it was on, running <code>ls zxc</code> would exit your terminal session. But when we run a script, this is useful. If we modify our script like this, it will do something more sensible:</p>
+
+        <pre><code>
+          <span>#!/bin/bash</span>
+          <span></span>
+          <span>set -o errexit</span>
+          <span></span>
+          <span>echo "hello"</span>
+          <span>ls zxc</span>
+          <span>echo "world"</span>
+        </code></pre>
+
+        <p>This makes sense for most scripts, since we wouldn't expect anything to go wrong. You can still suppress errors with output redirection if you want, but it should be done explicitly rather than implicitly.</p>
+
+        <p><code>nounset</code> is another pretty obvious one. Imagine we have a script like this:</p>
+
+        <pre><code>
+          <span>#!/bin/bash</span>
+          <span></span>
+          <span>MSG="${1}"</span>
+          <span></span>
+          <span>echo "$MSG"</span>
+        </code></pre>
+
+        <p>Okay, we've just reinvented echo. But what happens if we don't pass an argument?</p>
+
+        <p>Now really, this isn't correct. Our contract with the script is that the caller passes an argument. This isn't super critical here, but if you aren't catering for the explicit absence of the argument you're going to be caught short when it's not supplied. If we set <code>nounset</code> it changes this behaviour to be more sensible:</p>
+
+        <pre><code>
+          <span>#!/bin/bash</span>
+          <span></span>
+          <span>set -o nounset</span>
+          <span></span>
+          <span>MSG="${1}"</span>
+          <span></span>
+          <span>echo "$MSG"</span>
+        </code></pre>
+
+        <p>Now if we don't supply an argument, we get;</p>
+
+        <pre><code>
+          <span>&gt; ./script.sh </span>
+          <span>./script.sh: line 5: 1: unbound variable</span>
+        </code></pre>
+
+        <p>Okay, but what if we want the option of passing a argument or having a default? Bash lets you do that too:</p>
+
+        <pre><code>
+          <span>#!/bin/bash</span>
+          <span></span>
+          <span>set -o nounset</span>
+          <span></span>
+          <span>MSG="${1:-"You didn't set a message"}"</span>
+          <span></span>
+          <span>echo "$MSG"</span>
+        </code></pre>
+
+        <p><code>nounset</code> also applies to any regular variable. For example, if we removed the setting of <code>MSG</code> we'd get an error that it's not set when it's called in the echo.</p>
+
+        <p>Finally <code>pipefail</code>, which is a bit less obvious. Remember how I mentioned before that you need to be aware of how pipes work? If we do something like this:</p>
+
+        <pre><code>
+          <span>#!/bin/bash</span>
+          <span></span>
+          <span>ls zxc | grep a</span>
+          <span>echo "done"</span>
+        </code></pre>
+
+        <p>This will run quite happily and print "done", even though there's an error in the <code>ls</code> command. As per <a href="https://www.gnu.org/savannah-checkouts/gnu/bash/manual/bash.html#Pipelines">the manual</a>, the exit status is the exit status of the last command in the pipeline, so in this case the grep.</p>
+
+        <p>What we want is for the exit status to be the one of the failed command. If we set <code>pipefail</code>, that's what we get:</p>
+
+        <pre><code>
+          <span>#!/bin/bash</span>
+          <span></span>
+          <span>set -o pipefail</span>
+          <span></span>
+          <span>ls zxc | grep a</span>
+          <span>echo "done"</span>
+        </code></pre>
+
+        <p>Wait a minute, nothing's changed! That's because although the pipeline now fails, the script doesn't exit because <code>errexit</code> is off. Let's add that too:</p>
+
+        <pre><code>
+          <span>#!/bin/bash</span>
+          <span></span>
+          <span>set -o pipefail -o errexit</span>
+          <span></span>
+          <span>ls zxc | grep a</span>
+          <span>echo "done"</span>
+        </code></pre>
+
+        <p>Now it exists at the failed pipe, and exits with a failure code. Success!?</p>
+
+        <p>N.B. these options can also be set using their short codes. You might see it written in shorthand like this:</p>
+
+        <pre><code>
+          <span>set -euo pipefail</span>
+        </code></pre>
+
+        <p><code>pipefail</code> doesn't have a short option, so will always be written in long form.</p>
+      </content>
+    </article>
+  </content>
+</document>
