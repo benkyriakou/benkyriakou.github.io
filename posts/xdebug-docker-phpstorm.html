@@ -1,0 +1,92 @@
+<!DOCTYPE html SYSTEM "about:legacy-compat">
+<html lang="en">
+  <head>
+    <meta charset="utf-8"/>
+    <meta name="theme-color" content="#333"/>
+    <meta name="description" content="A brief guide on configuring xdebug with Docker."/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=1"/>
+    <link rel="canonical" href="https://benkyriakou.com/posts/xdebug-docker-phpstorm"/>
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon"/>
+    <title>Setting up xdebug with Docker and PHPStorm | Ben Kyriakou</title>
+    <link rel="stylesheet" href="/css/style.css" type="text/css"/>
+    <meta property="og:url" content="http://benkyriakou.com/posts/xdebug-docker-phpstorm"/>
+    <meta property="og:title" content="Setting up xdebug with Docker and PHPStorm"/>
+    <meta property="og:description" content="A brief guide on configuring xdebug with Docker."/>
+    <meta property="og:image" content="http://benkyriakou.com/images/global/twitter-card-image.png"/>
+    <meta name="twitter:card" content="summary"/>
+    <meta name="twitter:site" content="@benkyriakou"/>
+    <meta name="twitter:title" content="Setting up xdebug with Docker and PHPStorm"/>
+    <meta name="twitter:description" content="A brief guide on configuring xdebug with Docker."/>
+    <meta name="twitter:image" content="http://benkyriakou.com/images/global/twitter-card-image.png"/>
+    <script>
+      window.onload = function() {
+        (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+        (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+        m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+        })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+        ga('create', 'UA-64337321-1', 'auto');
+        ga('send', 'pageview');
+      };
+    </script>
+  </head>
+  <body>
+    <div class="wrapper">
+      <header class="site-header">
+        <div class="center-wrapper">
+          <nav>
+            <ul class="site-header__items">
+              <li class="site-header__item">
+                <a href="/">Home</a>
+              </li>
+              <li class="site-header__item">
+                <a href="/pdfs">PDFs</a>
+              </li>
+              <li class="site-header__item">
+                <a href="/about">About</a>
+              </li>
+              <li class="site-header__item">
+                <a href="//drupal.org/u/ben.kyriakou">Drupal.org</a>
+              </li>
+              <li class="site-header__item">
+                <a href="//twitter.com/benkyriakou">Twitter</a>
+              </li>
+            </ul>
+          </nav>
+        </div>
+      </header>
+      <main class="center-wrapper">
+    <article class="article"><time class="article__date" datetime="2020-06">June 2020</time><h1 class="article__header">Setting up xdebug with Docker and PHPStorm</h1><div class="article__content">
+        <p>A quick guide to how to do this, since I always forget and have to look it up. This is done with <a href="https://github.com/wodby/docker4drupal">docker4drupal</a>, but should work equally well with any Docker Compose setup.</p>
+
+        <p>Enable xdebug on the relevant Docker container. For docker4drupal this means uncommenting these lines in the <code>docker-compose.yml</code> file:</p>
+
+        <pre><code><span>PHP_XDEBUG: 1</span>
+<span>PHP_XDEBUG_DEFAULT_ENABLE: 1</span>
+<span>PHP_XDEBUG_REMOTE_CONNECT_BACK: 0</span>
+<span>PHP_IDE_CONFIG: serverName=PHPSTORM</span>
+<span>PHP_XDEBUG_IDEKEY: "PHPSTORM"</span>
+<span>PHP_XDEBUG_REMOTE_HOST: 172.17.0.1 # Linux</span>
+</code></pre>
+
+        <p>If you enable these after you've created the PHP container, remember to restart the container so that xdebug is enabled and configured.</p>
+
+        <p>Now go to Settings &gt; Languages &amp; Frameworks &gt; PHP and set your language level as required. Add a new CLI interpreter by clicking <code>...</code>. Click the <code>+</code> on the top left and add a new Docker configuration. Select Docker Compose and the php service, then use the default options for everything else. Save this and apply.</p>
+
+        <p>Next click the 'Add configuration' button on the taskbar in the top right. Pick the PHP Remote Debug template and click the <code>+</code> on the top left to add a new configuration (don't make the mistake of editing the template). Check 'Filter debug connection by IDE key' and set the IDE key to match the one in your XDebug config (for the above we'd use <code>PHPSTORM</code>). Add a server (the name doesn't matter). Give it the appropriate host and port - for docker4drupal the host will be something like http://myproject.docker.drupal.localhost, and the port will be 8000 unless you've changed it. Check 'Use path mappings', and set a path mapping for the root directory to <code>/var/www/html</code> (or wherever it's mounted to on the container).</p>
+
+        <p>It's important to note that for this to work with Drush, or anything that exists both in Composer and globally, you need to invoke Drush from the binary in the vendor directory <code>vendor/bin/drush</code> rather than using the system Drush, so that PHPStorm can use the path mappings. You could do this with a make command or Composer script. A make command I've used in the past:</p>
+
+        <pre><code><span>make VENDOR_BIN ?= /var/www/html/vendor/bin</span>
+<span/>
+<span>drush:</span>
+<span>  docker exec $(shell docker ps --filter name='^/$(PROJECT_NAME)_php' --format "{{ .ID }}") $(VENDOR_BIN)/drush -r $(DRUPAL_ROOT) $(filter-out $@,$(MAKECMDGOALS))</span>
+</code></pre>
+
+        <p>This is a modified version of the default docker4drupal command.</p>
+
+      </div></article><footer class="article-footer"><div class="email-signup"><p>Thanks for reading. If you'd like to get notifications when I post new content, please sign up to my mailing list.</p><div class="email-signup__form"><form action="https://gmail.us3.list-manage.com/subscribe/post?u=20b45c0b3f0f59af11c016095&amp;id=64c922ea23" method="post" id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" class="validate" target="_blank" novalidate="novalidate"><input type="email" value="" name="EMAIL" class="email" id="mce-EMAIL" placeholder="email address" required="required"/><div style="position: absolute; left: -5000px;" aria-hidden="true"><input type="text" name="b_20b45c0b3f0f59af11c016095_64c922ea23" tabindex="-1" value=""/></div><input type="submit" value="Subscribe" name="subscribe" id="mc-embedded-subscribe" class="button"/></form></div></div></footer>
+  </main>
+    </div>
+  </body>
+</html>

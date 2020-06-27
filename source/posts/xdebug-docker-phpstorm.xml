@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!DOCTYPE document [
+  <!ENTITY mdash "&#8212;">
+]>
+
+<document type="article">
+  <title>Setting up xdebug with Docker and PHPStorm</title>
+  <description>A brief guide on configuring xdebug with Docker.</description>
+  <slug>/posts/xdebug-docker-phpstorm</slug>
+  <content>
+    <article>
+      <title>Setting up xdebug with Docker and PHPStorm</title>
+      <date datetime="2020-06">June 2020</date>
+      <content>
+        <p>A quick guide to how to do this, since I always forget and have to look it up. This is done with <a href="https://github.com/wodby/docker4drupal">docker4drupal</a>, but should work equally well with any Docker Compose setup.</p>
+
+        <p>Enable xdebug on the relevant Docker container. For docker4drupal this means uncommenting these lines in the <code>docker-compose.yml</code> file:</p>
+
+        <pre><code>yml
+          <span>PHP_XDEBUG: 1</span>
+          <span>PHP_XDEBUG_DEFAULT_ENABLE: 1</span>
+          <span>PHP_XDEBUG_REMOTE_CONNECT_BACK: 0</span>
+          <span>PHP_IDE_CONFIG: serverName=PHPSTORM</span>
+          <span>PHP_XDEBUG_IDEKEY: "PHPSTORM"</span>
+          <span>PHP_XDEBUG_REMOTE_HOST: 172.17.0.1 # Linux</span>
+        </code></pre>
+
+        <p>If you enable these after you've created the PHP container, remember to restart the container so that xdebug is enabled and configured.</p>
+
+        <p>Now go to Settings > Languages &amp; Frameworks > PHP and set your language level as required. Add a new CLI interpreter by clicking <code>...</code>. Click the <code>+</code> on the top left and add a new Docker configuration. Select Docker Compose and the php service, then use the default options for everything else. Save this and apply.</p>
+
+        <p>Next click the 'Add configuration' button on the taskbar in the top right. Pick the PHP Remote Debug template and click the <code>+</code> on the top left to add a new configuration (don't make the mistake of editing the template). Check 'Filter debug connection by IDE key' and set the IDE key to match the one in your XDebug config (for the above we'd use <code>PHPSTORM</code>). Add a server (the name doesn't matter). Give it the appropriate host and port - for docker4drupal the host will be something like http://myproject.docker.drupal.localhost, and the port will be 8000 unless you've changed it. Check 'Use path mappings', and set a path mapping for the root directory to <code>/var/www/html</code> (or wherever it's mounted to on the container).</p>
+
+        <p>It's important to note that for this to work with Drush, or anything that exists both in Composer and globally, you need to invoke Drush from the binary in the vendor directory <code>vendor/bin/drush</code> rather than using the system Drush, so that PHPStorm can use the path mappings. You could do this with a make command or Composer script. A make command I've used in the past:</p>
+
+        <pre><code>
+          <span>make VENDOR_BIN ?= /var/www/html/vendor/bin</span>
+          <span></span>
+          <span>drush:</span>
+          <span>  docker exec $(shell docker ps --filter name='^/$(PROJECT_NAME)_php' --format "{{ .ID }}") $(VENDOR_BIN)/drush -r $(DRUPAL_ROOT) $(filter-out $@,$(MAKECMDGOALS))</span>
+        </code></pre>
+
+        <p>This is a modified version of the default docker4drupal command.</p>
+
+      </content>
+    </article>
+  </content>
+</document>
