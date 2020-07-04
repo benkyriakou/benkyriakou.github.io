@@ -6,7 +6,7 @@ from PIL import Image
 from lxml import etree
 from lxml.etree import XSLTApplyError, XSLTParseError
 from pygments import highlight
-from pygments.lexers import PythonLexer
+from pygments.lexers import guess_lexer, get_lexer_by_name
 from pygments.formatters import HtmlFormatter
 
 # Command-line arguments.
@@ -108,7 +108,8 @@ for item in os.walk(SOURCE_DIR):
         code = code_block.text
         leader_indent = len(re.match(r'\s+', code).group(0)) - 1
         code = '\n'.join([l[leader_indent:] for l in code.split('\n')])
-        pygments_code = highlight(code, PythonLexer(), HtmlFormatter())
+        lexer = get_lexer_by_name(code_block.get('lang')) if code_block.get('lang') else guess_lexer(code)
+        pygments_code = highlight(code, guess_lexer(code), HtmlFormatter())
         code_block.getparent().replace(code_block, etree.fromstring(pygments_code))
 
       # Then apply the XSL styles to the rest.
