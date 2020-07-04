@@ -17,14 +17,14 @@
 
         <p>Enable xdebug on the relevant Docker container. For docker4drupal this means uncommenting these lines in the <code>docker-compose.yml</code> file:</p>
 
-        <pre><code>yml
-          <span>PHP_XDEBUG: 1</span>
-          <span>PHP_XDEBUG_DEFAULT_ENABLE: 1</span>
-          <span>PHP_XDEBUG_REMOTE_CONNECT_BACK: 0</span>
-          <span>PHP_IDE_CONFIG: serverName=PHPSTORM</span>
-          <span>PHP_XDEBUG_IDEKEY: "PHPSTORM"</span>
-          <span>PHP_XDEBUG_REMOTE_HOST: 172.17.0.1 # Linux</span>
-        </code></pre>
+        <codeblock lang="yaml">
+          PHP_XDEBUG: 1
+          PHP_XDEBUG_DEFAULT_ENABLE: 1
+          PHP_XDEBUG_REMOTE_CONNECT_BACK: 0
+          PHP_IDE_CONFIG: serverName=PHPSTORM
+          PHP_XDEBUG_IDEKEY: "PHPSTORM"
+          PHP_XDEBUG_REMOTE_HOST: 172.17.0.1 # Linux
+        </codeblock>
 
         <p>If you enable these after you've created the PHP container, remember to restart the container so that xdebug is enabled and configured.</p>
 
@@ -34,12 +34,12 @@
 
         <p>It's important to note that for this to work with Drush, or anything that exists both in Composer and globally, you need to invoke Drush from the binary in the vendor directory <code>vendor/bin/drush</code> rather than using the system Drush, so that PHPStorm can use the path mappings. You could do this with a make command or Composer script. A make command I've used in the past:</p>
 
-        <pre><code>
-          <span>make VENDOR_BIN ?= /var/www/html/vendor/bin</span>
-          <span></span>
-          <span>drush:</span>
-          <span>  docker exec $(shell docker ps --filter name='^/$(PROJECT_NAME)_php' --format "{{ .ID }}") $(VENDOR_BIN)/drush -r $(DRUPAL_ROOT) $(filter-out $@,$(MAKECMDGOALS))</span>
-        </code></pre>
+        <codeblock lang="make">
+          make VENDOR_BIN ?= /var/www/html/vendor/bin
+
+          drush:
+            docker exec $(shell docker ps --filter name='^/$(PROJECT_NAME)_php' --format "{{ .ID }}") $(VENDOR_BIN)/drush -r $(DRUPAL_ROOT) $(filter-out $@,$(MAKECMDGOALS))
+        </codeblock>
 
         <p>This is a modified version of the default docker4drupal command.</p>
 

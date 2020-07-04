@@ -61,15 +61,13 @@
 
         <p>Enable xdebug on the relevant Docker container. For docker4drupal this means uncommenting these lines in the <code>docker-compose.yml</code> file:</p>
 
-        <pre><code><span>PHP_XDEBUG: 1</span>
-<span>PHP_XDEBUG_DEFAULT_ENABLE: 1</span>
-<span>PHP_XDEBUG_REMOTE_CONNECT_BACK: 0</span>
-<span>PHP_IDE_CONFIG: serverName=PHPSTORM</span>
-<span>PHP_XDEBUG_IDEKEY: "PHPSTORM"</span>
-<span>PHP_XDEBUG_REMOTE_HOST: 172.17.0.1 # Linux</span>
-</code></pre>
-
-        <p>If you enable these after you've created the PHP container, remember to restart the container so that xdebug is enabled and configured.</p>
+        <div class="highlight"><pre><span/><span class="c">PHP_XDEBUG: 1</span>
+<span class="c">PHP_XDEBUG_DEFAULT_ENABLE: 1</span>
+<span class="c">PHP_XDEBUG_REMOTE_CONNECT_BACK: 0</span>
+<span class="c">PHP_IDE_CONFIG: serverName=PHPSTORM</span>
+<span class="c">PHP_XDEBUG_IDEKEY: "PHPSTORM"</span>
+<span class="c">PHP_XDEBUG_REMOTE_HOST: 172.17.0.1 # Linux</span>
+</pre></div><p>If you enable these after you've created the PHP container, remember to restart the container so that xdebug is enabled and configured.</p>
 
         <p>Now go to Settings &gt; Languages &amp; Frameworks &gt; PHP and set your language level as required. Add a new CLI interpreter by clicking <code>...</code>. Click the <code>+</code> on the top left and add a new Docker configuration. Select Docker Compose and the php service, then use the default options for everything else. Save this and apply.</p>
 
@@ -77,13 +75,11 @@
 
         <p>It's important to note that for this to work with Drush, or anything that exists both in Composer and globally, you need to invoke Drush from the binary in the vendor directory <code>vendor/bin/drush</code> rather than using the system Drush, so that PHPStorm can use the path mappings. You could do this with a make command or Composer script. A make command I've used in the past:</p>
 
-        <pre><code><span>make VENDOR_BIN ?= /var/www/html/vendor/bin</span>
-<span/>
-<span>drush:</span>
-<span>  docker exec $(shell docker ps --filter name='^/$(PROJECT_NAME)_php' --format "{{ .ID }}") $(VENDOR_BIN)/drush -r $(DRUPAL_ROOT) $(filter-out $@,$(MAKECMDGOALS))</span>
-</code></pre>
+        <div class="highlight"><pre><span/><span class="x">make VENDOR_BIN ?= /var/www/html/vendor/bin</span>
 
-        <p>This is a modified version of the default docker4drupal command.</p>
+<span class="x">drush:</span>
+<span class="x">  docker exec $(shell docker ps --filter name='^/$(PROJECT_NAME)_php' --format "</span><span class="cp">{{</span> <span class="nv">.ID</span> <span class="cp">}}</span><span class="x">") $(VENDOR_BIN)/drush -r $(DRUPAL_ROOT) $(filter-out $@,$(MAKECMDGOALS))</span>
+</pre></div><p>This is a modified version of the default docker4drupal command.</p>
 
       </div></article><footer class="article-footer"><div class="email-signup"><p>Thanks for reading. If you'd like to get notifications when I post new content, please sign up to my mailing list.</p><div class="email-signup__form"><form action="https://gmail.us3.list-manage.com/subscribe/post?u=20b45c0b3f0f59af11c016095&amp;id=64c922ea23" method="post" id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" class="validate" target="_blank" novalidate="novalidate"><input type="email" value="" name="EMAIL" class="email" id="mce-EMAIL" placeholder="email address" required="required"/><div style="position: absolute; left: -5000px;" aria-hidden="true"><input type="text" name="b_20b45c0b3f0f59af11c016095_64c922ea23" tabindex="-1" value=""/></div><input type="submit" value="Subscribe" name="subscribe" id="mc-embedded-subscribe" class="button"/></form></div></div></footer>
   </main>
