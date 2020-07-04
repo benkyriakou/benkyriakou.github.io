@@ -1,9 +1,13 @@
 import os
+import re
 import sass
 import argparse
 from PIL import Image
 from lxml import etree
 from lxml.etree import XSLTApplyError, XSLTParseError
+from pygments import highlight
+from pygments.lexers import PythonLexer
+from pygments.formatters import HtmlFormatter
 
 # Command-line arguments.
 parser = argparse.ArgumentParser(description="Static blog processor")
@@ -38,7 +42,13 @@ if args.all or args.css:
   SCSS_BASE = os.path.join(BASE_DIR, 'scss')
   CSS_FILE = os.path.join(BASE_DIR, 'css', 'style.css')
 
-# First get a sorted list of files for consistency.
+  # Generate the Pygments styles.
+  PYGMENTS_FILE = os.path.join(BASE_DIR, 'scss', 'pygments.scss')
+
+  with open(PYGMENTS_FILE, 'w', encoding='utf8') as fh:
+    fh.write(HtmlFormatter().get_style_defs('.highlight'))
+
+  # Get a sorted list of files for consistency.
   scss_files = os.listdir(SCSS_BASE)
   scss_files.sort()
 
@@ -56,7 +66,7 @@ if args.all or args.css:
       output_style='compressed'
     )
 
-  # # Write the new CSS file
+  # Write the new CSS file
   with open(CSS_FILE, 'w', encoding='utf8') as fh:
     print('Writing CSS to {!s}'.format(CSS_FILE.replace(BASE_DIR, '')))
 
@@ -93,6 +103,15 @@ for item in os.walk(SOURCE_DIR):
       continue
 
     try:
+      # First apply Pygments transforms to any codeblocks.
+      for code_block in xml.xpath('//codeblock'):
+        code = code_block.text
+        leader_indent = len(re.match(r'\s+', code).group(0)) - 1
+        code = '\n'.join([l[leader_indent:] for l in code.split('\n')])
+        pygments_code = highlight(code, PythonLexer(), HtmlFormatter())
+        code_block.getparent().replace(code_block, etree.fromstring(pygments_code))
+
+      # Then apply the XSL styles to the rest.
       result = transform(xml)
       outfile = os.path.join(outpath, name + '.html')
 
