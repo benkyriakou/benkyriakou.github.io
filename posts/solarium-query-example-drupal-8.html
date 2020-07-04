@@ -59,40 +59,39 @@
     <article class="article"><time class="article__date" datetime="2020-05">May 2020</time><h1 class="article__header">Solarium Query Example in Drupal 8</h1><div class="article__content">
         <p>When using Search API Solr in Drupal 8, I needed to run some more in-depth queries than were available via the Search API Query, but couldn't find any examples online of how to run a Solarium query directly. After digging around in the module, I found some examples in the <code>SearchApiSolrBackend</code>. If anyone else is looking for the same, here's how to run a basic Solarium query:</p>
 
-      <pre><code><span>use Drupal\search_api\Entity\Index;</span>
-<span>use Solarium\QueryType\Select\Query\Query;</span>
-<span>use Drupal\search_api_solr\Plugin\search_api\backend\SearchApiSolrBackend;</span>
-<span/>
-<span>/** @var Index $index */</span>
-<span>$index = Index::load('images');</span>
-<span/>
-<span>/** @var SearchApiSolrBackend $backend */</span>
-<span>$backend = $index-&gt;getServerInstance()-&gt;getBackend();</span>
-<span/>
-<span>$connector = $backend-&gt;getSolrConnector();</span>
-<span/>
-<span>$solarium_query = $connector-&gt;getSelectQuery();</span>
-<span>$solarium_query-&gt;createFilterQuery('archive_id')-&gt;setQuery('"EAP781-1-1-653"');</span>
-<span>$solarium_query-&gt;addSort('sequence_id', Query::SORT_ASC);</span>
-<span>$solarium_query-&gt;setRows(1);</span>
-<span/>
-<span>$result = $connector-&gt;execute($solarium_query);</span>
-<span/>
-<span>// The total number of documents found by Solr.</span>
-<span>$found = $result-&gt;getNumFound();</span>
-<span/>
-<span>// The total number of documents returned from the query.</span>
-<span>$count = $result-&gt;count();</span>
-<span/>
-<span>// Check the Solr response status (not the HTTP status).</span>
-<span>// Can't find much documentation for this apart from https://lucene.472066.n3.nabble.com/Response-status-td490876.html#a3703172.</span>
-<span>$status = $result-&gt;getStatus();</span>
-<span/>
-<span>// An array of documents. Can also iterate directly on $result.</span>
-<span>$documents = $result-&gt;getDocuments();</span>
-</code></pre>
+      <div class="highlight"><pre><span/><span class="cp">&lt;?php</span>
+<span class="k">use</span> <span class="nx">Drupal\search_api\Entity\Index</span><span class="p">;</span>
+<span class="k">use</span> <span class="nx">Solarium\QueryType\Select\Query\Query</span><span class="p">;</span>
+<span class="k">use</span> <span class="nx">Drupal\search_api_solr\Plugin\search_api\backend\SearchApiSolrBackend</span><span class="p">;</span>
 
-      <p>For more information on the query syntax, see the <a href="https://solarium.readthedocs.io/en/stable/">Solarium documentation</a>.</p>
+<span class="sd">/** @var Index $index */</span>
+<span class="nv">$index</span> <span class="o">=</span> <span class="nx">Index</span><span class="o">::</span><span class="na">load</span><span class="p">(</span><span class="s1">'images'</span><span class="p">);</span>
+
+<span class="sd">/** @var SearchApiSolrBackend $backend */</span>
+<span class="nv">$backend</span> <span class="o">=</span> <span class="nv">$index</span><span class="o">-&gt;</span><span class="na">getServerInstance</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">getBackend</span><span class="p">();</span>
+
+<span class="nv">$connector</span> <span class="o">=</span> <span class="nv">$backend</span><span class="o">-&gt;</span><span class="na">getSolrConnector</span><span class="p">();</span>
+
+<span class="nv">$solarium_query</span> <span class="o">=</span> <span class="nv">$connector</span><span class="o">-&gt;</span><span class="na">getSelectQuery</span><span class="p">();</span>
+<span class="nv">$solarium_query</span><span class="o">-&gt;</span><span class="na">createFilterQuery</span><span class="p">(</span><span class="s1">'archive_id'</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">setQuery</span><span class="p">(</span><span class="s1">'"id-12345"'</span><span class="p">);</span>
+<span class="nv">$solarium_query</span><span class="o">-&gt;</span><span class="na">addSort</span><span class="p">(</span><span class="s1">'sequence_id'</span><span class="p">,</span> <span class="nx">Query</span><span class="o">::</span><span class="na">SORT_ASC</span><span class="p">);</span>
+<span class="nv">$solarium_query</span><span class="o">-&gt;</span><span class="na">setRows</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+
+<span class="nv">$result</span> <span class="o">=</span> <span class="nv">$connector</span><span class="o">-&gt;</span><span class="na">execute</span><span class="p">(</span><span class="nv">$solarium_query</span><span class="p">);</span>
+
+<span class="c1">// The total number of documents found by Solr.</span>
+<span class="nv">$found</span> <span class="o">=</span> <span class="nv">$result</span><span class="o">-&gt;</span><span class="na">getNumFound</span><span class="p">();</span>
+
+<span class="c1">// The total number of documents returned from the query.</span>
+<span class="nv">$count</span> <span class="o">=</span> <span class="nv">$result</span><span class="o">-&gt;</span><span class="na">count</span><span class="p">();</span>
+
+<span class="c1">// Check the Solr response status (not the HTTP status).</span>
+<span class="c1">// Can't find much documentation for this apart from https://lucene.472066.n3.nabble.com/Response-status-td490876.html#a3703172.</span>
+<span class="nv">$status</span> <span class="o">=</span> <span class="nv">$result</span><span class="o">-&gt;</span><span class="na">getStatus</span><span class="p">();</span>
+
+<span class="c1">// An array of documents. Can also iterate directly on $result.</span>
+<span class="nv">$documents</span> <span class="o">=</span> <span class="nv">$result</span><span class="o">-&gt;</span><span class="na">getDocuments</span><span class="p">();</span>
+</pre></div><p>For more information on the query syntax, see the <a href="https://solarium.readthedocs.io/en/stable/">Solarium documentation</a>.</p>
       </div></article><footer class="article-footer"><div class="email-signup"><p>Thanks for reading. If you'd like to get notifications when I post new content, please sign up to my mailing list.</p><div class="email-signup__form"><form action="https://gmail.us3.list-manage.com/subscribe/post?u=20b45c0b3f0f59af11c016095&amp;id=64c922ea23" method="post" id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" class="validate" target="_blank" novalidate="novalidate"><input type="email" value="" name="EMAIL" class="email" id="mce-EMAIL" placeholder="email address" required="required"/><div style="position: absolute; left: -5000px;" aria-hidden="true"><input type="text" name="b_20b45c0b3f0f59af11c016095_64c922ea23" tabindex="-1" value=""/></div><input type="submit" value="Subscribe" name="subscribe" id="mc-embedded-subscribe" class="button"/></form></div></div></footer>
   </main>
     </div>
