@@ -1,0 +1,536 @@
+<!DOCTYPE html SYSTEM "about:legacy-compat">
+<html lang="en">
+  <head>
+    <meta charset="utf-8"/>
+    <meta name="theme-color" content="#333"/>
+    <meta name="description" content="How does a Drupal 8 page get made."/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=1"/>
+    <link rel="canonical" href="https://benkyriakou.com/posts/drupal-8-page-rendering"/>
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon"/>
+    <title>Drupal 8 page | Ben Kyriakou</title>
+    <link rel="stylesheet" href="/css/style.css" type="text/css"/>
+    <meta property="og:url" content="http://benkyriakou.com/posts/drupal-8-page-rendering"/>
+    <meta property="og:title" content="Drupal 8 page"/>
+    <meta property="og:description" content="How does a Drupal 8 page get made."/>
+    <meta property="og:image" content="http://benkyriakou.com/images/global/twitter-card-image.png"/>
+    <meta name="twitter:card" content="summary"/>
+    <meta name="twitter:site" content="@benkyriakou"/>
+    <meta name="twitter:title" content="Drupal 8 page"/>
+    <meta name="twitter:description" content="How does a Drupal 8 page get made."/>
+    <meta name="twitter:image" content="http://benkyriakou.com/images/global/twitter-card-image.png"/>
+    <script>
+      window.onload = function() {
+        (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+        (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+        m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+        })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+        ga('create', 'UA-64337321-1', 'auto');
+        ga('send', 'pageview');
+      };
+    </script>
+  </head>
+  <body>
+    <div class="wrapper">
+      <header class="site-header">
+        <div class="center-wrapper">
+          <nav>
+            <ul class="site-header__items">
+              <li class="site-header__item">
+                <a href="/">Home</a>
+              </li>
+              <li class="site-header__item">
+                <a href="/pdfs">PDFs</a>
+              </li>
+              <li class="site-header__item">
+                <a href="/about">About</a>
+              </li>
+              <li class="site-header__item">
+                <a href="//drupal.org/u/ben.kyriakou">Drupal.org</a>
+              </li>
+              <li class="site-header__item">
+                <a href="//twitter.com/benkyriakou">Twitter</a>
+              </li>
+            </ul>
+          </nav>
+        </div>
+      </header>
+      <main class="center-wrapper">
+    <article class="article"><time class="article__date" datetime="2020-07">July 2020</time><h1 class="article__header">Drupal 8 page</h1><div class="article__content">
+        <p>How does a page get rendered in Drupal? This is a question I felt I had a good handle on in Drupal 7, but although I understand the mechanisms underlying Drupal 8 I couldn't have given you a good explanation of how you get from a request to a rendered page. Perhaps you feel the same way&#8212;if that's the case, join me on the journey to figure out how Drupal 8 makes a page.</p>
+
+        <p>I didn't find a lot of existing material on this looking around the internet&#8212;this <a href="http://x-team.com/blog/handle-me-gently">article from x-team</a> gives an explanation of how the Drupal kernel works, but doesn't go much deeper than how it handles the initial request.</p>
+
+        <h2 id="section-starting-our-search">Starting our search</h2>
+
+        <p>We start in index.php:</p>
+
+        <div class="highlight"><pre><span/><span class="cp">&lt;?php</span>
+
+<span class="sd">/**</span>
+<span class="sd">* @file</span>
+<span class="sd">* The PHP page that serves all page requests on a Drupal installation.</span>
+<span class="sd">*</span>
+<span class="sd">* All Drupal code is released under the GNU General Public License.</span>
+<span class="sd">* See COPYRIGHT.txt and LICENSE.txt files in the "core" directory.</span>
+<span class="sd">*/</span>
+
+<span class="k">use</span> <span class="nx">Drupal\Core\DrupalKernel</span><span class="p">;</span>
+<span class="k">use</span> <span class="nx">Symfony\Component\HttpFoundation\Request</span><span class="p">;</span>
+
+<span class="nv">$autoloader</span> <span class="o">=</span> <span class="k">require_once</span> <span class="s1">'autoload.php'</span><span class="p">;</span>
+
+<span class="nv">$kernel</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">DrupalKernel</span><span class="p">(</span><span class="s1">'prod'</span><span class="p">,</span> <span class="nv">$autoloader</span><span class="p">);</span>
+
+<span class="nv">$request</span> <span class="o">=</span> <span class="nx">Request</span><span class="o">::</span><span class="na">createFromGlobals</span><span class="p">();</span>
+<span class="nv">$response</span> <span class="o">=</span> <span class="nv">$kernel</span><span class="o">-&gt;</span><span class="na">handle</span><span class="p">(</span><span class="nv">$request</span><span class="p">);</span>
+<span class="nv">$response</span><span class="o">-&gt;</span><span class="na">send</span><span class="p">();</span>
+
+<span class="nv">$kernel</span><span class="o">-&gt;</span><span class="na">terminate</span><span class="p">(</span><span class="nv">$request</span><span class="p">,</span> <span class="nv">$response</span><span class="p">);</span>
+</pre></div><p>The Symfony kernel is initially overridden by <code>DrupalKernel</code>, a class which implements the Symfony <code>KernelInterface</code> via <code>DrupalKernelInterface</code>, and hence can easily override the Symfony <code>HttpKernel</code>.</p>
+
+        <p>First the <code>DrupalKernel</code> is instantiated, and the global server variables are built into a Symfony <code>Request</code> object. After we have a kernel and a request, the <code>handle()</code> method is called to generate a Symfony <code>Response</code>.</p>
+
+        <p>The <code>handle()</code> method doesn't immediately do anything particularly interesting:</p>
+
+        <div class="highlight"><pre><span/><span class="cp">&lt;?php</span>
+<span class="k">public</span> <span class="k">function</span> <span class="nf">handle</span><span class="p">(</span><span class="nx">Request</span> <span class="nv">$request</span><span class="p">,</span> <span class="nv">$type</span> <span class="o">=</span> <span class="nx">self</span><span class="o">::</span><span class="na">MASTER_REQUEST</span><span class="p">,</span> <span class="nv">$catch</span> <span class="o">=</span> <span class="k">TRUE</span><span class="p">)</span> <span class="p">{</span>
+  <span class="c1">// Ensure sane PHP environment variables.</span>
+  <span class="k">static</span><span class="o">::</span><span class="na">bootEnvironment</span><span class="p">();</span>
+
+  <span class="k">try</span> <span class="p">{</span>
+    <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">initializeSettings</span><span class="p">(</span><span class="nv">$request</span><span class="p">);</span>
+
+    <span class="c1">// Redirect the user to the installation script if Drupal has not been</span>
+    <span class="c1">// installed yet (i.e., if no $databases array has been defined in the</span>
+    <span class="c1">// settings.php file) and we are not already installing.</span>
+    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">Database</span><span class="o">::</span><span class="na">getConnectionInfo</span><span class="p">()</span> <span class="o">&amp;&amp;</span>
+        <span class="o">!</span><span class="nx">InstallerKernel</span><span class="o">::</span><span class="na">installationAttempted</span><span class="p">()</span> <span class="o">&amp;&amp;</span>
+        <span class="nx">PHP_SAPI</span> <span class="o">!==</span> <span class="s1">'cli'</span><span class="p">)</span> <span class="p">{</span>
+      <span class="nv">$response</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">RedirectResponse</span><span class="p">(</span><span class="nv">$request</span><span class="o">-&gt;</span><span class="na">getBasePath</span><span class="p">()</span> <span class="o">.</span> <span class="s1">'/core/install.php'</span><span class="p">,</span> <span class="mi">302</span><span class="p">,</span> <span class="p">[</span><span class="s1">'Cache-Control'</span> <span class="o">=&gt;</span> <span class="s1">'no-cache'</span><span class="p">]);</span>
+    <span class="p">}</span>
+    <span class="k">else</span> <span class="p">{</span>
+      <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">boot</span><span class="p">();</span>
+      <span class="nv">$response</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">getHttpKernel</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">handle</span><span class="p">(</span><span class="nv">$request</span><span class="p">,</span> <span class="nv">$type</span><span class="p">,</span> <span class="nv">$catch</span><span class="p">);</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+  <span class="k">catch</span> <span class="p">(</span><span class="nx">\Exception</span> <span class="nv">$e</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nv">$catch</span> <span class="o">===</span> <span class="k">FALSE</span><span class="p">)</span> <span class="p">{</span>
+      <span class="k">throw</span> <span class="nv">$e</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="nv">$response</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">handleException</span><span class="p">(</span><span class="nv">$e</span><span class="p">,</span> <span class="nv">$request</span><span class="p">,</span> <span class="nv">$type</span><span class="p">);</span>
+  <span class="p">}</span>
+
+  <span class="c1">// Adapt response headers to the current request.</span>
+  <span class="nv">$response</span><span class="o">-&gt;</span><span class="na">prepare</span><span class="p">(</span><span class="nv">$request</span><span class="p">);</span>
+
+  <span class="k">return</span> <span class="nv">$response</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div><p>First it makes sure that Drupal is installed&#8212;if not, the user is redirected to the install page and the usual routing process ends. Otherwise, the request is passed down the chain to <code>$this-&gt;getHttpKernel()-&gt;handle()</code>. This retrieves the kernel from the core <code>http_kernel</code> service, which by default is:</p>
+
+        <div class="highlight"><pre><span/><span class="c">http_kernel:</span>
+<span class="c">  class: Stack\StackedHttpKernel</span>
+</pre></div><p>The <code>StackedHttpKernel</code> is another Drupal-specific class, again implementing a Symfony interface <code>HttpKernelInterface</code>.</p>
+
+        <p>The <code>handle()</code> method here is equally as exciting:</p>
+
+        <div class="highlight"><pre><span/><span class="cp">&lt;?php</span>
+<span class="k">public</span> <span class="k">function</span> <span class="nf">handle</span><span class="p">(</span><span class="nx">Request</span> <span class="nv">$request</span><span class="p">,</span> <span class="nv">$type</span> <span class="o">=</span> <span class="nx">HttpKernelInterface</span><span class="o">::</span><span class="na">MASTER_REQUEST</span><span class="p">,</span> <span class="nv">$catch</span> <span class="o">=</span> <span class="k">true</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">app</span><span class="o">-&gt;</span><span class="na">handle</span><span class="p">(</span><span class="nv">$request</span><span class="p">,</span> <span class="nv">$type</span><span class="p">,</span> <span class="nv">$catch</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div><p>Instead of being injected via the service definition, <code>$app</code> and <code>$middleware</code> are supplied as part of the Kernel compilation process in <code>StackedKernelPass-&gt;process()</code>. By inspecting the application at runtime we can see that <code>$app</code> is an instance of <code>NegotiationMiddleware</code> and <code>$middleware</code> is a stack comprised of:</p>
+
+        <ol>
+          <li><code>NegotiationMiddleware</code></li>
+          <li><code>ReverseProxyMiddleware</code></li>
+          <li><code>PageCache</code></li>
+          <li><code>KernelPreHandle</code></li>
+          <li><code>Session</code></li>
+          <li><code>HttpKernel</code></li>
+        </ol>
+
+        <p>These are all services tagged with <code>http_middleware</code>, as we can see from the discovery in <code>StackedKernelPass</code>. If you've got access to Drupal Console, you can easily find all of these with:</p>
+
+        <div class="highlight">
+          <pre><code><span>&gt; drupal debug:container --tag=http_middleware</span>
+<span>Service ID                        Class Name</span>
+<span>http_middleware.kernel_pre_handle Drupal\Core\StackMiddleware\KernelPreHandle</span>
+<span>http_middleware.negotiation       Drupal\Core\StackMiddleware\NegotiationMiddleware</span>
+<span>http_middleware.page_cache        Drupal\page_cache\StackMiddleware\PageCache</span>
+<span>http_middleware.reverse_proxy     Drupal\Core\StackMiddleware\ReverseProxyMiddleware</span>
+<span>http_middleware.session           Drupal\Core\StackMiddleware\Session</span>
+</code></pre>
+        </div>
+
+        <p>The first five classes are all Drupal classes, with the <code>HttpKernel</code> being the default Symfony Kernel as supplied by the service tagged with <code>http_kernel.basic</code>.</p>
+
+        <p><code>KernelPreHandle</code></p>
+
+        <div class="highlight"><pre><span/><span class="cp">&lt;?php</span>
+<span class="k">public</span> <span class="k">function</span> <span class="nf">handle</span><span class="p">(</span><span class="nx">Request</span> <span class="nv">$request</span><span class="p">,</span> <span class="nv">$type</span> <span class="o">=</span> <span class="nx">self</span><span class="o">::</span><span class="na">MASTER_REQUEST</span><span class="p">,</span> <span class="nv">$catch</span> <span class="o">=</span> <span class="k">TRUE</span><span class="p">)</span> <span class="p">{</span>
+  <span class="c1">// Register available mime types.</span>
+  <span class="k">foreach</span> <span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">formats</span> <span class="k">as</span> <span class="nv">$format</span> <span class="o">=&gt;</span> <span class="nv">$mime_type</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nv">$request</span><span class="o">-&gt;</span><span class="na">setFormat</span><span class="p">(</span><span class="nv">$format</span><span class="p">,</span> <span class="nv">$mime_type</span><span class="p">);</span>
+  <span class="p">}</span>
+
+  <span class="c1">// Determine the request format using the negotiator.</span>
+  <span class="k">if</span> <span class="p">(</span><span class="nv">$requested_format</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">getContentType</span><span class="p">(</span><span class="nv">$request</span><span class="p">))</span> <span class="p">{</span>
+    <span class="nv">$request</span><span class="o">-&gt;</span><span class="na">setRequestFormat</span><span class="p">(</span><span class="nv">$requested_format</span><span class="p">);</span>
+  <span class="p">}</span>
+  <span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">app</span><span class="o">-&gt;</span><span class="na">handle</span><span class="p">(</span><span class="nv">$request</span><span class="p">,</span> <span class="nv">$type</span><span class="p">,</span> <span class="nv">$catch</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div><p><code>NegotiationMiddleware</code></p>
+
+        <div class="highlight"><pre><span/><span class="cp">&lt;?php</span>
+<span class="k">public</span> <span class="k">function</span> <span class="nf">handle</span><span class="p">(</span><span class="nx">Request</span> <span class="nv">$request</span><span class="p">,</span> <span class="nv">$type</span> <span class="o">=</span> <span class="nx">self</span><span class="o">::</span><span class="na">MASTER_REQUEST</span><span class="p">,</span> <span class="nv">$catch</span> <span class="o">=</span> <span class="k">TRUE</span><span class="p">)</span> <span class="p">{</span>
+  <span class="c1">// Register available mime types.</span>
+  <span class="k">foreach</span> <span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">formats</span> <span class="k">as</span> <span class="nv">$format</span> <span class="o">=&gt;</span> <span class="nv">$mime_type</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nv">$request</span><span class="o">-&gt;</span><span class="na">setFormat</span><span class="p">(</span><span class="nv">$format</span><span class="p">,</span> <span class="nv">$mime_type</span><span class="p">);</span>
+  <span class="p">}</span>
+
+  <span class="c1">// Determine the request format using the negotiator.</span>
+  <span class="k">if</span> <span class="p">(</span><span class="nv">$requested_format</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">getContentType</span><span class="p">(</span><span class="nv">$request</span><span class="p">))</span> <span class="p">{</span>
+    <span class="nv">$request</span><span class="o">-&gt;</span><span class="na">setRequestFormat</span><span class="p">(</span><span class="nv">$requested_format</span><span class="p">);</span>
+  <span class="p">}</span>
+  <span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">app</span><span class="o">-&gt;</span><span class="na">handle</span><span class="p">(</span><span class="nv">$request</span><span class="p">,</span> <span class="nv">$type</span><span class="p">,</span> <span class="nv">$catch</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div><p><code>PageCache</code></p>
+
+        <div class="highlight"><pre><span/><span class="cp">&lt;?php</span>
+<span class="k">public</span> <span class="k">function</span> <span class="nf">handle</span><span class="p">(</span><span class="nx">Request</span> <span class="nv">$request</span><span class="p">,</span> <span class="nv">$type</span> <span class="o">=</span> <span class="nx">self</span><span class="o">::</span><span class="na">MASTER_REQUEST</span><span class="p">,</span> <span class="nv">$catch</span> <span class="o">=</span> <span class="k">TRUE</span><span class="p">)</span> <span class="p">{</span>
+  <span class="c1">// Only allow page caching on master request.</span>
+  <span class="k">if</span> <span class="p">(</span><span class="nv">$type</span> <span class="o">===</span> <span class="k">static</span><span class="o">::</span><span class="na">MASTER_REQUEST</span> <span class="o">&amp;&amp;</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">requestPolicy</span><span class="o">-&gt;</span><span class="na">check</span><span class="p">(</span><span class="nv">$request</span><span class="p">)</span> <span class="o">===</span> <span class="nx">RequestPolicyInterface</span><span class="o">::</span><span class="na">ALLOW</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nv">$response</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">lookup</span><span class="p">(</span><span class="nv">$request</span><span class="p">,</span> <span class="nv">$type</span><span class="p">,</span> <span class="nv">$catch</span><span class="p">);</span>
+  <span class="p">}</span>
+  <span class="k">else</span> <span class="p">{</span>
+    <span class="nv">$response</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">pass</span><span class="p">(</span><span class="nv">$request</span><span class="p">,</span> <span class="nv">$type</span><span class="p">,</span> <span class="nv">$catch</span><span class="p">);</span>
+  <span class="p">}</span>
+
+  <span class="k">return</span> <span class="nv">$response</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div><p><code>ReverseProxyMiddleware</code></p>
+
+        <div class="highlight"><pre><span/><span class="cp">&lt;?php</span>
+<span class="k">public</span> <span class="k">function</span> <span class="nf">handle</span><span class="p">(</span><span class="nx">Request</span> <span class="nv">$request</span><span class="p">,</span> <span class="nv">$type</span> <span class="o">=</span> <span class="nx">self</span><span class="o">::</span><span class="na">MASTER_REQUEST</span><span class="p">,</span> <span class="nv">$catch</span> <span class="o">=</span> <span class="k">TRUE</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">drupalKernel</span><span class="o">-&gt;</span><span class="na">preHandle</span><span class="p">(</span><span class="nv">$request</span><span class="p">);</span>
+
+  <span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">httpKernel</span><span class="o">-&gt;</span><span class="na">handle</span><span class="p">(</span><span class="nv">$request</span><span class="p">,</span> <span class="nv">$type</span><span class="p">,</span> <span class="nv">$catch</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div><p><code>Session</code></p>
+
+        <div class="highlight"><pre><span/><span class="cp">&lt;?php</span>
+<span class="k">public</span> <span class="k">function</span> <span class="nf">handle</span><span class="p">(</span><span class="nx">Request</span> <span class="nv">$request</span><span class="p">,</span> <span class="nv">$type</span> <span class="o">=</span> <span class="nx">self</span><span class="o">::</span><span class="na">MASTER_REQUEST</span><span class="p">,</span> <span class="nv">$catch</span> <span class="o">=</span> <span class="k">TRUE</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">if</span> <span class="p">(</span><span class="nv">$type</span> <span class="o">===</span> <span class="nx">self</span><span class="o">::</span><span class="na">MASTER_REQUEST</span> <span class="o">&amp;&amp;</span> <span class="nx">PHP_SAPI</span> <span class="o">!==</span> <span class="s1">'cli'</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nv">$session</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">container</span><span class="o">-&gt;</span><span class="na">get</span><span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">sessionServiceName</span><span class="p">);</span>
+    <span class="nv">$session</span><span class="o">-&gt;</span><span class="na">start</span><span class="p">();</span>
+    <span class="nv">$request</span><span class="o">-&gt;</span><span class="na">setSession</span><span class="p">(</span><span class="nv">$session</span><span class="p">);</span>
+  <span class="p">}</span>
+
+  <span class="nv">$result</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">httpKernel</span><span class="o">-&gt;</span><span class="na">handle</span><span class="p">(</span><span class="nv">$request</span><span class="p">,</span> <span class="nv">$type</span><span class="p">,</span> <span class="nv">$catch</span><span class="p">);</span>
+
+  <span class="k">if</span> <span class="p">(</span><span class="nv">$type</span> <span class="o">===</span> <span class="nx">self</span><span class="o">::</span><span class="na">MASTER_REQUEST</span> <span class="o">&amp;&amp;</span> <span class="nv">$request</span><span class="o">-&gt;</span><span class="na">hasSession</span><span class="p">())</span> <span class="p">{</span>
+    <span class="nv">$request</span><span class="o">-&gt;</span><span class="na">getSession</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">save</span><span class="p">();</span>
+  <span class="p">}</span>
+
+  <span class="k">return</span> <span class="nv">$result</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div><p><code>HttpKernel</code></p>
+
+        <div class="highlight"><pre><span/><span class="cp">&lt;?php</span>
+<span class="k">public</span> <span class="k">function</span> <span class="nf">handle</span><span class="p">(</span><span class="nx">Request</span> <span class="nv">$request</span><span class="p">,</span> <span class="nv">$type</span> <span class="o">=</span> <span class="nx">HttpKernelInterface</span><span class="o">::</span><span class="na">MASTER_REQUEST</span><span class="p">,</span> <span class="nv">$catch</span> <span class="o">=</span> <span class="k">true</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nv">$request</span><span class="o">-&gt;</span><span class="na">headers</span><span class="o">-&gt;</span><span class="na">set</span><span class="p">(</span><span class="s1">'X-Php-Ob-Level'</span><span class="p">,</span> <span class="nb">ob_get_level</span><span class="p">());</span>
+
+  <span class="k">try</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">handleRaw</span><span class="p">(</span><span class="nv">$request</span><span class="p">,</span> <span class="nv">$type</span><span class="p">);</span>
+  <span class="p">}</span> <span class="k">catch</span> <span class="p">(</span><span class="nx">\Exception</span> <span class="nv">$e</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nv">$e</span> <span class="nx">instanceof</span> <span class="nx">RequestExceptionInterface</span><span class="p">)</span> <span class="p">{</span>
+      <span class="nv">$e</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">BadRequestHttpException</span><span class="p">(</span><span class="nv">$e</span><span class="o">-&gt;</span><span class="na">getMessage</span><span class="p">(),</span> <span class="nv">$e</span><span class="p">);</span>
+    <span class="p">}</span>
+    <span class="k">if</span> <span class="p">(</span><span class="k">false</span> <span class="o">===</span> <span class="nv">$catch</span><span class="p">)</span> <span class="p">{</span>
+      <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">finishRequest</span><span class="p">(</span><span class="nv">$request</span><span class="p">,</span> <span class="nv">$type</span><span class="p">);</span>
+
+      <span class="k">throw</span> <span class="nv">$e</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">handleException</span><span class="p">(</span><span class="nv">$e</span><span class="p">,</span> <span class="nv">$request</span><span class="p">,</span> <span class="nv">$type</span><span class="p">);</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</pre></div><div class="highlight"><pre><span/><span class="cp">&lt;?php</span>
+<span class="k">private</span> <span class="k">function</span> <span class="nf">handleRaw</span><span class="p">(</span><span class="nx">Request</span> <span class="nv">$request</span><span class="p">,</span> <span class="nv">$type</span> <span class="o">=</span> <span class="nx">self</span><span class="o">::</span><span class="na">MASTER_REQUEST</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">requestStack</span><span class="o">-&gt;</span><span class="na">push</span><span class="p">(</span><span class="nv">$request</span><span class="p">);</span>
+
+  <span class="c1">// request</span>
+  <span class="nv">$event</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">GetResponseEvent</span><span class="p">(</span><span class="nv">$this</span><span class="p">,</span> <span class="nv">$request</span><span class="p">,</span> <span class="nv">$type</span><span class="p">);</span>
+  <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">dispatcher</span><span class="o">-&gt;</span><span class="na">dispatch</span><span class="p">(</span><span class="nx">KernelEvents</span><span class="o">::</span><span class="na">REQUEST</span><span class="p">,</span> <span class="nv">$event</span><span class="p">);</span>
+
+  <span class="k">if</span> <span class="p">(</span><span class="nv">$event</span><span class="o">-&gt;</span><span class="na">hasResponse</span><span class="p">())</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">filterResponse</span><span class="p">(</span><span class="nv">$event</span><span class="o">-&gt;</span><span class="na">getResponse</span><span class="p">(),</span> <span class="nv">$request</span><span class="p">,</span> <span class="nv">$type</span><span class="p">);</span>
+  <span class="p">}</span>
+
+  <span class="c1">// load controller</span>
+  <span class="k">if</span> <span class="p">(</span><span class="k">false</span> <span class="o">===</span> <span class="nv">$controller</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">resolver</span><span class="o">-&gt;</span><span class="na">getController</span><span class="p">(</span><span class="nv">$request</span><span class="p">))</span> <span class="p">{</span>
+    <span class="k">throw</span> <span class="k">new</span> <span class="nx">NotFoundHttpException</span><span class="p">(</span><span class="nb">sprintf</span><span class="p">(</span><span class="s1">'Unable to find the controller for path "%s". The route is wrongly configured.'</span><span class="p">,</span> <span class="nv">$request</span><span class="o">-&gt;</span><span class="na">getPathInfo</span><span class="p">()));</span>
+  <span class="p">}</span>
+
+  <span class="nv">$event</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">FilterControllerEvent</span><span class="p">(</span><span class="nv">$this</span><span class="p">,</span> <span class="nv">$controller</span><span class="p">,</span> <span class="nv">$request</span><span class="p">,</span> <span class="nv">$type</span><span class="p">);</span>
+  <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">dispatcher</span><span class="o">-&gt;</span><span class="na">dispatch</span><span class="p">(</span><span class="nx">KernelEvents</span><span class="o">::</span><span class="na">CONTROLLER</span><span class="p">,</span> <span class="nv">$event</span><span class="p">);</span>
+  <span class="nv">$controller</span> <span class="o">=</span> <span class="nv">$event</span><span class="o">-&gt;</span><span class="na">getController</span><span class="p">();</span>
+
+  <span class="c1">// controller arguments</span>
+  <span class="nv">$arguments</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">argumentResolver</span><span class="o">-&gt;</span><span class="na">getArguments</span><span class="p">(</span><span class="nv">$request</span><span class="p">,</span> <span class="nv">$controller</span><span class="p">);</span>
+
+  <span class="nv">$event</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">FilterControllerArgumentsEvent</span><span class="p">(</span><span class="nv">$this</span><span class="p">,</span> <span class="nv">$controller</span><span class="p">,</span> <span class="nv">$arguments</span><span class="p">,</span> <span class="nv">$request</span><span class="p">,</span> <span class="nv">$type</span><span class="p">);</span>
+  <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">dispatcher</span><span class="o">-&gt;</span><span class="na">dispatch</span><span class="p">(</span><span class="nx">KernelEvents</span><span class="o">::</span><span class="na">CONTROLLER_ARGUMENTS</span><span class="p">,</span> <span class="nv">$event</span><span class="p">);</span>
+  <span class="nv">$controller</span> <span class="o">=</span> <span class="nv">$event</span><span class="o">-&gt;</span><span class="na">getController</span><span class="p">();</span>
+  <span class="nv">$arguments</span> <span class="o">=</span> <span class="nv">$event</span><span class="o">-&gt;</span><span class="na">getArguments</span><span class="p">();</span>
+
+  <span class="c1">// call controller</span>
+  <span class="nv">$response</span> <span class="o">=</span> <span class="nx">\call_user_func_array</span><span class="p">(</span><span class="nv">$controller</span><span class="p">,</span> <span class="nv">$arguments</span><span class="p">);</span>
+
+  <span class="c1">// view</span>
+  <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nv">$response</span> <span class="nx">instanceof</span> <span class="nx">Response</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nv">$event</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">GetResponseForControllerResultEvent</span><span class="p">(</span><span class="nv">$this</span><span class="p">,</span> <span class="nv">$request</span><span class="p">,</span> <span class="nv">$type</span><span class="p">,</span> <span class="nv">$response</span><span class="p">);</span>
+    <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">dispatcher</span><span class="o">-&gt;</span><span class="na">dispatch</span><span class="p">(</span><span class="nx">KernelEvents</span><span class="o">::</span><span class="na">VIEW</span><span class="p">,</span> <span class="nv">$event</span><span class="p">);</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="nv">$event</span><span class="o">-&gt;</span><span class="na">hasResponse</span><span class="p">())</span> <span class="p">{</span>
+      <span class="nv">$response</span> <span class="o">=</span> <span class="nv">$event</span><span class="o">-&gt;</span><span class="na">getResponse</span><span class="p">();</span>
+    <span class="p">}</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nv">$response</span> <span class="nx">instanceof</span> <span class="nx">Response</span><span class="p">)</span> <span class="p">{</span>
+      <span class="nv">$msg</span> <span class="o">=</span> <span class="nb">sprintf</span><span class="p">(</span><span class="s1">'The controller must return a response (%s given).'</span><span class="p">,</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">varToString</span><span class="p">(</span><span class="nv">$response</span><span class="p">));</span>
+
+      <span class="c1">// the user may have forgotten to return something</span>
+      <span class="k">if</span> <span class="p">(</span><span class="k">null</span> <span class="o">===</span> <span class="nv">$response</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nv">$msg</span> <span class="o">.=</span> <span class="s1">' Did you forget to add a return statement somewhere in your controller?'</span><span class="p">;</span>
+      <span class="p">}</span>
+      <span class="k">throw</span> <span class="k">new</span> <span class="nx">\LogicException</span><span class="p">(</span><span class="nv">$msg</span><span class="p">);</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+
+  <span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">filterResponse</span><span class="p">(</span><span class="nv">$response</span><span class="p">,</span> <span class="nv">$request</span><span class="p">,</span> <span class="nv">$type</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div><div class="highlight">
+          <pre><code><span>index.php:19, {main}()</span>
+<span>DrupalKernel.php:708, Drupal\Core\DrupalKernel-&gt;handle()</span>
+<span>StackedHttpKernel.php:23, Stack\StackedHttpKernel-&gt;handle()</span>
+<span>NegotiationMiddleware.php:52, Drupal\Core\StackMiddleware\NegotiationMiddleware-&gt;handle()</span>
+<span>ReverseProxyMiddleware.php:47, Drupal\Core\StackMiddleware\ReverseProxyMiddleware-&gt;handle()</span>
+<span>PageCache.php:82, Drupal\page_cache\StackMiddleware\PageCache-&gt;handle()</span>
+<span>PageCache.php:128, Drupal\page_cache\StackMiddleware\PageCache-&gt;lookup()</span>
+<span>PageCache.php:191, Drupal\page_cache\StackMiddleware\PageCache-&gt;fetch()</span>
+<span>KernelPreHandle.php:47, Drupal\Core\StackMiddleware\KernelPreHandle-&gt;handle()</span>
+<span>Session.php:57, Drupal\Core\StackMiddleware\Session-&gt;handle()</span>
+<span>HttpKernel.php:65, Symfony\Component\HttpKernel\HttpKernel-&gt;handle()</span>
+</code></pre>
+        </div>
+
+        <p>So we can see that <code>HttpKernel-&gt;handleRaw()</code> dispatches a bunch of events, but doesn't do much else. The page rendering, therefore, must be handled by one of these event subscribers. We could reasonably assume that <code>KernelEvents::REQUEST</code>, as the first event dispatched, is the one we're looking for.</p>
+
+        <p>Let's take a look at what subscribes to this event:</p>
+
+        <div class="highlight">
+          <pre><code><span>&gt; drupal debug:event kernel.request</span>
+<span>-------------------------------------------------------------------------------- -----------------------------------</span>
+<span>Class                                                                            Method                             </span>
+<span>-------------------------------------------------------------------------------- -----------------------------------</span>
+<span>Drupal\Core\EventSubscriber\OptionsRequestSubscriber                             onRequest: 1000                    </span>
+<span>Drupal\Core\EventSubscriber\RedirectLeadingSlashesSubscriber                     redirect: 1000                     </span>
+<span>Drupal\Core\EventSubscriber\AuthenticationSubscriber                             onKernelRequestAuthenticate: 300   </span>
+<span>Drupal\system\TimeZoneResolver                                                   setDefaultTimeZone: 299            </span>
+<span>Drupal\Core\EventSubscriber\AjaxResponseSubscriber                               onRequest: 50                      </span>
+<span>Symfony\Component\HttpKernel\EventListener\RouterListener                        onKernelRequest: 32                </span>
+<span>Drupal\Core\EventSubscriber\AuthenticationSubscriber                             onKernelRequestFilterProvider: 31  </span>
+<span>Drupal\user\EventSubscriber\MaintenanceModeSubscriber                            onKernelRequestMaintenance: 31     </span>
+<span>Drupal\Core\EventSubscriber\MaintenanceModeSubscriber                            onKernelRequestMaintenance: 30     </span>
+<span>Drupal\dynamic_page_cache\EventSubscriber\DynamicPageCacheSubscriber             onRequest: 27                      </span>
+<span>Drupal\Core\Database\ReplicaKillSwitch                                           checkReplicaServer: 0              </span>
+<span>Drupal\Core\Routing\RoutePreloader                                               onRequest: 0                       </span>
+<span>-------------------------------------------------------------------------------- -----------------------------------</span>
+</code></pre>
+        </div>
+
+        <p>Nothing interesting here. Maybe it's one of the others? Let's take a different approach.</p>
+
+        <p>If we drop a breakpoint into <code>template_preprocess_html()</code> we can see that the render request originates from the <code>KernelEvents::VIEW</code> event. Now that we know which event we're interested in, we can again use Drupal console to find the subscribers:</p>
+
+        <div class="highlight">
+          <pre><code><span>&gt; drupal debug:event kernel.view</span>
+<span>---------------------------------------------------------- ----------------------</span>
+<span>      Class                                                      Method          </span>
+<span>---------------------------------------------------------- ----------------------</span>
+<span>Drupal\Core\Form\EventSubscriber\FormAjaxSubscriber        onView: 1             </span>
+<span>Drupal\Core\EventSubscriber\PsrResponseSubscriber          onKernelView: 0       </span>
+<span>Drupal\Core\EventSubscriber\MainContentViewSubscriber      onViewRenderArray: 0  </span>
+<span>Drupal\Core\EventSubscriber\RenderArrayNonHtmlSubscriber   onRespond: -10        </span>
+<span>---------------------------------------------------------- ----------------------</span>
+</code></pre>
+        </div>
+
+        <p>The one that does the actual page rendering is <code>MainContentViewSubscriber</code>&#8212;the rendering originates from the <code>MainContentViewSubscriber-&gt;onViewRenderArray()</code> callback. This then renders the page using the available <code>%main_content_renderers%</code> based on the <code>$wrapper</code> format:</p>
+
+        <div class="highlight"><pre><span/><span class="cp">&lt;?php</span>
+<span class="nv">$wrapper</span> <span class="o">=</span> <span class="nv">$request</span><span class="o">-&gt;</span><span class="na">query</span><span class="o">-&gt;</span><span class="na">get</span><span class="p">(</span><span class="k">static</span><span class="o">::</span><span class="na">WRAPPER_FORMAT</span><span class="p">,</span> <span class="s1">'html'</span><span class="p">);</span>
+
+<span class="c1">// Fall back to HTML if the requested wrapper envelope is not available.</span>
+<span class="nv">$wrapper</span> <span class="o">=</span> <span class="nb">isset</span><span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">mainContentRenderers</span><span class="p">[</span><span class="nv">$wrapper</span><span class="p">])</span> <span class="o">?</span> <span class="nv">$wrapper</span> <span class="o">:</span> <span class="s1">'html'</span><span class="p">;</span>
+
+<span class="nv">$renderer</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">classResolver</span><span class="o">-&gt;</span><span class="na">getInstanceFromDefinition</span><span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">mainContentRenderers</span><span class="p">[</span><span class="nv">$wrapper</span><span class="p">]);</span>
+<span class="nv">$response</span> <span class="o">=</span> <span class="nv">$renderer</span><span class="o">-&gt;</span><span class="na">renderResponse</span><span class="p">(</span><span class="nv">$result</span><span class="p">,</span> <span class="nv">$request</span><span class="p">,</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">routeMatch</span><span class="p">);</span>
+</pre></div><p>The subscriber service definition:</p>
+
+        <div class="highlight"><pre><span/><span class="c">main_content_view_subscriber:</span>
+<span class="c">  class: Drupal\Core\EventSubscriber\MainContentViewSubscriber</span>
+<span class="c">  arguments: ['@class_resolver', '@current_route_match', '%main_content_renderers%']</span>
+<span class="c">  tags:</span>
+<span class="c">    - { name: event_subscriber }</span>
+</pre></div><p>An example of a content renderer service definition:</p>
+
+        <div class="highlight">
+          <pre><code><span class="c">main_content_renderer.html:</span>
+<span class="c">  class: Drupal\Core\Render\MainContent\HtmlRenderer</span>
+<span class="c">  arguments: ['@title_resolver', '@plugin.manager.display_variant', '@event_dispatcher', '@module_handler', '@renderer', '@render_cache', '%renderer.config%']</span>
+<span class="c">  tags:</span>
+<span class="c">    - { name: render.main_content_renderer, format: html }</span>
+</code></pre>
+        </div>
+
+        <p>Content renderers are collected from services tagged with <code>name: render.main_content_renderer</code> as part of the Kernel compilation by another <code>CompilerPass</code> class&#8212;<code>MainContentRenderersPass</code>:</p>
+
+        <div class="highlight"><pre><span/><span class="cp">&lt;?php</span>
+<span class="sd">/**</span>
+<span class="sd">* Adds main_content_renderers parameter to the container.</span>
+<span class="sd">*/</span>
+<span class="k">class</span> <span class="nc">MainContentRenderersPass</span> <span class="k">implements</span> <span class="nx">CompilerPassInterface</span> <span class="p">{</span>
+
+  <span class="sd">/**</span>
+<span class="sd">  * {@inheritdoc}</span>
+<span class="sd">  *</span>
+<span class="sd">  * Collects the available main content renderer service IDs into the</span>
+<span class="sd">  * main_content_renderers parameter, keyed by format.</span>
+<span class="sd">  */</span>
+  <span class="k">public</span> <span class="k">function</span> <span class="nf">process</span><span class="p">(</span><span class="nx">ContainerBuilder</span> <span class="nv">$container</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nv">$main_content_renderers</span> <span class="o">=</span> <span class="p">[];</span>
+
+    <span class="k">foreach</span> <span class="p">(</span><span class="nv">$container</span><span class="o">-&gt;</span><span class="na">findTaggedServiceIds</span><span class="p">(</span><span class="s1">'render.main_content_renderer'</span><span class="p">)</span> <span class="k">as</span> <span class="nv">$id</span> <span class="o">=&gt;</span> <span class="nv">$attributes_list</span><span class="p">)</span> <span class="p">{</span>
+      <span class="k">foreach</span> <span class="p">(</span><span class="nv">$attributes_list</span> <span class="k">as</span> <span class="nv">$attributes</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nv">$format</span> <span class="o">=</span> <span class="nv">$attributes</span><span class="p">[</span><span class="s1">'format'</span><span class="p">];</span>
+        <span class="nv">$main_content_renderers</span><span class="p">[</span><span class="nv">$format</span><span class="p">]</span> <span class="o">=</span> <span class="nv">$id</span><span class="p">;</span>
+      <span class="p">}</span>
+    <span class="p">}</span>
+
+    <span class="nv">$container</span><span class="o">-&gt;</span><span class="na">setParameter</span><span class="p">(</span><span class="s1">'main_content_renderers'</span><span class="p">,</span> <span class="nv">$main_content_renderers</span><span class="p">);</span>
+  <span class="p">}</span>
+
+<span class="p">}</span>
+</pre></div><p>The core renderers available by wrapper are:</p>
+
+        <pre><code><span>html = "main_content_renderer.html"</span>
+<span>drupal_ajax = "main_content_renderer.ajax"</span>
+<span>iframeupload = "main_content_renderer.ajax"</span>
+<span>drupal_dialog = "main_content_renderer.dialog"</span>
+<span>drupal_dialog.off_canvas = "main_content_renderer.off_canvas"</span>
+<span>drupal_dialog.off_canvas_top = "main_content_renderer.off_canvas_top"</span>
+<span>drupal_modal = "main_content_renderer.modal"</span>
+</code></pre>
+
+        <p>There's also a test example in <code>common_test.services.yml</code>.</p>
+
+        <p>We can see an instance of practical invocation in <code>ajax.js</code>, where the format is assigned as <code>Drupal.ajax.WRAPPER_FORMAT</code>. In the AJAX options, it's then set up as:</p>
+
+        <div class="highlight">
+          <pre><code><span>var wrapper = "drupal_".concat(elementSettings.dialogType || 'ajax');</span>
+<span/>
+<span>if (elementSettings.dialogRenderer) {</span>
+<span>  wrapper += ".".concat(elementSettings.dialogRenderer);</span>
+<span>}</span>
+<span/>
+<span>ajax.options.url += "".concat(Drupal.ajax.WRAPPER_FORMAT, "=").concat(wrapper);</span>
+</code></pre>
+        </div>
+
+        <p>As we can see from the <code>drupal_</code> prefix used for <code>wrapper</code>, with the exception of <code>html</code> the other built-in wrappers are all expected to be invoked via JavaScript. The <code>iframeupload</code> wrapper is an altered value for <code>ajax_iframe_upload</code> as seen in <code>NegotiationMiddleware-&gt;getContentType()</code>, which is again sent from <code>ajax.js</code>.</p>
+
+        <h2 id="section-page-rendering">Page rendering</h2>
+
+        <p>We can see what goes down in the <code>MainContentViewSubscriber</code>&#8212;the event subscriber method is <code>onViewRenderArray</code>:</p>
+
+        <div class="highlight"><pre><span/><span class="cp">&lt;?php</span>
+<span class="k">public</span> <span class="k">function</span> <span class="nf">onViewRenderArray</span><span class="p">(</span><span class="nx">GetResponseForControllerResultEvent</span> <span class="nv">$event</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nv">$request</span> <span class="o">=</span> <span class="nv">$event</span><span class="o">-&gt;</span><span class="na">getRequest</span><span class="p">();</span>
+  <span class="nv">$result</span> <span class="o">=</span> <span class="nv">$event</span><span class="o">-&gt;</span><span class="na">getControllerResult</span><span class="p">();</span>
+
+  <span class="c1">// Render the controller result into a response if it's a render array.</span>
+  <span class="k">if</span> <span class="p">(</span><span class="nb">is_array</span><span class="p">(</span><span class="nv">$result</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="nv">$request</span><span class="o">-&gt;</span><span class="na">query</span><span class="o">-&gt;</span><span class="na">has</span><span class="p">(</span><span class="k">static</span><span class="o">::</span><span class="na">WRAPPER_FORMAT</span><span class="p">)</span> <span class="o">||</span> <span class="nv">$request</span><span class="o">-&gt;</span><span class="na">getRequestFormat</span><span class="p">()</span> <span class="o">==</span> <span class="s1">'html'</span><span class="p">))</span> <span class="p">{</span>
+    <span class="nv">$wrapper</span> <span class="o">=</span> <span class="nv">$request</span><span class="o">-&gt;</span><span class="na">query</span><span class="o">-&gt;</span><span class="na">get</span><span class="p">(</span><span class="k">static</span><span class="o">::</span><span class="na">WRAPPER_FORMAT</span><span class="p">,</span> <span class="s1">'html'</span><span class="p">);</span>
+
+    <span class="c1">// Fall back to HTML if the requested wrapper envelope is not available.</span>
+    <span class="nv">$wrapper</span> <span class="o">=</span> <span class="nb">isset</span><span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">mainContentRenderers</span><span class="p">[</span><span class="nv">$wrapper</span><span class="p">])</span> <span class="o">?</span> <span class="nv">$wrapper</span> <span class="o">:</span> <span class="s1">'html'</span><span class="p">;</span>
+
+    <span class="nv">$renderer</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">classResolver</span><span class="o">-&gt;</span><span class="na">getInstanceFromDefinition</span><span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">mainContentRenderers</span><span class="p">[</span><span class="nv">$wrapper</span><span class="p">]);</span>
+    <span class="nv">$response</span> <span class="o">=</span> <span class="nv">$renderer</span><span class="o">-&gt;</span><span class="na">renderResponse</span><span class="p">(</span><span class="nv">$result</span><span class="p">,</span> <span class="nv">$request</span><span class="p">,</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">routeMatch</span><span class="p">);</span>
+    <span class="c1">// The main content render array is rendered into a different Response</span>
+    <span class="c1">// object, depending on the specified wrapper format.</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nv">$response</span> <span class="nx">instanceof</span> <span class="nx">CacheableResponseInterface</span><span class="p">)</span> <span class="p">{</span>
+      <span class="nv">$main_content_view_subscriber_cacheability</span> <span class="o">=</span> <span class="p">(</span><span class="k">new</span> <span class="nx">CacheableMetadata</span><span class="p">())</span><span class="o">-&gt;</span><span class="na">setCacheContexts</span><span class="p">([</span><span class="s1">'url.query_args:'</span> <span class="o">.</span> <span class="k">static</span><span class="o">::</span><span class="na">WRAPPER_FORMAT</span><span class="p">]);</span>
+      <span class="nv">$response</span><span class="o">-&gt;</span><span class="na">addCacheableDependency</span><span class="p">(</span><span class="nv">$main_content_view_subscriber_cacheability</span><span class="p">);</span>
+    <span class="p">}</span>
+    <span class="nv">$event</span><span class="o">-&gt;</span><span class="na">setResponse</span><span class="p">(</span><span class="nv">$response</span><span class="p">);</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</pre></div><p>The <code>$result</code> is retrieved from the controller, and is then passed to the renderer&#8212;in this case the <code>html</code> renderer, predictably named <code>HtmlRenderer</code>.</p>
+
+        <p>This renders the page variant supplied by the controller, which has to be a class which implements <code>PageVariantInterface</code>. In most cases this is just going to end up rendering an array with <code>#type</code> page.</p>
+
+        <p>The <code>HtmlRenderer</code> also handles the page regions and attachments in the <code>prepare()</code> method:</p>
+
+        <div class="highlight"><pre><span/><span class="cp">&lt;?php</span>
+<span class="c1">// $page is now fully built. Find all non-empty page regions, and add a</span>
+<span class="c1">// theme wrapper function that allows them to be consistently themed.</span>
+<span class="nv">$regions</span> <span class="o">=</span> <span class="nx">\Drupal</span><span class="o">::</span><span class="na">theme</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">getActiveTheme</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">getRegions</span><span class="p">();</span>
+<span class="k">foreach</span> <span class="p">(</span><span class="nv">$regions</span> <span class="k">as</span> <span class="nv">$region</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">empty</span><span class="p">(</span><span class="nv">$page</span><span class="p">[</span><span class="nv">$region</span><span class="p">]))</span> <span class="p">{</span>
+    <span class="nv">$page</span><span class="p">[</span><span class="nv">$region</span><span class="p">][</span><span class="s1">'#theme_wrappers'</span><span class="p">][]</span> <span class="o">=</span> <span class="s1">'region'</span><span class="p">;</span>
+    <span class="nv">$page</span><span class="p">[</span><span class="nv">$region</span><span class="p">][</span><span class="s1">'#region'</span><span class="p">]</span> <span class="o">=</span> <span class="nv">$region</span><span class="p">;</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="c1">// Allow hooks to add attachments to $page['#attached'].</span>
+<span class="nv">$this</span><span class="o">-&gt;</span><span class="na">invokePageAttachmentHooks</span><span class="p">(</span><span class="nv">$page</span><span class="p">);</span>
+</pre></div><p>We can also see that the page title is derived and set here, either from the <code>#title</code> property on the main content array, or via the <code>_title</code> or <code>_title_callback</code> methods on the controller via <code>TitleResolver</code>. As we can see above from the service definition for <code>main_content_renderer.html</code>, this title resolution can be completely overridden by re-implementing the <code>title_resolver</code> service, giving us a large degree of control over how page titles are created.</p>
+
+        <p>It's worth looking at how we get the result from the controller, since this tells us a bit more about how the event system works in this core rendering path. We can see in <code>MainContentViewSubscriber</code> the event we're passed is an instance of <code>GetResponseForControllerResultEvent</code>, which already has the response from the controller available via <code>getControllerResult()</code>. With some searching, we can see this event being dispatched from the <code>HttpKernel</code> we were looking at earlier;</p>
+
+        <div class="highlight"><pre><span/><span class="cp">&lt;?php</span>
+<span class="nv">$event</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">GetResponseForControllerResultEvent</span><span class="p">(</span><span class="nv">$this</span><span class="p">,</span> <span class="nv">$request</span><span class="p">,</span> <span class="nv">$type</span><span class="p">,</span> <span class="nv">$response</span><span class="p">);</span>
+<span class="nv">$this</span><span class="o">-&gt;</span><span class="na">dispatcher</span><span class="o">-&gt;</span><span class="na">dispatch</span><span class="p">(</span><span class="nx">KernelEvents</span><span class="o">::</span><span class="na">VIEW</span><span class="p">,</span> <span class="nv">$event</span><span class="p">);</span>
+</pre></div><p>Prior to this event being dispatched in <code>HttpKernel-&gt;handleRaw()</code>, we can also see the controller response being handled by the <code>HttpKernel</code>:</p>
+
+        <div class="highlight"><pre><span/><span class="cp">&lt;?php</span>
+<span class="nv">$event</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">FilterControllerEvent</span><span class="p">(</span><span class="nv">$this</span><span class="p">,</span> <span class="nv">$controller</span><span class="p">,</span> <span class="nv">$request</span><span class="p">,</span> <span class="nv">$type</span><span class="p">);</span>
+<span class="nv">$this</span><span class="o">-&gt;</span><span class="na">dispatcher</span><span class="o">-&gt;</span><span class="na">dispatch</span><span class="p">(</span><span class="nx">KernelEvents</span><span class="o">::</span><span class="na">CONTROLLER</span><span class="p">,</span> <span class="nv">$event</span><span class="p">);</span>
+<span class="nv">$controller</span> <span class="o">=</span> <span class="nv">$event</span><span class="o">-&gt;</span><span class="na">getController</span><span class="p">();</span>
+
+<span class="c1">// controller arguments</span>
+<span class="nv">$arguments</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">argumentResolver</span><span class="o">-&gt;</span><span class="na">getArguments</span><span class="p">(</span><span class="nv">$request</span><span class="p">,</span> <span class="nv">$controller</span><span class="p">);</span>
+
+<span class="nv">$event</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">FilterControllerArgumentsEvent</span><span class="p">(</span><span class="nv">$this</span><span class="p">,</span> <span class="nv">$controller</span><span class="p">,</span> <span class="nv">$arguments</span><span class="p">,</span> <span class="nv">$request</span><span class="p">,</span> <span class="nv">$type</span><span class="p">);</span>
+<span class="nv">$this</span><span class="o">-&gt;</span><span class="na">dispatcher</span><span class="o">-&gt;</span><span class="na">dispatch</span><span class="p">(</span><span class="nx">KernelEvents</span><span class="o">::</span><span class="na">CONTROLLER_ARGUMENTS</span><span class="p">,</span> <span class="nv">$event</span><span class="p">);</span>
+<span class="nv">$controller</span> <span class="o">=</span> <span class="nv">$event</span><span class="o">-&gt;</span><span class="na">getController</span><span class="p">();</span>
+<span class="nv">$arguments</span> <span class="o">=</span> <span class="nv">$event</span><span class="o">-&gt;</span><span class="na">getArguments</span><span class="p">();</span>
+
+<span class="c1">// call controller</span>
+<span class="nv">$response</span> <span class="o">=</span> <span class="nx">\call_user_func_array</span><span class="p">(</span><span class="nv">$controller</span><span class="p">,</span> <span class="nv">$arguments</span><span class="p">);</span>
+</pre></div><p>Again we see the use of events to retrieve both the controller class and the controller arguments, which we could subscribe to if necessary to give high-level control over controller output.</p>
+
+        <p>After this, the rendering largely follows the same recipe as in Drupal 7&#8212;the regions render their blocks, one of them being the main page content, and blocks can be added in the traditional way by users and other modules. We won't follow the rendering process all the way down, since from here on out it's nothing we haven't seen already.</p>
+
+        <hr/>
+
+        <p>I hope this was a useful look into how rendering works in Drupal 8&#8212;I know it was for me. It's interesting to see how much is compiled into the Kernel to improve render performance, and also interesting to see the level to which the rendering relies on creating those core areas&#8212;the page and blocks&#8212;for other modules to hook into to render the remaining site content.</p>
+
+      </div></article><footer class="article-footer"><div class="email-signup"><p>Thanks for reading. If you'd like to get notifications when I post new content, please sign up to my mailing list.</p><div class="email-signup__form"><form action="https://gmail.us3.list-manage.com/subscribe/post?u=20b45c0b3f0f59af11c016095&amp;id=64c922ea23" method="post" id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" class="validate" target="_blank" novalidate="novalidate"><input type="email" value="" name="EMAIL" class="email" id="mce-EMAIL" placeholder="email address" required="required"/><div style="position: absolute; left: -5000px;" aria-hidden="true"><input type="text" name="b_20b45c0b3f0f59af11c016095_64c922ea23" tabindex="-1" value=""/></div><input type="submit" value="Subscribe" name="subscribe" id="mc-embedded-subscribe" class="button"/></form></div></div></footer>
+  </main>
+    </div>
+  </body>
+</html>
