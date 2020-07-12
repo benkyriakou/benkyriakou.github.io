@@ -108,8 +108,14 @@ for item in os.walk(SOURCE_DIR):
         code = code_block.text
         leader_indent = len(re.match(r'\s+', code).group(0)) - 1
         code = '\n'.join([l[leader_indent:] for l in code.split('\n')])
-        lexer = get_lexer_by_name(code_block.get('lang')) if code_block.get('lang') else guess_lexer(code)
-        pygments_code = highlight(code, guess_lexer(code), HtmlFormatter())
+        lang = code_block.get('lang')
+        options = {}
+
+        if lang == 'php':
+            options['startinline'] = True
+
+        lexer = get_lexer_by_name(lang, **options) if lang else guess_lexer(code)
+        pygments_code = highlight(code, lexer, HtmlFormatter())
         code_block.getparent().replace(code_block, etree.fromstring(pygments_code))
 
       # Then apply the XSL styles to the rest.
