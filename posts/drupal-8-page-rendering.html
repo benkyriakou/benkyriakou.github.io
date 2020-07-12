@@ -439,7 +439,7 @@ drupal_modal = "main_content_renderer.modal"
 <span class="p">}</span>
 </pre></div><p>The <code>$result</code> is retrieved from the controller, and is then passed to the renderer&#8212;in this case the <code>html</code> renderer, predictably named <code>HtmlRenderer</code>.</p>
 
-        <p>This renders the page variant supplied by the controller, which has to be a class which implements <code>PageVariantInterface</code>. In most cases this is just going to end up rendering an array with <code>#type</code> page.</p>
+        <p>This renders the page variant supplied by the controller, which has to be a class which implements <code>PageVariantInterface</code>. In most cases this is just going to end up rendering an array with <code>'#type' =&gt; 'page'</code>.</p>
 
         <p>The <code>HtmlRenderer</code> also handles the page regions and attachments in the <code>prepare()</code> method:</p>
 
@@ -483,7 +483,7 @@ drupal_modal = "main_content_renderer.modal"
 
         <hr/>
 
-        <p>I hope this was a useful look into how rendering works in Drupal 8&#8212;I know it was for me. It's interesting to see how much is compiled into the Kernel to improve render performance, and also interesting to see the level to which the rendering relies on creating those core areas&#8212;the page and blocks&#8212;for other modules to hook into to render the remaining site content.</p>
+        <p>I hope this was a useful look into how rendering works in Drupal 8&#8212;I know it was for me. It's interesting to see how much is compiled into the kernel to improve render performance, and also interesting to see the level to which the rendering relies on creating those core areas&#8212;the page and blocks&#8212;for other modules to hook into to render the remaining site content.</p>
       </div></article><footer class="article-footer"><div class="email-signup"><p>Thanks for reading. If you'd like to get notifications when I post new content, please sign up to my mailing list.</p><div class="email-signup__form"><form action="https://gmail.us3.list-manage.com/subscribe/post?u=20b45c0b3f0f59af11c016095&amp;id=64c922ea23" method="post" id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" class="validate" target="_blank" novalidate="novalidate"><input type="email" value="" name="EMAIL" class="email" id="mce-EMAIL" placeholder="email address" required="required"/><div style="position: absolute; left: -5000px;" aria-hidden="true"><input type="text" name="b_20b45c0b3f0f59af11c016095_64c922ea23" tabindex="-1" value=""/></div><input type="submit" value="Subscribe" name="subscribe" id="mc-embedded-subscribe" class="button"/></form></div></div></footer>
   </main>
     </div>
