@@ -61,24 +61,26 @@
 
         <p>Enable xdebug on the relevant Docker container. For docker4drupal this means uncommenting these lines in the <code>docker-compose.yml</code> file:</p>
 
-        <div class="highlight"><pre><span/><span class="c">PHP_XDEBUG: 1</span>
-<span class="c">PHP_XDEBUG_DEFAULT_ENABLE: 1</span>
-<span class="c">PHP_XDEBUG_REMOTE_CONNECT_BACK: 0</span>
-<span class="c">PHP_IDE_CONFIG: serverName=PHPSTORM</span>
-<span class="c">PHP_XDEBUG_IDEKEY: "PHPSTORM"</span>
-<span class="c">PHP_XDEBUG_REMOTE_HOST: 172.17.0.1 # Linux</span>
+        <div class="highlight"><pre><span/><span class="nt">PHP_XDEBUG</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">1</span>
+<span class="nt">PHP_XDEBUG_DEFAULT_ENABLE</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">1</span>
+<span class="nt">PHP_XDEBUG_REMOTE_CONNECT_BACK</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">0</span>
+<span class="nt">PHP_IDE_CONFIG</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">serverName=PHPSTORM</span>
+<span class="nt">PHP_XDEBUG_IDEKEY</span><span class="p">:</span> <span class="s">"PHPSTORM"</span>
+<span class="nt">PHP_XDEBUG_REMOTE_HOST</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">172.17.0.1</span> <span class="c1"># Linux</span>
 </pre></div><p>If you enable these after you've created the PHP container, remember to restart the container so that xdebug is enabled and configured.</p>
 
         <p>Now go to Settings &gt; Languages &amp; Frameworks &gt; PHP and set your language level as required. Add a new CLI interpreter by clicking <code>...</code>. Click the <code>+</code> on the top left and add a new Docker configuration. Select Docker Compose and the php service, then use the default options for everything else. Save this and apply.</p>
 
-        <p>Next click the 'Add configuration' button on the taskbar in the top right. Pick the PHP Remote Debug template and click the <code>+</code> on the top left to add a new configuration (don't make the mistake of editing the template). Check 'Filter debug connection by IDE key' and set the IDE key to match the one in your XDebug config (for the above we'd use <code>PHPSTORM</code>). Add a server (the name doesn't matter). Give it the appropriate host and port - for docker4drupal the host will be something like http://myproject.docker.drupal.localhost, and the port will be 8000 unless you've changed it. Check 'Use path mappings', and set a path mapping for the root directory to <code>/var/www/html</code> (or wherever it's mounted to on the container).</p>
+        <p>Next click the 'Add configuration' button on the taskbar in the top right. Pick the PHP Remote Debug template and click the <code>+</code> on the top left to add a new configuration (don't make the mistake of editing the template). Check 'Filter debug connection by IDE key' and set the IDE key to match the one in your XDebug config (for the above we'd use <code>PHPSTORM</code>). Add a server (the name doesn't matter). Give it the appropriate host and port&#8212;for docker4drupal the host will be something like http://myproject.docker.drupal.localhost, and the port will be 8000 unless you've changed it. Check 'Use path mappings', and set a path mapping for the root directory to <code>/var/www/html</code> (or wherever it's mounted to on the container).</p>
 
         <p>It's important to note that for this to work with Drush, or anything that exists both in Composer and globally, you need to invoke Drush from the binary in the vendor directory <code>vendor/bin/drush</code> rather than using the system Drush, so that PHPStorm can use the path mappings. You could do this with a make command or Composer script. A make command I've used in the past:</p>
 
-        <div class="highlight"><pre><span/><span class="x">make VENDOR_BIN ?= /var/www/html/vendor/bin</span>
+        <div class="highlight"><pre><span/><span class="nv">DRUPAL_ROOT</span> <span class="o">?=</span> /var/www/html/drupal
+<span class="nv">VENDOR_BIN</span> <span class="o">?=</span> /var/www/html/vendor/bin
 
-<span class="x">drush:</span>
-<span class="x">  docker exec $(shell docker ps --filter name='^/$(PROJECT_NAME)_php' --format "</span><span class="cp">{{</span> <span class="nv">.ID</span> <span class="cp">}}</span><span class="x">") $(VENDOR_BIN)/drush -r $(DRUPAL_ROOT) $(filter-out $@,$(MAKECMDGOALS))</span>
+<span class="nf">drush</span><span class="o">:</span>
+  docker-compose <span class="nb">exec</span> php
+    <span class="k">$(</span>VENDOR_BIN<span class="k">)</span>/drush -r <span class="k">$(</span>DRUPAL_ROOT<span class="k">)</span> <span class="k">$(</span>filter-out <span class="nv">$@</span>,<span class="k">$(</span>MAKECMDGOALS<span class="k">))</span>
 </pre></div><p>This is a modified version of the default docker4drupal command.</p>
 
       </div></article><footer class="article-footer"><div class="email-signup"><p>Thanks for reading. If you'd like to get notifications when I post new content, please sign up to my mailing list.</p><div class="email-signup__form"><form action="https://gmail.us3.list-manage.com/subscribe/post?u=20b45c0b3f0f59af11c016095&amp;id=64c922ea23" method="post" id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" class="validate" target="_blank" novalidate="novalidate"><input type="email" value="" name="EMAIL" class="email" id="mce-EMAIL" placeholder="email address" required="required"/><div style="position: absolute; left: -5000px;" aria-hidden="true"><input type="text" name="b_20b45c0b3f0f59af11c016095_64c922ea23" tabindex="-1" value=""/></div><input type="submit" value="Subscribe" name="subscribe" id="mc-embedded-subscribe" class="button"/></form></div></div></footer>

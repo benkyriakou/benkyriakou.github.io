@@ -30,15 +30,17 @@
 
         <p>Now go to Settings > Languages &amp; Frameworks > PHP and set your language level as required. Add a new CLI interpreter by clicking <code>...</code>. Click the <code>+</code> on the top left and add a new Docker configuration. Select Docker Compose and the php service, then use the default options for everything else. Save this and apply.</p>
 
-        <p>Next click the 'Add configuration' button on the taskbar in the top right. Pick the PHP Remote Debug template and click the <code>+</code> on the top left to add a new configuration (don't make the mistake of editing the template). Check 'Filter debug connection by IDE key' and set the IDE key to match the one in your XDebug config (for the above we'd use <code>PHPSTORM</code>). Add a server (the name doesn't matter). Give it the appropriate host and port - for docker4drupal the host will be something like http://myproject.docker.drupal.localhost, and the port will be 8000 unless you've changed it. Check 'Use path mappings', and set a path mapping for the root directory to <code>/var/www/html</code> (or wherever it's mounted to on the container).</p>
+        <p>Next click the 'Add configuration' button on the taskbar in the top right. Pick the PHP Remote Debug template and click the <code>+</code> on the top left to add a new configuration (don't make the mistake of editing the template). Check 'Filter debug connection by IDE key' and set the IDE key to match the one in your XDebug config (for the above we'd use <code>PHPSTORM</code>). Add a server (the name doesn't matter). Give it the appropriate host and port&mdash;for docker4drupal the host will be something like http://myproject.docker.drupal.localhost, and the port will be 8000 unless you've changed it. Check 'Use path mappings', and set a path mapping for the root directory to <code>/var/www/html</code> (or wherever it's mounted to on the container).</p>
 
         <p>It's important to note that for this to work with Drush, or anything that exists both in Composer and globally, you need to invoke Drush from the binary in the vendor directory <code>vendor/bin/drush</code> rather than using the system Drush, so that PHPStorm can use the path mappings. You could do this with a make command or Composer script. A make command I've used in the past:</p>
 
         <codeblock lang="make">
-          make VENDOR_BIN ?= /var/www/html/vendor/bin
+          DRUPAL_ROOT ?= /var/www/html/drupal
+          VENDOR_BIN ?= /var/www/html/vendor/bin
 
           drush:
-            docker exec $(shell docker ps --filter name='^/$(PROJECT_NAME)_php' --format "{{ .ID }}") $(VENDOR_BIN)/drush -r $(DRUPAL_ROOT) $(filter-out $@,$(MAKECMDGOALS))
+            docker-compose exec php
+              $(VENDOR_BIN)/drush -r $(DRUPAL_ROOT) $(filter-out $@,$(MAKECMDGOALS))
         </codeblock>
 
         <p>This is a modified version of the default docker4drupal command.</p>

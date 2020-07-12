@@ -16,7 +16,6 @@
         <p>When using Search API Solr in Drupal 8, I needed to run some more in-depth queries than were available via the Search API Query, but couldn't find any examples online of how to run a Solarium query directly. After digging around in the module, I found some examples in the <code>SearchApiSolrBackend</code>. If anyone else is looking for the same, here's how to run a basic Solarium query:</p>
 
       <codeblock lang="php">
-        &lt;?php
         use Drupal\search_api\Entity\Index;
         use Solarium\QueryType\Select\Query\Query;
         use Drupal\search_api_solr\Plugin\search_api\backend\SearchApiSolrBackend;

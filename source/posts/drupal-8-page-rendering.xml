@@ -5,12 +5,12 @@
 ]>
 
 <document type="article">
-  <title>Drupal 8 page</title>
-  <description>How does a Drupal 8 page get made.</description>
+  <title>Drupal 8 page rendering</title>
+  <description>How is a Drupal 8 page made?</description>
   <slug>/posts/drupal-8-page-rendering</slug>
   <content>
     <article>
-      <title>Drupal 8 page</title>
+      <title>Drupal 8 page rendering</title>
       <date datetime="2020-07">July 2020</date>
       <content>
         <p>How does a page get rendered in Drupal? This is a question I felt I had a good handle on in Drupal 7, but although I understand the mechanisms underlying Drupal 8 I couldn't have given you a good explanation of how you get from a request to a rendered page. Perhaps you feel the same way&mdash;if that's the case, join me on the journey to figure out how Drupal 8 makes a page.</p>
@@ -22,7 +22,6 @@
         <p>We start in <code>index.php</code>:</p>
 
         <codeblock lang="php">
-          &lt;?php
           use Drupal\Core\DrupalKernel;
           use Symfony\Component\HttpFoundation\Request;
 
@@ -44,7 +43,6 @@
         <p>The <code>handle()</code> method doesn't immediately do anything particularly interesting:</p>
 
         <codeblock lang="php">
-          &lt;?php
           public function handle(Request $request, $type = self::MASTER_REQUEST, $catch = TRUE) {
             // Ensure sane PHP environment variables.
             static::bootEnvironment();
@@ -58,7 +56,11 @@
               if (!Database::getConnectionInfo() &amp;&amp;
                   !InstallerKernel::installationAttempted() &amp;&amp;
                   PHP_SAPI !== 'cli') {
-                $response = new RedirectResponse($request-&gt;getBasePath() . '/core/install.php', 302, ['Cache-Control' =&gt; 'no-cache']);
+                $response = new RedirectResponse(
+                  $request-&gt;getBasePath() . '/core/install.php',
+                  302,
+                  ['Cache-Control' =&gt; 'no-cache']
+                );
               }
               else {
                 $this-&gt;boot();
@@ -92,7 +94,6 @@
         <p>The <code>handle()</code> method here is equally as exciting:</p>
 
         <codeblock lang="php">
-          &lt;?php
           public function handle(Request $request, $type = HttpKernelInterface::MASTER_REQUEST, $catch = true) {
             return $this-&gt;app-&gt;handle($request, $type, $catch);
           }
@@ -128,7 +129,6 @@
         <p><code>KernelPreHandle</code></p>
 
         <codeblock lang="php">
-          &lt;?php
           public function handle(Request $request, $type = self::MASTER_REQUEST, $catch = TRUE) {
             // Register available mime types.
             foreach ($this-&gt;formats as $format =&gt; $mime_type) {
@@ -146,7 +146,6 @@
         <p><code>NegotiationMiddleware</code></p>
 
         <codeblock lang="php">
-          &lt;?php
           public function handle(Request $request, $type = self::MASTER_REQUEST, $catch = TRUE) {
             // Register available mime types.
             foreach ($this-&gt;formats as $format =&gt; $mime_type) {
@@ -164,10 +163,10 @@
         <p><code>PageCache</code></p>
 
         <codeblock lang="php">
-          &lt;?php
           public function handle(Request $request, $type = self::MASTER_REQUEST, $catch = TRUE) {
             // Only allow page caching on master request.
-            if ($type === static::MASTER_REQUEST &amp;&amp; $this-&gt;requestPolicy-&gt;check($request) === RequestPolicyInterface::ALLOW) {
+            if ($type === static::MASTER_REQUEST
+                &amp;&amp; $this-&gt;requestPolicy-&gt;check($request) === RequestPolicyInterface::ALLOW) {
               $response = $this-&gt;lookup($request, $type, $catch);
             }
             else {
@@ -181,7 +180,6 @@
         <p><code>ReverseProxyMiddleware</code></p>
 
         <codeblock lang="php">
-          &lt;?php
           public function handle(Request $request, $type = self::MASTER_REQUEST, $catch = TRUE) {
             $this-&gt;drupalKernel-&gt;preHandle($request);
 
@@ -192,7 +190,6 @@
         <p><code>Session</code></p>
 
         <codeblock lang="php">
-          &lt;?php
           public function handle(Request $request, $type = self::MASTER_REQUEST, $catch = TRUE) {
             if ($type === self::MASTER_REQUEST &amp;&amp; PHP_SAPI !== 'cli') {
               $session = $this-&gt;container-&gt;get($this-&gt;sessionServiceName);
@@ -213,7 +210,6 @@
         <p><code>HttpKernel</code></p>
 
         <codeblock lang="php">
-          &lt;?php
           public function handle(Request $request, $type = HttpKernelInterface::MASTER_REQUEST, $catch = true) {
             $request-&gt;headers-&gt;set('X-Php-Ob-Level', ob_get_level());
 
@@ -235,7 +231,6 @@
         </codeblock>
 
         <codeblock lang="php">
-          &lt;?php
           private function handleRaw(Request $request, $type = self::MASTER_REQUEST) {
             $this-&gt;requestStack-&gt;push($request);
 
@@ -249,7 +244,9 @@
 
             // load controller
             if (false === $controller = $this-&gt;resolver-&gt;getController($request)) {
-              throw new NotFoundHttpException(sprintf('Unable to find the controller for path &quot;%s&quot;. The route is wrongly configured.', $request-&gt;getPathInfo()));
+              throw new NotFoundHttpException(
+                sprintf('Unable to find the controller for path &quot;%s&quot;. The route is wrongly configured.', $request-&gt;getPathInfo())
+              );
             }
 
             $event = new FilterControllerEvent($this, $controller, $request, $type);
@@ -291,70 +288,49 @@
           }
         </codeblock>
 
-        <div class="highlight">
-          <pre><code>
-            <span>index.php:19, {main}()</span>
-            <span>DrupalKernel.php:708, Drupal\Core\DrupalKernel-&gt;handle()</span>
-            <span>StackedHttpKernel.php:23, Stack\StackedHttpKernel-&gt;handle()</span>
-            <span>NegotiationMiddleware.php:52, Drupal\Core\StackMiddleware\NegotiationMiddleware-&gt;handle()</span>
-            <span>ReverseProxyMiddleware.php:47, Drupal\Core\StackMiddleware\ReverseProxyMiddleware-&gt;handle()</span>
-            <span>PageCache.php:82, Drupal\page_cache\StackMiddleware\PageCache-&gt;handle()</span>
-            <span>PageCache.php:128, Drupal\page_cache\StackMiddleware\PageCache-&gt;lookup()</span>
-            <span>PageCache.php:191, Drupal\page_cache\StackMiddleware\PageCache-&gt;fetch()</span>
-            <span>KernelPreHandle.php:47, Drupal\Core\StackMiddleware\KernelPreHandle-&gt;handle()</span>
-            <span>Session.php:57, Drupal\Core\StackMiddleware\Session-&gt;handle()</span>
-            <span>HttpKernel.php:65, Symfony\Component\HttpKernel\HttpKernel-&gt;handle()</span>
-          </code></pre>
-        </div>
-
         <p>So we can see that <code>HttpKernel-&gt;handleRaw()</code> dispatches a bunch of events, but doesn't do much else. The page rendering, therefore, must be handled by one of these event subscribers. We could reasonably assume that <code>KernelEvents::REQUEST</code>, as the first event dispatched, is the one we're looking for.</p>
 
         <p>Let's take a look at what subscribes to this event:</p>
 
-        <div class="highlight">
-          <pre><code>
-            <span>&gt; drupal debug:event kernel.request</span>
-            <span>-------------------------------------------------------------------------------- -----------------------------------</span>
-            <span>Class                                                                            Method                             </span>
-            <span>-------------------------------------------------------------------------------- -----------------------------------</span>
-            <span>Drupal\Core\EventSubscriber\OptionsRequestSubscriber                             onRequest: 1000                    </span>
-            <span>Drupal\Core\EventSubscriber\RedirectLeadingSlashesSubscriber                     redirect: 1000                     </span>
-            <span>Drupal\Core\EventSubscriber\AuthenticationSubscriber                             onKernelRequestAuthenticate: 300   </span>
-            <span>Drupal\system\TimeZoneResolver                                                   setDefaultTimeZone: 299            </span>
-            <span>Drupal\Core\EventSubscriber\AjaxResponseSubscriber                               onRequest: 50                      </span>
-            <span>Symfony\Component\HttpKernel\EventListener\RouterListener                        onKernelRequest: 32                </span>
-            <span>Drupal\Core\EventSubscriber\AuthenticationSubscriber                             onKernelRequestFilterProvider: 31  </span>
-            <span>Drupal\user\EventSubscriber\MaintenanceModeSubscriber                            onKernelRequestMaintenance: 31     </span>
-            <span>Drupal\Core\EventSubscriber\MaintenanceModeSubscriber                            onKernelRequestMaintenance: 30     </span>
-            <span>Drupal\dynamic_page_cache\EventSubscriber\DynamicPageCacheSubscriber             onRequest: 27                      </span>
-            <span>Drupal\Core\Database\ReplicaKillSwitch                                           checkReplicaServer: 0              </span>
-            <span>Drupal\Core\Routing\RoutePreloader                                               onRequest: 0                       </span>
-            <span>-------------------------------------------------------------------------------- -----------------------------------</span>
-          </code></pre>
-        </div>
+        <codeblock lang="text">
+          > drupal debug:event kernel.request
+            -------------------------------------------------------------------------------- -----------------------------------
+            Class                                                                            Method
+            -------------------------------------------------------------------------------- -----------------------------------
+            Drupal\Core\EventSubscriber\OptionsRequestSubscriber                             onRequest: 1000
+            Drupal\Core\EventSubscriber\RedirectLeadingSlashesSubscriber                     redirect: 1000
+            Drupal\Core\EventSubscriber\AuthenticationSubscriber                             onKernelRequestAuthenticate: 300
+            Drupal\system\TimeZoneResolver                                                   setDefaultTimeZone: 299
+            Drupal\Core\EventSubscriber\AjaxResponseSubscriber                               onRequest: 50
+            Symfony\Component\HttpKernel\EventListener\RouterListener                        onKernelRequest: 32
+            Drupal\Core\EventSubscriber\AuthenticationSubscriber                             onKernelRequestFilterProvider: 31
+            Drupal\user\EventSubscriber\MaintenanceModeSubscriber                            onKernelRequestMaintenance: 31
+            Drupal\Core\EventSubscriber\MaintenanceModeSubscriber                            onKernelRequestMaintenance: 30
+            Drupal\dynamic_page_cache\EventSubscriber\DynamicPageCacheSubscriber             onRequest: 27
+            Drupal\Core\Database\ReplicaKillSwitch                                           checkReplicaServer: 0
+            Drupal\Core\Routing\RoutePreloader                                               onRequest: 0
+            -------------------------------------------------------------------------------- -----------------------------------
+        </codeblock>
 
         <p>Nothing interesting here. Maybe it's one of the others? Let's take a different approach.</p>
 
         <p>If we drop a breakpoint into <code>template_preprocess_html()</code> we can see that the render request originates from the <code>KernelEvents::VIEW</code> event. Now that we know which event we're interested in, we can again use Drupal console to find the subscribers:</p>
 
-        <div class="highlight">
-          <pre><code>
-            <span>&gt; drupal debug:event kernel.view</span>
-            <span>---------------------------------------------------------- ----------------------</span>
-            <span>      Class                                                      Method          </span>
-            <span>---------------------------------------------------------- ----------------------</span>
-            <span>Drupal\Core\Form\EventSubscriber\FormAjaxSubscriber        onView: 1             </span>
-            <span>Drupal\Core\EventSubscriber\PsrResponseSubscriber          onKernelView: 0       </span>
-            <span>Drupal\Core\EventSubscriber\MainContentViewSubscriber      onViewRenderArray: 0  </span>
-            <span>Drupal\Core\EventSubscriber\RenderArrayNonHtmlSubscriber   onRespond: -10        </span>
-            <span>---------------------------------------------------------- ----------------------</span>
-          </code></pre>
-        </div>
+        <codeblock lang="text">
+          > drupal debug:event kernel.view
+            ---------------------------------------------------------- ----------------------
+            Class                                                      Method
+            ---------------------------------------------------------- ----------------------
+            Drupal\Core\Form\EventSubscriber\FormAjaxSubscriber        onView: 1
+            Drupal\Core\EventSubscriber\PsrResponseSubscriber          onKernelView: 0
+            Drupal\Core\EventSubscriber\MainContentViewSubscriber      onViewRenderArray: 0
+            Drupal\Core\EventSubscriber\RenderArrayNonHtmlSubscriber   onRespond: -10
+            ---------------------------------------------------------- ----------------------
+        </codeblock>
 
         <p>The one that does the actual page rendering is <code>MainContentViewSubscriber</code>&mdash;the rendering originates from the <code>MainContentViewSubscriber-&gt;onViewRenderArray()</code> callback. This then renders the page using the available <code>%main_content_renderers%</code> based on the <code>$wrapper</code> format:</p>
 
         <codeblock lang="php">
-          &lt;?php
           $wrapper = $request-&gt;query-&gt;get(static::WRAPPER_FORMAT, 'html');
 
           // Fall back to HTML if the requested wrapper envelope is not available.
@@ -376,20 +352,24 @@
 
         <p>An example of a content renderer service definition:</p>
 
-        <div class="highlight">
-          <pre><code>
-            <span class="c">main_content_renderer.html:</span>
-            <span class="c">  class: Drupal\Core\Render\MainContent\HtmlRenderer</span>
-            <span class="c">  arguments: ['@title_resolver', '@plugin.manager.display_variant', '@event_dispatcher', '@module_handler', '@renderer', '@render_cache', '%renderer.config%']</span>
-            <span class="c">  tags:</span>
-            <span class="c">    - { name: render.main_content_renderer, format: html }</span>
-          </code></pre>
-        </div>
+        <codeblock lang="yaml">
+          main_content_renderer.html:
+            class: Drupal\Core\Render\MainContent\HtmlRenderer
+            arguments:
+              - '@title_resolver'
+              - '@plugin.manager.display_variant'
+              - '@event_dispatcher'
+              - '@module_handler'
+              - '@renderer'
+              - '@render_cache'
+              - '%renderer.config%'
+            tags:
+              - { name: render.main_content_renderer, format: html }
+        </codeblock>
 
         <p>Content renderers are collected from services tagged with <code>name: render.main_content_renderer</code> as part of the Kernel compilation by another <code>CompilerPass</code> class&mdash;<code>MainContentRenderersPass</code>:</p>
 
         <codeblock lang="php">
-          &lt;?php
           /**
           * Adds main_content_renderers parameter to the container.
           */
@@ -419,31 +399,29 @@
 
         <p>The core renderers available by wrapper are:</p>
 
-        <pre><code>
-          <span>html = &quot;main_content_renderer.html&quot;</span>
-          <span>drupal_ajax = &quot;main_content_renderer.ajax&quot;</span>
-          <span>iframeupload = &quot;main_content_renderer.ajax&quot;</span>
-          <span>drupal_dialog = &quot;main_content_renderer.dialog&quot;</span>
-          <span>drupal_dialog.off_canvas = &quot;main_content_renderer.off_canvas&quot;</span>
-          <span>drupal_dialog.off_canvas_top = &quot;main_content_renderer.off_canvas_top&quot;</span>
-          <span>drupal_modal = &quot;main_content_renderer.modal&quot;</span>
-        </code></pre>
+        <codeblock lang="text">
+          html = "main_content_renderer.html"
+          drupal_ajax = "main_content_renderer.ajax"
+          iframeupload = "main_content_renderer.ajax"
+          drupal_dialog = "main_content_renderer.dialog"
+          drupal_dialog.off_canvas = "main_content_renderer.off_canvas"
+          drupal_dialog.off_canvas_top = "main_content_renderer.off_canvas_top"
+          drupal_modal = "main_content_renderer.modal"
+        </codeblock>
 
         <p>There's also a test example in <code>common_test.services.yml</code>.</p>
 
         <p>We can see an instance of practical invocation in <code>ajax.js</code>, where the format is assigned as <code>Drupal.ajax.WRAPPER_FORMAT</code>. In the AJAX options, it's then set up as:</p>
 
-        <div class="highlight">
-          <pre><code>
-            <span>var wrapper = &quot;drupal_&quot;.concat(elementSettings.dialogType || 'ajax');</span>
-            <span></span>
-            <span>if (elementSettings.dialogRenderer) {</span>
-            <span>  wrapper += &quot;.&quot;.concat(elementSettings.dialogRenderer);</span>
-            <span>}</span>
-            <span></span>
-            <span>ajax.options.url += &quot;&quot;.concat(Drupal.ajax.WRAPPER_FORMAT, &quot;=&quot;).concat(wrapper);</span>
-          </code></pre>
-        </div>
+        <codeblock lang="javascript">
+          var wrapper = "drupal_".concat(elementSettings.dialogType || 'ajax');
+
+          if (elementSettings.dialogRenderer) {
+            wrapper += ".".concat(elementSettings.dialogRenderer);
+          }
+
+          ajax.options.url += "".concat(Drupal.ajax.WRAPPER_FORMAT, "=").concat(wrapper);
+        </codeblock>
 
         <p>As we can see from the <code>drupal_</code> prefix used for <code>wrapper</code>, with the exception of <code>html</code> the other built-in wrappers are all expected to be invoked via JavaScript. The <code>iframeupload</code> wrapper is an altered value for <code>ajax_iframe_upload</code> as seen in <code>NegotiationMiddleware->getContentType()</code>, which is again sent from <code>ajax.js</code>.</p>
 
@@ -452,7 +430,6 @@
         <p>We can see what goes down in the <code>MainContentViewSubscriber</code>&mdash;the event subscriber method is <code>onViewRenderArray</code>:</p>
 
         <codeblock lang="php">
-          &lt;?php
           public function onViewRenderArray(GetResponseForControllerResultEvent $event) {
             $request = $event-&gt;getRequest();
             $result = $event-&gt;getControllerResult();
@@ -484,7 +461,6 @@
         <p>The <code>HtmlRenderer</code> also handles the page regions and attachments in the <code>prepare()</code> method:</p>
 
         <codeblock lang="php">
-          &lt;?php
           // $page is now fully built. Find all non-empty page regions, and add a
           // theme wrapper function that allows them to be consistently themed.
           $regions = \Drupal::theme()-&gt;getActiveTheme()-&gt;getRegions();
@@ -504,7 +480,6 @@
         <p>It's worth looking at how we get the result from the controller, since this tells us a bit more about how the event system works in this core rendering path. We can see in <code>MainContentViewSubscriber</code> the event we're passed is an instance of <code>GetResponseForControllerResultEvent</code>, which already has the response from the controller available via <code>getControllerResult()</code>. With some searching, we can see this event being dispatched from the <code>HttpKernel</code> we were looking at earlier;</p>
 
         <codeblock lang="php">
-          &lt;?php
           $event = new GetResponseForControllerResultEvent($this, $request, $type, $response);
           $this-&gt;dispatcher-&gt;dispatch(KernelEvents::VIEW, $event);
         </codeblock>
@@ -512,7 +487,6 @@
         <p>Prior to this event being dispatched in <code>HttpKernel->handleRaw()</code>, we can also see the controller response being handled by the <code>HttpKernel</code>:</p>
 
         <codeblock lang="php">
-          &lt;?php
           $event = new FilterControllerEvent($this, $controller, $request, $type);
           $this-&gt;dispatcher-&gt;dispatch(KernelEvents::CONTROLLER, $event);
           $controller = $event-&gt;getController();
@@ -536,7 +510,6 @@
         <hr />
 
         <p>I hope this was a useful look into how rendering works in Drupal 8&mdash;I know it was for me. It's interesting to see how much is compiled into the Kernel to improve render performance, and also interesting to see the level to which the rendering relies on creating those core areas&mdash;the page and blocks&mdash;for other modules to hook into to render the remaining site content.</p>
-
       </content>
     </article>
   </content>

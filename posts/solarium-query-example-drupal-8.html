@@ -59,8 +59,7 @@
     <article class="article"><time class="article__date" datetime="2020-05">May 2020</time><h1 class="article__header">Solarium Query Example in Drupal 8</h1><div class="article__content">
         <p>When using Search API Solr in Drupal 8, I needed to run some more in-depth queries than were available via the Search API Query, but couldn't find any examples online of how to run a Solarium query directly. After digging around in the module, I found some examples in the <code>SearchApiSolrBackend</code>. If anyone else is looking for the same, here's how to run a basic Solarium query:</p>
 
-      <div class="highlight"><pre><span/><span class="cp">&lt;?php</span>
-<span class="k">use</span> <span class="nx">Drupal\search_api\Entity\Index</span><span class="p">;</span>
+      <div class="highlight"><pre><span/><span class="k">use</span> <span class="nx">Drupal\search_api\Entity\Index</span><span class="p">;</span>
 <span class="k">use</span> <span class="nx">Solarium\QueryType\Select\Query\Query</span><span class="p">;</span>
 <span class="k">use</span> <span class="nx">Drupal\search_api_solr\Plugin\search_api\backend\SearchApiSolrBackend</span><span class="p">;</span>
 
