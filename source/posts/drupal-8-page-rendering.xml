@@ -7,7 +7,7 @@
 <document type="article">
   <title>Drupal 8 page rendering</title>
   <description>How is a Drupal 8 page made?</description>
-  <slug>/posts/drupal-8-page-rendering</slug>
+  <slug>/posts/drupal-8-page-rendering</slug>¬
   <content>
     <article>
       <title>Drupal 8 page rendering</title>
@@ -15,7 +15,9 @@
       <content>
         <p>How does a page get rendered in Drupal? This is a question I felt I had a good handle on in Drupal 7, but although I understand the mechanisms underlying Drupal 8 I couldn't have given you a good explanation of how you get from a request to a rendered page. Perhaps you feel the same way&mdash;if that's the case, join me on the journey to figure out how Drupal 8 makes a page.</p>
 
-        <p>I didn't find a lot of existing material on this looking around the internet&mdash;this <a href="http://x-team.com/blog/handle-me-gently">article from x-team</a> gives an explanation of how the Drupal kernel works, but doesn't go much deeper than how it handles the initial request.</p>
+        <p>I didn't find a lot of existing material on this looking around the internet&mdash;this <a href="http://x-team.com/blog/handle-me-gently">article from x-team</a> gives an explanation of how the Drupal kernel works, but doesn't go much deeper than how it handles the initial request. There's a great breakdown of the <a href="https://symfony.com/doc/current/components/http_kernel.html">Symfony HttpKernel</a> which I'd recommend reading, but this obviously doesn't touch on any Drupal specifics.</p>
+
+        <p><em>After writing the initial version of this post, I was pointed towards a page which gives more of an overview of the <a href="https://www.drupal.org/docs/8/api/render-api/the-drupal-8-render-pipeline">Drupal render pipeline</a>, along with <a href="https://www.drupal.org/files/d8_render_pipeline_1.png">this great diagram</a>. This would have been useful to help me figure out what was going on, but on the other hand I think this post is more useful to show how I found my way there regardless.</em></p>
 
         <h2>Starting our search</h2>
 
@@ -89,7 +91,7 @@
             class: Stack\StackedHttpKernel
         </codeblock>
 
-        <p>The <code>StackedHttpKernel</code> is another Drupal-specific class, again implementing a Symfony interface <code>HttpKernelInterface</code>.</p>
+        <p>The <code>StackedHttpKernel</code> is a Symfony Dependecy Injection class, again implementing a Symfony interface <code>HttpKernelInterface</code>.</p>
 
         <p>The <code>handle()</code> method here is equally as exciting:</p>
 
@@ -124,24 +126,32 @@
           </code></pre>
         </div>
 
-        <p>The first five classes are all Drupal classes, with the <code>HttpKernel</code> being the default Symfony Kernel as supplied by the service tagged with <code>http_kernel.basic</code>.</p>
-
-        <p><code>KernelPreHandle</code></p>
+        <p>The first five classes are all Drupal classes, with the <code>HttpKernel</code> being the default Symfony Kernel as supplied by the service tagged with <code>http_kernel.basic</code>. It's not entirely obvious how these all get called from their service definitions in <code>core.services.yml</code> since none of them have arguments, yet all of them have a reference to the next piece of middleware in the stack. The answer lies again in the <code>StackedKernelPass</code> class:</p>
 
         <codeblock lang="php">
-          public function handle(Request $request, $type = self::MASTER_REQUEST, $catch = TRUE) {
-            // Register available mime types.
-            foreach ($this-&gt;formats as $format =&gt; $mime_type) {
-              $request-&gt;setFormat($format, $mime_type);
+          foreach ($middlewares as $id => $decorator) {
+            // Prepend a reference to the middlewares container parameter.
+            array_unshift($middlewares_param, new Reference($id));
+
+            // Prepend the inner kernel as first constructor argument.
+            $arguments = $decorator->getArguments();
+            array_unshift($arguments, new Reference($decorated_id));
+            $decorator->setArguments($arguments);
+
+            if ($first_responder === $id) {
+              $first_responder = FALSE;
+            }
+            elseif ($first_responder) {
+              $decorator->setLazy(TRUE);
             }
 
-            // Determine the request format using the negotiator.
-            if ($requested_format = $this-&gt;getContentType($request)) {
-              $request-&gt;setRequestFormat($requested_format);
-            }
-            return $this-&gt;app-&gt;handle($request, $type, $catch);
+            $decorated_id = $id;
           }
         </codeblock>
+
+        <p>Here <code>$middleware</code> is an array of the services tagged with <code>http_middleware</code> ordered from last to first invoked. The value of <code>$decorated_id</code> is initially set to <code>http_kernel.basic</code>, which you'll remember as the service name for the <code>HttpKernel</code>, and is assigned as an argument for the last service invoked. As we iterate through, each middleware has the next middleware in the stack assigned as an argument for the service creation. The <code>Reference</code> class used here is again part of the Symfony Dependency Injection framework, and is a programmatic reference to a service by name. Check out the <a href="https://symfony.com/doc/current/components/dependency_injection.html">dependency injection documentation</a> for more detail.</p>
+
+        <p>Here are the <code>handle()</code> methods from all of those middlewares:</p>
 
         <p><code>NegotiationMiddleware</code></p>
 
@@ -160,6 +170,16 @@
           }
         </codeblock>
 
+        <p><code>ReverseProxyMiddleware</code></p>
+
+        <codeblock lang="php">
+          public function handle(Request $request, $type = self::MASTER_REQUEST, $catch = TRUE) {
+            $this-&gt;drupalKernel-&gt;preHandle($request);
+
+            return $this-&gt;httpKernel-&gt;handle($request, $type, $catch);
+          }
+        </codeblock>
+        
         <p><code>PageCache</code></p>
 
         <codeblock lang="php">
@@ -177,13 +197,20 @@
           }
         </codeblock>
 
-        <p><code>ReverseProxyMiddleware</code></p>
+        <p><code>KernelPreHandle</code></p>
 
         <codeblock lang="php">
           public function handle(Request $request, $type = self::MASTER_REQUEST, $catch = TRUE) {
-            $this-&gt;drupalKernel-&gt;preHandle($request);
+            // Register available mime types.
+            foreach ($this-&gt;formats as $format =&gt; $mime_type) {
+              $request-&gt;setFormat($format, $mime_type);
+            }
 
-            return $this-&gt;httpKernel-&gt;handle($request, $type, $catch);
+            // Determine the request format using the negotiator.
+            if ($requested_format = $this-&gt;getContentType($request)) {
+              $request-&gt;setRequestFormat($requested_format);
+            }
+            return $this-&gt;app-&gt;handle($request, $type, $catch);
           }
         </codeblock>
 

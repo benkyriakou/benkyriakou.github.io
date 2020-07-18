@@ -59,7 +59,9 @@
     <article class="article"><time class="article__date" datetime="2020-07">July 2020</time><h1 class="article__header">Drupal 8 page rendering</h1><div class="article__content">
         <p>How does a page get rendered in Drupal? This is a question I felt I had a good handle on in Drupal 7, but although I understand the mechanisms underlying Drupal 8 I couldn't have given you a good explanation of how you get from a request to a rendered page. Perhaps you feel the same way&#8212;if that's the case, join me on the journey to figure out how Drupal 8 makes a page.</p>
 
-        <p>I didn't find a lot of existing material on this looking around the internet&#8212;this <a href="http://x-team.com/blog/handle-me-gently">article from x-team</a> gives an explanation of how the Drupal kernel works, but doesn't go much deeper than how it handles the initial request.</p>
+        <p>I didn't find a lot of existing material on this looking around the internet&#8212;this <a href="http://x-team.com/blog/handle-me-gently">article from x-team</a> gives an explanation of how the Drupal kernel works, but doesn't go much deeper than how it handles the initial request. There's a great breakdown of the <a href="https://symfony.com/doc/current/components/http_kernel.html">Symfony HttpKernel</a> which I'd recommend reading, but this obviously doesn't touch on any Drupal specifics.</p>
+
+        <p><em>After writing the initial version of this post, I was pointed towards a page which gives more of an overview of the <a href="https://www.drupal.org/docs/8/api/render-api/the-drupal-8-render-pipeline">Drupal render pipeline</a>, along with <a href="https://www.drupal.org/files/d8_render_pipeline_1.png">this great diagram</a>. This would have been useful to help me figure out what was going on, but on the other hand I think this post is more useful to show how I found my way there regardless.</em></p>
 
         <h2 id="section-starting-our-search">Starting our search</h2>
 
@@ -124,7 +126,7 @@
 
         <div class="highlight"><pre><span/><span class="nt">http_kernel</span><span class="p">:</span>
   <span class="nt">class</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">Stack\StackedHttpKernel</span>
-</pre></div><p>The <code>StackedHttpKernel</code> is another Drupal-specific class, again implementing a Symfony interface <code>HttpKernelInterface</code>.</p>
+</pre></div><p>The <code>StackedHttpKernel</code> is a Symfony Dependecy Injection class, again implementing a Symfony interface <code>HttpKernelInterface</code>.</p>
 
         <p>The <code>handle()</code> method here is equally as exciting:</p>
 
@@ -155,9 +157,31 @@
 </code></pre>
         </div>
 
-        <p>The first five classes are all Drupal classes, with the <code>HttpKernel</code> being the default Symfony Kernel as supplied by the service tagged with <code>http_kernel.basic</code>.</p>
+        <p>The first five classes are all Drupal classes, with the <code>HttpKernel</code> being the default Symfony Kernel as supplied by the service tagged with <code>http_kernel.basic</code>. It's not entirely obvious how these all get called from their service definitions in <code>core.services.yml</code> since none of them have arguments, yet all of them have a reference to the next piece of middleware in the stack. The answer lies again in the <code>StackedKernelPass</code> class:</p>
 
-        <p><code>KernelPreHandle</code></p>
+        <div class="highlight"><pre><span/><span class="k">foreach</span> <span class="p">(</span><span class="nv">$middlewares</span> <span class="k">as</span> <span class="nv">$id</span> <span class="o">=&gt;</span> <span class="nv">$decorator</span><span class="p">)</span> <span class="p">{</span>
+  <span class="c1">// Prepend a reference to the middlewares container parameter.</span>
+  <span class="nb">array_unshift</span><span class="p">(</span><span class="nv">$middlewares_param</span><span class="p">,</span> <span class="k">new</span> <span class="nx">Reference</span><span class="p">(</span><span class="nv">$id</span><span class="p">));</span>
+
+  <span class="c1">// Prepend the inner kernel as first constructor argument.</span>
+  <span class="nv">$arguments</span> <span class="o">=</span> <span class="nv">$decorator</span><span class="o">-&gt;</span><span class="na">getArguments</span><span class="p">();</span>
+  <span class="nb">array_unshift</span><span class="p">(</span><span class="nv">$arguments</span><span class="p">,</span> <span class="k">new</span> <span class="nx">Reference</span><span class="p">(</span><span class="nv">$decorated_id</span><span class="p">));</span>
+  <span class="nv">$decorator</span><span class="o">-&gt;</span><span class="na">setArguments</span><span class="p">(</span><span class="nv">$arguments</span><span class="p">);</span>
+
+  <span class="k">if</span> <span class="p">(</span><span class="nv">$first_responder</span> <span class="o">===</span> <span class="nv">$id</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nv">$first_responder</span> <span class="o">=</span> <span class="k">FALSE</span><span class="p">;</span>
+  <span class="p">}</span>
+  <span class="k">elseif</span> <span class="p">(</span><span class="nv">$first_responder</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nv">$decorator</span><span class="o">-&gt;</span><span class="na">setLazy</span><span class="p">(</span><span class="k">TRUE</span><span class="p">);</span>
+  <span class="p">}</span>
+
+  <span class="nv">$decorated_id</span> <span class="o">=</span> <span class="nv">$id</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div><p>Here <code>$middleware</code> is an array of the services tagged with <code>http_middleware</code> ordered from last to first invoked. The value of <code>$decorated_id</code> is initially set to <code>http_kernel.basic</code>, which you'll remember as the service name for the <code>HttpKernel</code>, and is assigned as an argument for the last service invoked. As we iterate through, each middleware has the next middleware in the stack assigned as an argument for the service creation. The <code>Reference</code> class used here is again part of the Symfony Dependency Injection framework, and is a programmatic reference to a service by name. Check out the <a href="https://symfony.com/doc/current/components/dependency_injection.html">dependency injection documentation</a> for more detail.</p>
+
+        <p>Here are the <code>handle()</code> methods from all of those middlewares:</p>
+
+        <p><code>NegotiationMiddleware</code></p>
 
         <div class="highlight"><pre><span/><span class="k">public</span> <span class="k">function</span> <span class="nf">handle</span><span class="p">(</span><span class="nx">Request</span> <span class="nv">$request</span><span class="p">,</span> <span class="nv">$type</span> <span class="o">=</span> <span class="nx">self</span><span class="o">::</span><span class="na">MASTER_REQUEST</span><span class="p">,</span> <span class="nv">$catch</span> <span class="o">=</span> <span class="k">TRUE</span><span class="p">)</span> <span class="p">{</span>
   <span class="c1">// Register available mime types.</span>
@@ -171,19 +195,12 @@
   <span class="p">}</span>
   <span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">app</span><span class="o">-&gt;</span><span class="na">handle</span><span class="p">(</span><span class="nv">$request</span><span class="p">,</span> <span class="nv">$type</span><span class="p">,</span> <span class="nv">$catch</span><span class="p">);</span>
 <span class="p">}</span>
-</pre></div><p><code>NegotiationMiddleware</code></p>
+</pre></div><p><code>ReverseProxyMiddleware</code></p>
 
         <div class="highlight"><pre><span/><span class="k">public</span> <span class="k">function</span> <span class="nf">handle</span><span class="p">(</span><span class="nx">Request</span> <span class="nv">$request</span><span class="p">,</span> <span class="nv">$type</span> <span class="o">=</span> <span class="nx">self</span><span class="o">::</span><span class="na">MASTER_REQUEST</span><span class="p">,</span> <span class="nv">$catch</span> <span class="o">=</span> <span class="k">TRUE</span><span class="p">)</span> <span class="p">{</span>
-  <span class="c1">// Register available mime types.</span>
-  <span class="k">foreach</span> <span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">formats</span> <span class="k">as</span> <span class="nv">$format</span> <span class="o">=&gt;</span> <span class="nv">$mime_type</span><span class="p">)</span> <span class="p">{</span>
-    <span class="nv">$request</span><span class="o">-&gt;</span><span class="na">setFormat</span><span class="p">(</span><span class="nv">$format</span><span class="p">,</span> <span class="nv">$mime_type</span><span class="p">);</span>
-  <span class="p">}</span>
+  <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">drupalKernel</span><span class="o">-&gt;</span><span class="na">preHandle</span><span class="p">(</span><span class="nv">$request</span><span class="p">);</span>
 
-  <span class="c1">// Determine the request format using the negotiator.</span>
-  <span class="k">if</span> <span class="p">(</span><span class="nv">$requested_format</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">getContentType</span><span class="p">(</span><span class="nv">$request</span><span class="p">))</span> <span class="p">{</span>
-    <span class="nv">$request</span><span class="o">-&gt;</span><span class="na">setRequestFormat</span><span class="p">(</span><span class="nv">$requested_format</span><span class="p">);</span>
-  <span class="p">}</span>
-  <span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">app</span><span class="o">-&gt;</span><span class="na">handle</span><span class="p">(</span><span class="nv">$request</span><span class="p">,</span> <span class="nv">$type</span><span class="p">,</span> <span class="nv">$catch</span><span class="p">);</span>
+  <span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">httpKernel</span><span class="o">-&gt;</span><span class="na">handle</span><span class="p">(</span><span class="nv">$request</span><span class="p">,</span> <span class="nv">$type</span><span class="p">,</span> <span class="nv">$catch</span><span class="p">);</span>
 <span class="p">}</span>
 </pre></div><p><code>PageCache</code></p>
 
@@ -199,12 +216,19 @@
 
   <span class="k">return</span> <span class="nv">$response</span><span class="p">;</span>
 <span class="p">}</span>
-</pre></div><p><code>ReverseProxyMiddleware</code></p>
+</pre></div><p><code>KernelPreHandle</code></p>
 
         <div class="highlight"><pre><span/><span class="k">public</span> <span class="k">function</span> <span class="nf">handle</span><span class="p">(</span><span class="nx">Request</span> <span class="nv">$request</span><span class="p">,</span> <span class="nv">$type</span> <span class="o">=</span> <span class="nx">self</span><span class="o">::</span><span class="na">MASTER_REQUEST</span><span class="p">,</span> <span class="nv">$catch</span> <span class="o">=</span> <span class="k">TRUE</span><span class="p">)</span> <span class="p">{</span>
-  <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">drupalKernel</span><span class="o">-&gt;</span><span class="na">preHandle</span><span class="p">(</span><span class="nv">$request</span><span class="p">);</span>
+  <span class="c1">// Register available mime types.</span>
+  <span class="k">foreach</span> <span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">formats</span> <span class="k">as</span> <span class="nv">$format</span> <span class="o">=&gt;</span> <span class="nv">$mime_type</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nv">$request</span><span class="o">-&gt;</span><span class="na">setFormat</span><span class="p">(</span><span class="nv">$format</span><span class="p">,</span> <span class="nv">$mime_type</span><span class="p">);</span>
+  <span class="p">}</span>
 
-  <span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">httpKernel</span><span class="o">-&gt;</span><span class="na">handle</span><span class="p">(</span><span class="nv">$request</span><span class="p">,</span> <span class="nv">$type</span><span class="p">,</span> <span class="nv">$catch</span><span class="p">);</span>
+  <span class="c1">// Determine the request format using the negotiator.</span>
+  <span class="k">if</span> <span class="p">(</span><span class="nv">$requested_format</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">getContentType</span><span class="p">(</span><span class="nv">$request</span><span class="p">))</span> <span class="p">{</span>
+    <span class="nv">$request</span><span class="o">-&gt;</span><span class="na">setRequestFormat</span><span class="p">(</span><span class="nv">$requested_format</span><span class="p">);</span>
+  <span class="p">}</span>
+  <span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">app</span><span class="o">-&gt;</span><span class="na">handle</span><span class="p">(</span><span class="nv">$request</span><span class="p">,</span> <span class="nv">$type</span><span class="p">,</span> <span class="nv">$catch</span><span class="p">);</span>
 <span class="p">}</span>
 </pre></div><p><code>Session</code></p>
 
