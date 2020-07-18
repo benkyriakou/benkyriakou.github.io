@@ -179,8 +179,10 @@
             return $this-&gt;httpKernel-&gt;handle($request, $type, $catch);
           }
         </codeblock>
-        
+
         <p><code>PageCache</code></p>
+
+        <p>Note the check for the master request here is due to the ability for the kernel to be passed sub-requests as detailed in the <a href="https://symfony.com/doc/current/components/http_kernel.html#sub-requests">Symfony kernel documentation</a>.</p>
 
         <codeblock lang="php">
           public function handle(Request $request, $type = self::MASTER_REQUEST, $catch = TRUE) {

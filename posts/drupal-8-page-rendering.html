@@ -204,6 +204,8 @@
 <span class="p">}</span>
 </pre></div><p><code>PageCache</code></p>
 
+        <p>Note the check for the master request here is due to the ability for the kernel to be passed sub-requests as detailed in the <a href="https://symfony.com/doc/current/components/http_kernel.html#sub-requests">Symfony kernel documentation</a>.</p>
+
         <div class="highlight"><pre><span/><span class="k">public</span> <span class="k">function</span> <span class="nf">handle</span><span class="p">(</span><span class="nx">Request</span> <span class="nv">$request</span><span class="p">,</span> <span class="nv">$type</span> <span class="o">=</span> <span class="nx">self</span><span class="o">::</span><span class="na">MASTER_REQUEST</span><span class="p">,</span> <span class="nv">$catch</span> <span class="o">=</span> <span class="k">TRUE</span><span class="p">)</span> <span class="p">{</span>
   <span class="c1">// Only allow page caching on master request.</span>
   <span class="k">if</span> <span class="p">(</span><span class="nv">$type</span> <span class="o">===</span> <span class="k">static</span><span class="o">::</span><span class="na">MASTER_REQUEST</span>
