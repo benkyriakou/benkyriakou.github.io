@@ -45,6 +45,9 @@
 
         <p>This is a modified version of the default docker4drupal command.</p>
 
+        <h2>ddev</h2>
+
+        <p>The process for ddev is largely the same. You can skip the step for setting up the CLI interpreter as this will work fine without it. An important point is that the name of your debug configuration <strong>must</strong> match your ddev site domain for this to work. See the <a href="https://ddev.readthedocs.io/en/stable/users/step-debugging/#phpstorm-debugging-setup">ddev documentation</a> for more details.</p>
       </content>
     </article>
   </content>
