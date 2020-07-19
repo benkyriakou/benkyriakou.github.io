@@ -91,7 +91,7 @@
             class: Stack\StackedHttpKernel
         </codeblock>
 
-        <p>The <code>StackedHttpKernel</code> is a Symfony Dependecy Injection class, again implementing a Symfony interface <code>HttpKernelInterface</code>.</p>
+        <p>The <code>StackedHttpKernel</code> is a Symfony Dependency Injection class, again implementing a Symfony interface <code>HttpKernelInterface</code>.</p>
 
         <p>The <code>handle()</code> method here is equally as exciting:</p>
 
