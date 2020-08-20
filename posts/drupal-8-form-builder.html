@@ -1,0 +1,654 @@
+<!DOCTYPE html SYSTEM "about:legacy-compat">
+<html lang="en">
+  <head>
+    <meta charset="utf-8"/>
+    <meta name="theme-color" content="#333"/>
+    <meta name="description" content="How is a Drupal 8 form made?"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=1"/>
+    <link rel="canonical" href="https://benkyriakou.com/posts/drupal-8-form-builder"/>
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon"/>
+    <title>Drupal 8 form builder | Ben Kyriakou</title>
+    <link rel="stylesheet" href="/css/style.css" type="text/css"/>
+    <meta property="og:url" content="http://benkyriakou.com/posts/drupal-8-form-builder"/>
+    <meta property="og:title" content="Drupal 8 form builder"/>
+    <meta property="og:description" content="How is a Drupal 8 form made?"/>
+    <meta property="og:image" content="http://benkyriakou.com/images/global/twitter-card-image.png"/>
+    <meta name="twitter:card" content="summary"/>
+    <meta name="twitter:site" content="@benkyriakou"/>
+    <meta name="twitter:title" content="Drupal 8 form builder"/>
+    <meta name="twitter:description" content="How is a Drupal 8 form made?"/>
+    <meta name="twitter:image" content="http://benkyriakou.com/images/global/twitter-card-image.png"/>
+    <script>
+      window.onload = function() {
+        (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+        (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+        m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+        })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+        ga('create', 'UA-64337321-1', 'auto');
+        ga('send', 'pageview');
+      };
+    </script>
+  </head>
+  <body>
+    <div class="wrapper">
+      <header class="site-header">
+        <div class="center-wrapper">
+          <nav>
+            <ul class="site-header__items">
+              <li class="site-header__item">
+                <a href="/">Home</a>
+              </li>
+              <li class="site-header__item">
+                <a href="/pdfs">PDFs</a>
+              </li>
+              <li class="site-header__item">
+                <a href="/about">About</a>
+              </li>
+              <li class="site-header__item">
+                <a href="//drupal.org/u/ben.kyriakou">Drupal.org</a>
+              </li>
+              <li class="site-header__item">
+                <a href="//twitter.com/benkyriakou">Twitter</a>
+              </li>
+            </ul>
+          </nav>
+        </div>
+      </header>
+      <main class="center-wrapper">
+    <article class="article"><time class="article__date" datetime="2020-08">August 2020</time><h1 class="article__header">Drupal 8 form builder</h1><div class="article__content">
+        <p>Forms are a core part of any Drupal site. But how is a form actually made? The process is fairly simple, so let's take a stroll through Drupal 8's form code.</p>
+
+        <h2 id="section-creating-a-basic-form">Creating a basic form</h2>
+
+        <p>We'll be creating a basic form, then walking through how it works in the core form code. Most form code can be found in <code>core/lib/Drupal/Core/Form</code>. The classes we're immediately interested in are the <code>FormBuilder</code> and <code>FormBase</code>/<code>FormInterface</code>.</p>
+
+        <p><code>FormBuilder</code> is what creates forms&#8212;<code>FormInterface</code> is the interface for classes to implement the form object, and <code>FormBase</code> is the class that all forms will extend.</p>
+
+        <p>Outside of the core form code, we are also interested in the render elements that make up a form. We can see the form render element (along with other relevant render elements) in <code>core/lib/Drupal/Core/Render/Element</code>.</p>
+
+        <p>When we create a form, we create a form object that extends <code>FormBase</code>. This must implement the methods from <code>FormInterface</code>:</p>
+
+        <div class="highlight"><pre><span/><span class="nx">getFormId</span><span class="p">();</span>
+<span class="nx">buildForm</span><span class="p">(</span><span class="k">array</span> <span class="nv">$form</span><span class="p">,</span> <span class="nx">FormStateInterface</span> <span class="nv">$form_state</span><span class="p">);</span>
+<span class="nx">validateForm</span><span class="p">(</span><span class="k">array</span> <span class="nv">$form</span><span class="p">,</span> <span class="nx">FormStateInterface</span> <span class="nv">$form_state</span><span class="p">);</span>
+<span class="nx">submitForm</span><span class="p">(</span><span class="k">array</span> <span class="nv">$form</span><span class="p">,</span> <span class="nx">FormStateInterface</span> <span class="nv">$form_state</span><span class="p">);</span>
+</pre></div><p>We can see that the signatures of most of these methods are the same, which suggests they're very closely related.</p>
+
+        <p>The simplest form implementation is directly tied to a route for display&#8212;we can generate one with Drupal Console using <code>drupal generate:form</code>. This gives us a route that looks like this:</p>
+
+        <div class="highlight"><pre><span/><span class="nt">example.example_form</span><span class="p">:</span>
+  <span class="nt">path</span><span class="p">:</span> <span class="s">'/example/form/example'</span>
+  <span class="nt">defaults</span><span class="p">:</span>
+    <span class="nt">_form</span><span class="p">:</span> <span class="s">'\Drupal\example\Form\ExampleForm'</span>
+    <span class="nt">_title</span><span class="p">:</span> <span class="s">'ExampleForm'</span>
+  <span class="nt">requirements</span><span class="p">:</span>
+    <span class="nt">_access</span><span class="p">:</span> <span class="s">'TRUE'</span>
+</pre></div><p>And a form that looks like this (simplified for brevity):</p>
+
+        <div class="highlight"><pre><span/><span class="k">namespace</span> <span class="nx">Drupal\example_widget\Form</span><span class="p">;</span>
+
+<span class="k">use</span> <span class="nx">Drupal\Core\Form\FormBase</span><span class="p">;</span>
+<span class="k">use</span> <span class="nx">Drupal\Core\Form\FormStateInterface</span><span class="p">;</span>
+
+<span class="k">class</span> <span class="nc">ExampleForm</span> <span class="k">extends</span> <span class="nx">FormBase</span> <span class="p">{</span>
+
+  <span class="k">public</span> <span class="k">function</span> <span class="nf">getFormId</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="s1">'example_form'</span><span class="p">;</span>
+  <span class="p">}</span>
+
+  <span class="k">public</span> <span class="k">function</span> <span class="nf">buildForm</span><span class="p">(</span><span class="k">array</span> <span class="nv">$form</span><span class="p">,</span> <span class="nx">FormStateInterface</span> <span class="nv">$form_state</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nv">$form</span> <span class="o">=</span> <span class="p">[];</span>
+
+    <span class="nv">$form</span><span class="p">[</span><span class="s1">'text'</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span>
+      <span class="s1">'#type'</span> <span class="o">=&gt;</span> <span class="s1">'textarea'</span><span class="p">,</span>
+      <span class="s1">'#title'</span> <span class="o">=&gt;</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">t</span><span class="p">(</span><span class="s1">'Text'</span><span class="p">),</span>
+      <span class="s1">'#weight'</span> <span class="o">=&gt;</span> <span class="s1">'0'</span><span class="p">,</span>
+    <span class="p">];</span>
+
+    <span class="nv">$form</span><span class="p">[</span><span class="s1">'submit'</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span>
+      <span class="s1">'#type'</span> <span class="o">=&gt;</span> <span class="s1">'submit'</span><span class="p">,</span>
+      <span class="s1">'#value'</span> <span class="o">=&gt;</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">t</span><span class="p">(</span><span class="s1">'Submit'</span><span class="p">),</span>
+    <span class="p">];</span>
+
+    <span class="k">return</span> <span class="nv">$form</span><span class="p">;</span>
+  <span class="p">}</span>
+
+  <span class="k">public</span> <span class="k">function</span> <span class="nf">validateForm</span><span class="p">(</span><span class="k">array</span> <span class="o">&amp;</span><span class="nv">$form</span><span class="p">,</span> <span class="nx">FormStateInterface</span> <span class="nv">$form_state</span><span class="p">)</span> <span class="p">{</span>
+    <span class="c1">// ...</span>
+  <span class="p">}</span>
+
+  <span class="k">public</span> <span class="k">function</span> <span class="nf">submitForm</span><span class="p">(</span><span class="k">array</span> <span class="o">&amp;</span><span class="nv">$form</span><span class="p">,</span> <span class="nx">FormStateInterface</span> <span class="nv">$form_state</span><span class="p">)</span> <span class="p">{</span>
+    <span class="c1">// ...</span>
+  <span class="p">}</span>
+
+<span class="p">}</span>
+</pre></div><p>We can see that the route uses <code>_form</code> rather than the usual <code>_controller</code> default. These requests are handled by the <code>HtmlFormController</code>, but how does this know which requests to handle?</p>
+
+        <h2 id="section-form-controller">Form Controller</h2>
+
+        <p>We can see some form services defined in <code>core.services.yml</code>:</p>
+
+        <div class="highlight"><pre><span/><span class="nt">controller.form</span><span class="p">:</span>
+  <span class="nt">class</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">Drupal\Core\Controller\HtmlFormController</span>
+  <span class="nt">arguments</span><span class="p">:</span> <span class="p p-Indicator">[</span><span class="s">'@http_kernel.controller.argument_resolver'</span><span class="p p-Indicator">,</span> <span class="s">'@form_builder'</span><span class="p p-Indicator">,</span> <span class="s">'@class_resolver'</span><span class="p p-Indicator">]</span>
+<span class="nt">controller.entity_form</span><span class="p">:</span>
+  <span class="nt">class</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">Drupal\Core\Entity\HtmlEntityFormController</span>
+  <span class="nt">arguments</span><span class="p">:</span> <span class="p p-Indicator">[</span><span class="s">'@http_kernel.controller.argument_resolver'</span><span class="p p-Indicator">,</span> <span class="s">'@form_builder'</span><span class="p p-Indicator">,</span> <span class="s">'@entity_type.manager'</span><span class="p p-Indicator">]</span>
+</pre></div><p>These are added as responders via a <a href="https://symfony.com/doc/current/cmf/bundles/routing/dynamic_customize.html">Route Enhancer</a> in <code>core/lib/Drupal/Core/Routing/Enhancer/FormRouteEnhancer.php</code>:</p>
+
+        <div class="highlight"><pre><span/><span class="sd">/**</span>
+<span class="sd"> * Enhancer to add a wrapping controller for _form routes.</span>
+<span class="sd"> */</span>
+<span class="k">class</span> <span class="nc">FormRouteEnhancer</span> <span class="k">implements</span> <span class="nx">EnhancerInterface</span> <span class="p">{</span>
+
+  <span class="sd">/**</span>
+<span class="sd">   * Returns whether the enhancer runs on the current route.</span>
+<span class="sd">   *</span>
+<span class="sd">   * @param \Drupal\Core\Routing\Enhancer\Route $route</span>
+<span class="sd">   *   The current route.</span>
+<span class="sd">   *</span>
+<span class="sd">   * @return bool</span>
+<span class="sd">   */</span>
+  <span class="k">protected</span> <span class="k">function</span> <span class="nf">applies</span><span class="p">(</span><span class="nx">Route</span> <span class="nv">$route</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nv">$route</span><span class="o">-&gt;</span><span class="na">hasDefault</span><span class="p">(</span><span class="s1">'_form'</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nv">$route</span><span class="o">-&gt;</span><span class="na">hasDefault</span><span class="p">(</span><span class="s1">'_controller'</span><span class="p">);</span>
+  <span class="p">}</span>
+
+  <span class="sd">/**</span>
+<span class="sd">   * {@inheritdoc}</span>
+<span class="sd">   */</span>
+  <span class="k">public</span> <span class="k">function</span> <span class="nf">enhance</span><span class="p">(</span><span class="k">array</span> <span class="nv">$defaults</span><span class="p">,</span> <span class="nx">Request</span> <span class="nv">$request</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nv">$route</span> <span class="o">=</span> <span class="nv">$defaults</span><span class="p">[</span><span class="nx">RouteObjectInterface</span><span class="o">::</span><span class="na">ROUTE_OBJECT</span><span class="p">];</span>
+    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">applies</span><span class="p">(</span><span class="nv">$route</span><span class="p">))</span> <span class="p">{</span>
+      <span class="k">return</span> <span class="nv">$defaults</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="nv">$defaults</span><span class="p">[</span><span class="s1">'_controller'</span><span class="p">]</span> <span class="o">=</span> <span class="s1">'controller.form:getContentResult'</span><span class="p">;</span>
+    <span class="k">return</span> <span class="nv">$defaults</span><span class="p">;</span>
+  <span class="p">}</span>
+
+<span class="p">}</span>
+</pre></div><p>We can see this applies to any route that has a <code>_form</code> default without a <code>_controller</code>. This then adds a <code>_controller</code> value of <code>controller.form:getContentResult</code>.</p>
+
+        <p>This basically makes our route above a shorthand for:</p>
+
+        <div class="highlight"><pre><span/><span class="nt">example.example_form</span><span class="p">:</span>
+  <span class="nt">path</span><span class="p">:</span> <span class="s">'/example/form/example'</span>
+  <span class="nt">defaults</span><span class="p">:</span>
+    <span class="nt">_controller</span><span class="p">:</span> <span class="s">'controller.form:getContentResult'</span>
+    <span class="nt">_form</span><span class="p">:</span> <span class="s">'\Drupal\example_widget\Form\ExampleForm'</span>
+    <span class="nt">_title</span><span class="p">:</span> <span class="s">'ExampleForm'</span>
+  <span class="nt">requirements</span><span class="p">:</span>
+    <span class="nt">_access</span><span class="p">:</span> <span class="s">'TRUE'</span>
+</pre></div><p>The basic retrieval of the form object is straightforward&#8212;in <code>FormController-&gt;getContentResult()</code>:</p>
+
+        <div class="highlight"><pre><span/><span class="k">public</span> <span class="k">function</span> <span class="nf">getContentResult</span><span class="p">(</span><span class="nx">Request</span> <span class="nv">$request</span><span class="p">,</span> <span class="nx">RouteMatchInterface</span> <span class="nv">$route_match</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nv">$form_arg</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">getFormArgument</span><span class="p">(</span><span class="nv">$route_match</span><span class="p">);</span>
+  <span class="nv">$form_object</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">getFormObject</span><span class="p">(</span><span class="nv">$route_match</span><span class="p">,</span> <span class="nv">$form_arg</span><span class="p">);</span>
+
+  <span class="c1">// Add the form and form_state to trick the getArguments method of the</span>
+  <span class="c1">// controller resolver.</span>
+  <span class="nv">$form_state</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">FormState</span><span class="p">();</span>
+  <span class="nv">$request</span><span class="o">-&gt;</span><span class="na">attributes</span><span class="o">-&gt;</span><span class="na">set</span><span class="p">(</span><span class="s1">'form'</span><span class="p">,</span> <span class="p">[]);</span>
+  <span class="nv">$request</span><span class="o">-&gt;</span><span class="na">attributes</span><span class="o">-&gt;</span><span class="na">set</span><span class="p">(</span><span class="s1">'form_state'</span><span class="p">,</span> <span class="nv">$form_state</span><span class="p">);</span>
+  <span class="nv">$args</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">argumentResolver</span><span class="o">-&gt;</span><span class="na">getArguments</span><span class="p">(</span><span class="nv">$request</span><span class="p">,</span> <span class="p">[</span><span class="nv">$form_object</span><span class="p">,</span> <span class="s1">'buildForm'</span><span class="p">]);</span>
+  <span class="nv">$request</span><span class="o">-&gt;</span><span class="na">attributes</span><span class="o">-&gt;</span><span class="na">remove</span><span class="p">(</span><span class="s1">'form'</span><span class="p">);</span>
+  <span class="nv">$request</span><span class="o">-&gt;</span><span class="na">attributes</span><span class="o">-&gt;</span><span class="na">remove</span><span class="p">(</span><span class="s1">'form_state'</span><span class="p">);</span>
+
+  <span class="c1">// Remove $form and $form_state from the arguments, and re-index them.</span>
+  <span class="nb">unset</span><span class="p">(</span><span class="nv">$args</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nv">$args</span><span class="p">[</span><span class="mi">1</span><span class="p">]);</span>
+  <span class="nv">$form_state</span><span class="o">-&gt;</span><span class="na">addBuildInfo</span><span class="p">(</span><span class="s1">'args'</span><span class="p">,</span> <span class="nb">array_values</span><span class="p">(</span><span class="nv">$args</span><span class="p">));</span>
+
+  <span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">formBuilder</span><span class="o">-&gt;</span><span class="na">buildForm</span><span class="p">(</span><span class="nv">$form_object</span><span class="p">,</span> <span class="nv">$form_state</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div><p>First <code>$this-&gt;getFormObject()</code> is called with the value of the <code>_form</code> default we supplied in our route definition, which returns an instance of our form class via the Drupal <code>ClassResolver</code>. This also deals with any dependency injection if our form class implements <code>ContainerInjectionInterface</code>. The request is then modified to add our newly created form object, and an empty <code>FormState</code> object, before passing the <code>$request</code> to the argument resolver.</p>
+
+        <p>The argument resolver calls the <code>buildForm()</code> method on our form class, which returns the <code>$form</code> render array and updated <code>$form_state</code> object.</p>
+
+        <p>After this, the form render array and form state object are passed through to the <code>buildForm()</code> method on <code>$this-&gt;formBuilder</code>, which will almost always be the core <code>FormBuilder</code>. You could override this by creating a new <code>form_builder</code> service to supersede the one in <code>core.services.yml</code>:</p>
+
+        <div class="highlight"><pre><span/><span class="nt">form_builder</span><span class="p">:</span>
+  <span class="nt">class</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">Drupal\Core\Form\FormBuilder</span>
+  <span class="nt">arguments</span><span class="p">:</span>
+    <span class="p p-Indicator">-</span> <span class="s">'@form_validator'</span>
+    <span class="p p-Indicator">-</span> <span class="s">'@form_submitter'</span>
+    <span class="p p-Indicator">-</span> <span class="s">'@form_cache'</span>
+    <span class="p p-Indicator">-</span> <span class="s">'@module_handler'</span>
+    <span class="p p-Indicator">-</span> <span class="s">'@event_dispatcher'</span>
+    <span class="p p-Indicator">-</span> <span class="s">'@request_stack'</span>
+    <span class="p p-Indicator">-</span> <span class="s">'@class_resolver'</span>
+    <span class="p p-Indicator">-</span> <span class="s">'@element_info'</span>
+    <span class="p p-Indicator">-</span> <span class="s">'@theme.manager'</span>
+    <span class="p p-Indicator">-</span> <span class="s">'@?csrf_token'</span>
+</pre></div><h2 id="section-form-builder">Form builder</h2>
+
+        <p><code>FormBuilder</code> is a bit of a kitchen-sink class, implementing many related interfaces:</p>
+
+        <div class="highlight"><pre><span/><span class="k">class</span> <span class="nc">FormBuilder</span> <span class="k">implements</span>
+  <span class="nx">FormBuilderInterface</span><span class="p">,</span>
+  <span class="nx">FormValidatorInterface</span><span class="p">,</span>
+  <span class="nx">FormSubmitterInterface</span><span class="p">,</span>
+  <span class="nx">FormCacheInterface</span><span class="p">,</span>
+  <span class="nx">TrustedCallbackInterface</span> <span class="p">{</span>
+<span class="p">}</span>
+</pre></div><p>By the time we get to <code>$this-&gt;formBuilder-&gt;buildForm()</code>, the <code>FormController</code> has already resolved the form into a class. If this wasn't the case, <code>$form_arg</code> would be a string representing the class, which would be instantiated by <code>getFormId()</code>:</p>
+
+        <div class="highlight"><pre><span/><span class="k">public</span> <span class="k">function</span> <span class="nf">getFormId</span><span class="p">(</span><span class="nv">$form_arg</span><span class="p">,</span> <span class="nx">FormStateInterface</span> <span class="o">&amp;</span><span class="nv">$form_state</span><span class="p">)</span> <span class="p">{</span>
+  <span class="c1">// If the $form_arg is the name of a class, instantiate it. Don't allow</span>
+  <span class="c1">// arbitrary strings to be passed to the class resolver.</span>
+  <span class="k">if</span> <span class="p">(</span><span class="nb">is_string</span><span class="p">(</span><span class="nv">$form_arg</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="nb">class_exists</span><span class="p">(</span><span class="nv">$form_arg</span><span class="p">))</span> <span class="p">{</span>
+    <span class="nv">$form_arg</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">classResolver</span><span class="o">-&gt;</span><span class="na">getInstanceFromDefinition</span><span class="p">(</span><span class="nv">$form_arg</span><span class="p">);</span>
+  <span class="p">}</span>
+
+  <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nb">is_object</span><span class="p">(</span><span class="nv">$form_arg</span><span class="p">)</span> <span class="o">||</span> <span class="o">!</span><span class="p">(</span><span class="nv">$form_arg</span> <span class="nx">instanceof</span> <span class="nx">FormInterface</span><span class="p">))</span> <span class="p">{</span>
+    <span class="k">throw</span> <span class="k">new</span> <span class="nx">\InvalidArgumentException</span><span class="p">(</span><span class="s2">"The form argument </span><span class="si">$form_arg</span><span class="s2"> is not a valid form."</span><span class="p">);</span>
+  <span class="p">}</span>
+
+  <span class="c1">// Add the $form_arg as the callback object and determine the form ID.</span>
+  <span class="nv">$form_state</span><span class="o">-&gt;</span><span class="na">setFormObject</span><span class="p">(</span><span class="nv">$form_arg</span><span class="p">);</span>
+  <span class="k">if</span> <span class="p">(</span><span class="nv">$form_arg</span> <span class="nx">instanceof</span> <span class="nx">BaseFormIdInterface</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nv">$form_state</span><span class="o">-&gt;</span><span class="na">addBuildInfo</span><span class="p">(</span><span class="s1">'base_form_id'</span><span class="p">,</span> <span class="nv">$form_arg</span><span class="o">-&gt;</span><span class="na">getBaseFormId</span><span class="p">());</span>
+  <span class="p">}</span>
+  <span class="k">return</span> <span class="nv">$form_arg</span><span class="o">-&gt;</span><span class="na">getFormId</span><span class="p">();</span>
+<span class="p">}</span>
+</pre></div><p>There are some confusing naming conventions here which are worth clarifying as we move forward&#8212;we have a few different variables we'll see related to forms:</p>
+
+        <ul>
+          <li><code>$form_id</code>: the string form ID as returned by the form class <code>getFormId()</code> method</li>
+          <li><code>$form</code>: the form structure array, representing the renderable form</li>
+          <li><code>$form_state</code>: the current state of the form, containing any submitted values and related data</li>
+          <li>The form object (here represented as <code>$form_arg</code>): an instance of current form class, stored on the <code>$form_state</code> and accessible via <code>$form_state-&gt;getFormObject()</code></li>
+        </ul>
+
+        <p>The most useful thing to be aware of is the distinction between <code>$form</code> as the renderable form structure, and the form object as an instance of the form class we've defined.</p>
+
+        <p>With that out of the way, let's return to the <code>FormBuilder</code> and <code>buildForm()</code>. After retrieving the form ID and resolving any arguments along the way it next deals with the current request, setting input values from the appropriate request type:</p>
+
+        <div class="highlight"><pre><span/><span class="nv">$request</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">requestStack</span><span class="o">-&gt;</span><span class="na">getCurrentRequest</span><span class="p">();</span>
+
+<span class="c1">// Inform $form_state about the request method that's building it, so that</span>
+<span class="c1">// it can prevent persisting state changes during HTTP methods for which</span>
+<span class="c1">// that is disallowed by HTTP: GET and HEAD.</span>
+<span class="nv">$form_state</span><span class="o">-&gt;</span><span class="na">setRequestMethod</span><span class="p">(</span><span class="nv">$request</span><span class="o">-&gt;</span><span class="na">getMethod</span><span class="p">());</span>
+
+<span class="c1">// Initialize the form's user input. The user input should include only the</span>
+<span class="c1">// input meant to be treated as part of what is submitted to the form, so</span>
+<span class="c1">// we base it on the form's method rather than the request's method. For</span>
+<span class="c1">// example, when someone does a GET request for</span>
+<span class="c1">// /node/add/article?destination=foo, which is a form that expects its</span>
+<span class="c1">// submission method to be POST, the user input during the GET request</span>
+<span class="c1">// should be initialized to empty rather than to ['destination' =&gt; 'foo'].</span>
+<span class="nv">$input</span> <span class="o">=</span> <span class="nv">$form_state</span><span class="o">-&gt;</span><span class="na">getUserInput</span><span class="p">();</span>
+<span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nb">isset</span><span class="p">(</span><span class="nv">$input</span><span class="p">))</span> <span class="p">{</span>
+  <span class="nv">$input</span> <span class="o">=</span> <span class="nv">$form_state</span><span class="o">-&gt;</span><span class="na">isMethodType</span><span class="p">(</span><span class="s1">'get'</span><span class="p">)</span> <span class="o">?</span> <span class="nv">$request</span><span class="o">-&gt;</span><span class="na">query</span><span class="o">-&gt;</span><span class="na">all</span><span class="p">()</span> <span class="o">:</span> <span class="nv">$request</span><span class="o">-&gt;</span><span class="na">request</span><span class="o">-&gt;</span><span class="na">all</span><span class="p">();</span>
+  <span class="nv">$form_state</span><span class="o">-&gt;</span><span class="na">setUserInput</span><span class="p">(</span><span class="nv">$input</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div><p>It then deals with batch processing and caching, before getting into the meat of the form processing. If we have a new form, as opposed to retrieving a value from the cache, <code>buildForm()</code> calls out to two two other methods:</p>
+
+        <div class="highlight"><pre><span/><span class="nv">$form</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">retrieveForm</span><span class="p">(</span><span class="nv">$form_id</span><span class="p">,</span> <span class="nv">$form_state</span><span class="p">);</span>
+<span class="nv">$this</span><span class="o">-&gt;</span><span class="na">prepareForm</span><span class="p">(</span><span class="nv">$form_id</span><span class="p">,</span> <span class="nv">$form</span><span class="p">,</span> <span class="nv">$form_state</span><span class="p">);</span>
+</pre></div><p>First it calls <code>retrieveForm</code>, which adds the <code>$form_id</code> to the <code>$form_state</code> (available via <code>$form_state-&gt;getBuildInfo()['form_id']</code>). It then copies the build info from the form (which at this point looks something like this) and supplies to the form callback function:</p>
+
+        <div class="highlight"><pre><span/><span class="nv">$args</span> <span class="o">=</span> <span class="p">[</span>
+  <span class="s1">'args'</span> <span class="o">=&gt;</span> <span class="p">[],</span>
+  <span class="s1">'files'</span> <span class="o">=&gt;</span> <span class="p">[],</span>
+  <span class="s1">'callback_object'</span> <span class="o">=&gt;</span> <span class="s1">'...'</span><span class="p">,</span> <span class="c1">// instance of Drupal\example\Form\ExampleForm</span>
+  <span class="s1">'form_id'</span> <span class="o">=&gt;</span> <span class="s1">'example_form'</span><span class="p">,</span>
+<span class="p">];</span>
+</pre></div><div class="highlight"><pre><span/><span class="nv">$callback</span> <span class="o">=</span> <span class="p">[</span><span class="nv">$form_state</span><span class="o">-&gt;</span><span class="na">getFormObject</span><span class="p">(),</span> <span class="s1">'buildForm'</span><span class="p">];</span>
+
+<span class="nv">$form</span> <span class="o">=</span> <span class="p">[];</span>
+<span class="c1">// Assign a default CSS class name based on $form_id.</span>
+<span class="c1">// This happens here and not in self::prepareForm() in order to allow the</span>
+<span class="c1">// form constructor function to override or remove the default class.</span>
+<span class="nv">$form</span><span class="p">[</span><span class="s1">'#attributes'</span><span class="p">][</span><span class="s1">'class'</span><span class="p">][]</span> <span class="o">=</span> <span class="nx">Html</span><span class="o">::</span><span class="na">getClass</span><span class="p">(</span><span class="nv">$form_id</span><span class="p">);</span>
+<span class="c1">// Same for the base form ID, if any.</span>
+<span class="k">if</span> <span class="p">(</span><span class="nb">isset</span><span class="p">(</span><span class="nv">$build_info</span><span class="p">[</span><span class="s1">'base_form_id'</span><span class="p">]))</span> <span class="p">{</span>
+  <span class="nv">$form</span><span class="p">[</span><span class="s1">'#attributes'</span><span class="p">][</span><span class="s1">'class'</span><span class="p">][]</span> <span class="o">=</span> <span class="nx">Html</span><span class="o">::</span><span class="na">getClass</span><span class="p">(</span><span class="nv">$build_info</span><span class="p">[</span><span class="s1">'base_form_id'</span><span class="p">]);</span>
+<span class="p">}</span>
+
+<span class="c1">// We need to pass $form_state by reference in order for forms to modify it,</span>
+<span class="c1">// since call_user_func_array() requires that referenced variables are</span>
+<span class="c1">// passed explicitly.</span>
+<span class="nv">$args</span> <span class="o">=</span> <span class="nb">array_merge</span><span class="p">([</span><span class="nv">$form</span><span class="p">,</span> <span class="o">&amp;</span><span class="nv">$form_state</span><span class="p">],</span> <span class="nv">$args</span><span class="p">);</span>
+
+<span class="nv">$form</span> <span class="o">=</span> <span class="nb">call_user_func_array</span><span class="p">(</span><span class="nv">$callback</span><span class="p">,</span> <span class="nv">$args</span><span class="p">);</span>
+</pre></div><p>At this point, <code>$form</code> is not very interesting:</p>
+
+        <div class="highlight"><pre><span/><span class="nv">$form</span> <span class="o">=</span> <span class="p">[</span>
+  <span class="s1">'#attributes'</span> <span class="o">=&gt;</span> <span class="p">[</span>
+    <span class="s1">'class'</span> <span class="o">=&gt;</span> <span class="p">[</span>
+      <span class="mi">0</span> <span class="o">=&gt;</span> <span class="s1">'example-form'</span><span class="p">,</span>
+    <span class="p">],</span>
+  <span class="p">],</span>
+<span class="p">];</span>
+</pre></div><p>The build info is merged into the <code>$form</code> and <code>$form_state</code>, and these are then passed to the <code>buildForm()</code> method on the form class. After the form is built by the form class, <code>retrieveForm</code> returns a basic form that looks something like this:</p>
+
+        <div class="highlight"><pre><span/><span class="k">array</span> <span class="p">(</span>
+  <span class="s1">'#attributes'</span> <span class="o">=&gt;</span> 
+  <span class="k">array</span> <span class="p">(</span>
+    <span class="s1">'class'</span> <span class="o">=&gt;</span> 
+    <span class="k">array</span> <span class="p">(</span>
+      <span class="mi">0</span> <span class="o">=&gt;</span> <span class="s1">'example-form'</span><span class="p">,</span>
+    <span class="p">),</span>
+  <span class="p">),</span>
+  <span class="s1">'text'</span> <span class="o">=&gt;</span> 
+  <span class="k">array</span> <span class="p">(</span>
+    <span class="s1">'#type'</span> <span class="o">=&gt;</span> <span class="s1">'textarea'</span><span class="p">,</span>
+    <span class="s1">'#title'</span> <span class="o">=&gt;</span> <span class="s1">'Text'</span><span class="p">,</span>
+    <span class="p">)),</span>
+    <span class="s1">'#weight'</span> <span class="o">=&gt;</span> <span class="s1">'0'</span><span class="p">,</span>
+  <span class="p">),</span>
+  <span class="s1">'submit'</span> <span class="o">=&gt;</span> 
+  <span class="k">array</span> <span class="p">(</span>
+    <span class="s1">'#type'</span> <span class="o">=&gt;</span> <span class="s1">'submit'</span><span class="p">,</span>
+    <span class="s1">'#value'</span> <span class="o">=&gt;</span> <span class="s1">'Submit'</span><span class="p">,</span>
+    <span class="p">)),</span>
+  <span class="p">),</span>
+  <span class="s1">'#form_id'</span> <span class="o">=&gt;</span> <span class="s1">'example_form'</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div><p>(I've elided some translatable values to strings for the purposes of simplicity).</p>
+
+        <p>After this, the nascent form is passed to <code>prepareForm()</code>. This first sets up the form array to be rendered as a <code>Form</code> render element:</p>
+
+        <div class="highlight"><pre><span/><span class="nv">$form</span><span class="p">[</span><span class="s1">'#type'</span><span class="p">]</span> <span class="o">=</span> <span class="s1">'form'</span><span class="p">;</span>
+</pre></div><p>This is another shortcut&#8212;any render array that is returned from our form class <code>buildForm()</code> method is implicitly a form.</p>
+
+        <p>After this it does a bunch of safety checking and setting of CSRF tokens, which we're not going to get into here as it's not something you ever need to change. One part I do want to touch on is that some of this processing is not applied if the form has been submitted programmatically via <code>submitForm()</code>, which may be relevant to some of your form processing:</p>
+
+        <div class="highlight"><pre><span/><span class="k">if</span> <span class="p">(</span><span class="nv">$form_state</span><span class="o">-&gt;</span><span class="na">isProgrammed</span><span class="p">()</span> <span class="o">||</span> <span class="p">(</span><span class="nb">isset</span><span class="p">(</span><span class="nv">$form</span><span class="p">[</span><span class="s1">'#token'</span><span class="p">])</span> <span class="o">&amp;&amp;</span> <span class="nv">$form</span><span class="p">[</span><span class="s1">'#token'</span><span class="p">]</span> <span class="o">===</span> <span class="k">FALSE</span><span class="p">))</span> <span class="p">{</span>
+  <span class="nb">unset</span><span class="p">(</span><span class="nv">$form</span><span class="p">[</span><span class="s1">'#token'</span><span class="p">]);</span>
+<span class="p">}</span>
+</pre></div><p>We also see form IDs being set in the form array:</p>
+
+        <div class="highlight"><pre><span/><span class="k">if</span> <span class="p">(</span><span class="nb">isset</span><span class="p">(</span><span class="nv">$form_id</span><span class="p">))</span> <span class="p">{</span>
+  <span class="nv">$form</span><span class="p">[</span><span class="s1">'form_id'</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s1">'#type'</span> <span class="o">=&gt;</span> <span class="s1">'hidden'</span><span class="p">,</span>
+    <span class="s1">'#value'</span> <span class="o">=&gt;</span> <span class="nv">$form_id</span><span class="p">,</span>
+    <span class="s1">'#id'</span> <span class="o">=&gt;</span> <span class="nx">Html</span><span class="o">::</span><span class="na">getUniqueId</span><span class="p">(</span><span class="s2">"edit-</span><span class="si">$form_id</span><span class="s2">"</span><span class="p">),</span>
+    <span class="c1">// Form processing and validation requires this value, so ensure the</span>
+    <span class="c1">// submitted form value appears literally, regardless of custom #tree</span>
+    <span class="c1">// and #parents being set elsewhere.</span>
+    <span class="s1">'#parents'</span> <span class="o">=&gt;</span> <span class="p">[</span><span class="s1">'form_id'</span><span class="p">],</span>
+  <span class="p">];</span>
+<span class="p">}</span>
+<span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nb">isset</span><span class="p">(</span><span class="nv">$form</span><span class="p">[</span><span class="s1">'#id'</span><span class="p">]))</span> <span class="p">{</span>
+  <span class="nv">$form</span><span class="p">[</span><span class="s1">'#id'</span><span class="p">]</span> <span class="o">=</span> <span class="nx">Html</span><span class="o">::</span><span class="na">getUniqueId</span><span class="p">(</span><span class="nv">$form_id</span><span class="p">);</span>
+  <span class="c1">// Provide a selector usable by JavaScript. As the ID is unique, its not</span>
+  <span class="c1">// possible to rely on it in JavaScript.</span>
+  <span class="nv">$form</span><span class="p">[</span><span class="s1">'#attributes'</span><span class="p">][</span><span class="s1">'data-drupal-selector'</span><span class="p">]</span> <span class="o">=</span> <span class="nx">Html</span><span class="o">::</span><span class="na">getId</span><span class="p">(</span><span class="nv">$form_id</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="nv">$form</span> <span class="o">+=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">elementInfo</span><span class="o">-&gt;</span><span class="na">getInfo</span><span class="p">(</span><span class="s1">'form'</span><span class="p">);</span>
+<span class="nv">$form</span> <span class="o">+=</span> <span class="p">[</span><span class="s1">'#tree'</span> <span class="o">=&gt;</span> <span class="k">FALSE</span><span class="p">,</span> <span class="s1">'#parents'</span> <span class="o">=&gt;</span> <span class="p">[]];</span>
+<span class="nv">$form</span><span class="p">[</span><span class="s1">'#validate'</span><span class="p">][]</span> <span class="o">=</span> <span class="s1">'::validateForm'</span><span class="p">;</span>
+<span class="nv">$form</span><span class="p">[</span><span class="s1">'#submit'</span><span class="p">][]</span> <span class="o">=</span> <span class="s1">'::submitForm'</span><span class="p">;</span>
+
+<span class="nv">$build_info</span> <span class="o">=</span> <span class="nv">$form_state</span><span class="o">-&gt;</span><span class="na">getBuildInfo</span><span class="p">();</span>
+<span class="c1">// If no #theme has been set, automatically apply theme suggestions.</span>
+<span class="c1">// The form theme hook itself, which is rendered by form.html.twig,</span>
+<span class="c1">// is in #theme_wrappers. Therefore, the #theme function only has to care</span>
+<span class="c1">// for rendering the inner form elements, not the form itself.</span>
+<span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nb">isset</span><span class="p">(</span><span class="nv">$form</span><span class="p">[</span><span class="s1">'#theme'</span><span class="p">]))</span> <span class="p">{</span>
+  <span class="nv">$form</span><span class="p">[</span><span class="s1">'#theme'</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="nv">$form_id</span><span class="p">];</span>
+  <span class="k">if</span> <span class="p">(</span><span class="nb">isset</span><span class="p">(</span><span class="nv">$build_info</span><span class="p">[</span><span class="s1">'base_form_id'</span><span class="p">]))</span> <span class="p">{</span>
+    <span class="nv">$form</span><span class="p">[</span><span class="s1">'#theme'</span><span class="p">][]</span> <span class="o">=</span> <span class="nv">$build_info</span><span class="p">[</span><span class="s1">'base_form_id'</span><span class="p">];</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</pre></div><p>And we get some base element info added according to the current active theme from the <code>ElementInfoManager</code>. These values can be seen on the relevant render element in the <code>getInfo()</code> method. This will look something like:</p>
+
+        <div class="highlight"><pre><span/><span class="p">[</span>
+  <span class="s1">'#method'</span> <span class="o">=&gt;</span> <span class="s1">'post'</span><span class="p">,</span>
+  <span class="s1">'#theme_wrappers'</span> <span class="o">=&gt;</span> <span class="p">[</span>
+    <span class="mi">0</span> <span class="o">=&gt;</span> <span class="s1">'form'</span><span class="p">,</span>
+  <span class="p">],</span>
+  <span class="s1">'#type'</span> <span class="o">=&gt;</span> <span class="s1">'form'</span><span class="p">,</span>
+  <span class="s1">'#defaults_loaded'</span> <span class="o">=&gt;</span> <span class="k">true</span><span class="p">,</span>
+<span class="p">]</span>
+</pre></div><p>Two important attributes are set if they don't already exist:</p>
+
+        <div class="highlight"><pre><span/><span class="nv">$form</span> <span class="o">+=</span> <span class="p">[</span><span class="s1">'#tree'</span> <span class="o">=&gt;</span> <span class="k">FALSE</span><span class="p">,</span> <span class="s1">'#parents'</span> <span class="o">=&gt;</span> <span class="p">[]];</span>
+</pre></div><p>Setting <code>#tree</code> determines whether the form structure is flattened or not, which is important if you have multiple elements with the same name in a fieldset or similar structure. The value of <code>#parents</code> tells the form renderer if the element has a parent, and you'll see this later on individual form elements. For more information about what these values do, see <a href="https://www.drupal.org/docs/7/api/form-api/tree-and-parents">the Drupal documentation</a>.</p>
+
+        <p>Here we also see the default validate and submit handlers set for the <code>FormBuilder</code>:</p>
+
+        <div class="highlight"><pre><span/><span class="nv">$form</span><span class="p">[</span><span class="s1">'#validate'</span><span class="p">][]</span> <span class="o">=</span> <span class="s1">'::validateForm'</span><span class="p">;</span>
+<span class="nv">$form</span><span class="p">[</span><span class="s1">'#submit'</span><span class="p">][]</span> <span class="o">=</span> <span class="s1">'::submitForm'</span><span class="p">;</span>
+</pre></div><p>Finally, a <code>#theme</code> suggestion is added to the form structure if one doesn't already exist:</p>
+
+        <div class="highlight"><pre><span/><span class="s1">'#theme'</span> <span class="o">=&gt;</span> <span class="p">[</span>
+  <span class="mi">0</span> <span class="o">=&gt;</span> <span class="s1">'example_form'</span><span class="p">,</span>
+<span class="p">]</span>
+</pre></div><p>Finally, module and theme alter hooks are invoked for the built form structure:</p>
+
+        <div class="highlight"><pre><span/><span class="c1">// Invoke hook_form_alter(), hook_form_BASE_FORM_ID_alter(), and</span>
+<span class="c1">// hook_form_FORM_ID_alter() implementations.</span>
+<span class="nv">$hooks</span> <span class="o">=</span> <span class="p">[</span><span class="s1">'form'</span><span class="p">];</span>
+<span class="k">if</span> <span class="p">(</span><span class="nb">isset</span><span class="p">(</span><span class="nv">$build_info</span><span class="p">[</span><span class="s1">'base_form_id'</span><span class="p">]))</span> <span class="p">{</span>
+  <span class="nv">$hooks</span><span class="p">[]</span> <span class="o">=</span> <span class="s1">'form_'</span> <span class="o">.</span> <span class="nv">$build_info</span><span class="p">[</span><span class="s1">'base_form_id'</span><span class="p">];</span>
+<span class="p">}</span>
+<span class="nv">$hooks</span><span class="p">[]</span> <span class="o">=</span> <span class="s1">'form_'</span> <span class="o">.</span> <span class="nv">$form_id</span><span class="p">;</span>
+<span class="nv">$this</span><span class="o">-&gt;</span><span class="na">moduleHandler</span><span class="o">-&gt;</span><span class="na">alter</span><span class="p">(</span><span class="nv">$hooks</span><span class="p">,</span> <span class="nv">$form</span><span class="p">,</span> <span class="nv">$form_state</span><span class="p">,</span> <span class="nv">$form_id</span><span class="p">);</span>
+<span class="nv">$this</span><span class="o">-&gt;</span><span class="na">themeManager</span><span class="o">-&gt;</span><span class="na">alter</span><span class="p">(</span><span class="nv">$hooks</span><span class="p">,</span> <span class="nv">$form</span><span class="p">,</span> <span class="nv">$form_state</span><span class="p">,</span> <span class="nv">$form_id</span><span class="p">);</span>
+</pre></div><p>Now we're done with the form generation in <code>buildForm()</code>. Next, we move to <code>processForm()</code>:</p>
+
+        <div class="highlight"><pre><span/><span class="nv">$response</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">processForm</span><span class="p">(</span><span class="nv">$form_id</span><span class="p">,</span> <span class="nv">$form</span><span class="p">,</span> <span class="nv">$form_state</span><span class="p">);</span>
+</pre></div><p>The <code>processForm()</code> method takes the user's input and saves it to the form state, as well as as setting up a blank values array for <code>$form_state-&gt;setValues()</code> to be populated later:</p>
+
+        <div class="highlight"><pre><span/><span class="nv">$form_state</span><span class="o">-&gt;</span><span class="na">setValues</span><span class="p">([]);</span>
+
+<span class="c1">// With GET, these forms are always submitted if requested.</span>
+<span class="k">if</span> <span class="p">(</span><span class="nv">$form_state</span><span class="o">-&gt;</span><span class="na">isMethodType</span><span class="p">(</span><span class="s1">'get'</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="nv">$form_state</span><span class="o">-&gt;</span><span class="na">getAlwaysProcess</span><span class="p">())</span> <span class="p">{</span>
+  <span class="nv">$input</span> <span class="o">=</span> <span class="nv">$form_state</span><span class="o">-&gt;</span><span class="na">getUserInput</span><span class="p">();</span>
+  <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nb">isset</span><span class="p">(</span><span class="nv">$input</span><span class="p">[</span><span class="s1">'form_build_id'</span><span class="p">]))</span> <span class="p">{</span>
+    <span class="nv">$input</span><span class="p">[</span><span class="s1">'form_build_id'</span><span class="p">]</span> <span class="o">=</span> <span class="nv">$form</span><span class="p">[</span><span class="s1">'#build_id'</span><span class="p">];</span>
+  <span class="p">}</span>
+  <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nb">isset</span><span class="p">(</span><span class="nv">$input</span><span class="p">[</span><span class="s1">'form_id'</span><span class="p">]))</span> <span class="p">{</span>
+    <span class="nv">$input</span><span class="p">[</span><span class="s1">'form_id'</span><span class="p">]</span> <span class="o">=</span> <span class="nv">$form_id</span><span class="p">;</span>
+  <span class="p">}</span>
+  <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nb">isset</span><span class="p">(</span><span class="nv">$input</span><span class="p">[</span><span class="s1">'form_token'</span><span class="p">])</span> <span class="o">&amp;&amp;</span> <span class="nb">isset</span><span class="p">(</span><span class="nv">$form</span><span class="p">[</span><span class="s1">'#token'</span><span class="p">]))</span> <span class="p">{</span>
+    <span class="nv">$input</span><span class="p">[</span><span class="s1">'form_token'</span><span class="p">]</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">csrfToken</span><span class="o">-&gt;</span><span class="na">get</span><span class="p">(</span><span class="nv">$form</span><span class="p">[</span><span class="s1">'#token'</span><span class="p">]);</span>
+  <span class="p">}</span>
+  <span class="nv">$form_state</span><span class="o">-&gt;</span><span class="na">setUserInput</span><span class="p">(</span><span class="nv">$input</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div><p>We then jump into <code>doBuildForm()</code> which calls element <code>#process</code> functions. From the <a href="https://www.drupal.org/docs/8/api/form-api/form-render-elements">form documentation</a>:</p>
+
+        <div class="highlight"><pre><span/>#process: (array) Array of callables or function names, which are called during form building.
+          Arguments: $element, $form_state, $form.
+</pre></div><p>Again this adds on default element info per the theme, and assigns some default properties if they aren't already set:</p>
+
+        <div class="highlight"><pre><span/><span class="nv">$element</span> <span class="o">+=</span> <span class="p">[</span>
+  <span class="s1">'#required'</span> <span class="o">=&gt;</span> <span class="k">FALSE</span><span class="p">,</span>
+  <span class="s1">'#attributes'</span> <span class="o">=&gt;</span> <span class="p">[],</span>
+  <span class="s1">'#title_display'</span> <span class="o">=&gt;</span> <span class="s1">'before'</span><span class="p">,</span>
+  <span class="s1">'#description_display'</span> <span class="o">=&gt;</span> <span class="s1">'after'</span><span class="p">,</span>
+  <span class="s1">'#errors'</span> <span class="o">=&gt;</span> <span class="k">NULL</span><span class="p">,</span>
+<span class="p">];</span>
+</pre></div><p>There's also some special processing that happens for the top-level form element. The action URL is forced to HTTPS if it's external, and the entire form is stored in <code>$form_state</code> for use in callbacks:</p>
+
+        <div class="highlight"><pre><span/><span class="c1">// Store a reference to the complete form in $form_state prior to building</span>
+<span class="c1">// the form. This allows advanced #process and #after_build callbacks to</span>
+<span class="c1">// perform changes elsewhere in the form.</span>
+<span class="nv">$form_state</span><span class="o">-&gt;</span><span class="na">setCompleteForm</span><span class="p">(</span><span class="nv">$element</span><span class="p">);</span>
+</pre></div><p>If we have user input, this also performs a check against the CSRF token to ensure that it's a valid submission. If not, the inputs are all cleared and an error is set. After this some IDs are set for the rendering and JS access of the element.</p>
+
+        <p>Elements that have <code>#input</code> set are handled have additional processing via <code>handleInputElement()</code>. This ensures that it has a <code>#name</code> and <code>#value</code>, as well as setting some usability and accessibility properties. I won't go into detail as to what goes on in here, since it's not directly relevant to the general building of a form, but if you're interested in what happens to <code>#input</code> elements this is the place to look. The two notable bits of processing here happen at the end of the function.</p>
+
+        <p>First, if the element is a button (it has <code>#is_button</code> set) then the triggering element is set on the <code>$form_state</code> for later use:</p>
+
+        <div class="highlight"><pre><span/><span class="c1">// If the form was submitted by the browser rather than via Ajax, then it</span>
+<span class="c1">// can only have been triggered by a button, and we need to determine</span>
+<span class="c1">// which button within the constraints of how browsers provide this</span>
+<span class="c1">// information.</span>
+<span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">empty</span><span class="p">(</span><span class="nv">$element</span><span class="p">[</span><span class="s1">'#is_button'</span><span class="p">]))</span> <span class="p">{</span>
+  <span class="c1">// All buttons in the form need to be tracked for</span>
+  <span class="c1">// \Drupal\Core\Form\FormState::cleanValues() and for the</span>
+  <span class="c1">// self::doBuildForm() code that handles a form submission containing no</span>
+  <span class="c1">// button information in \Drupal::request()-&gt;request.</span>
+  <span class="nv">$buttons</span> <span class="o">=</span> <span class="nv">$form_state</span><span class="o">-&gt;</span><span class="na">getButtons</span><span class="p">();</span>
+  <span class="nv">$buttons</span><span class="p">[]</span> <span class="o">=</span> <span class="nv">$element</span><span class="p">;</span>
+  <span class="nv">$form_state</span><span class="o">-&gt;</span><span class="na">setButtons</span><span class="p">(</span><span class="nv">$buttons</span><span class="p">);</span>
+  <span class="k">if</span> <span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">buttonWasClicked</span><span class="p">(</span><span class="nv">$element</span><span class="p">,</span> <span class="nv">$form_state</span><span class="p">))</span> <span class="p">{</span>
+    <span class="nv">$form_state</span><span class="o">-&gt;</span><span class="na">setTriggeringElement</span><span class="p">(</span><span class="nv">$element</span><span class="p">);</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</pre></div><p>Secondly, the element's value is set for <code>$form_state-&gt;getValues()</code> if it's not already set:</p>
+
+        <div class="highlight"><pre><span/><span class="c1">// Set the element's value in $form_state-&gt;getValues(), but only, if its key</span>
+<span class="c1">// does not exist yet (a #value_callback may have already populated it).</span>
+<span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">NestedArray</span><span class="o">::</span><span class="na">keyExists</span><span class="p">(</span><span class="nv">$form_state</span><span class="o">-&gt;</span><span class="na">getValues</span><span class="p">(),</span> <span class="nv">$element</span><span class="p">[</span><span class="s1">'#parents'</span><span class="p">]))</span> <span class="p">{</span>
+  <span class="nv">$form_state</span><span class="o">-&gt;</span><span class="na">setValueForElement</span><span class="p">(</span><span class="nv">$element</span><span class="p">,</span> <span class="nv">$element</span><span class="p">[</span><span class="s1">'#value'</span><span class="p">]);</span>
+<span class="p">}</span>
+</pre></div><p>We return to <code>doBuildForm()</code> as this is the meat of our form processing. After processing input elements the <code>#process</code> callbacks are called:</p>
+
+        <div class="highlight"><pre><span/><span class="c1">// Allow for elements to expand to multiple elements, e.g., radios,</span>
+<span class="c1">// checkboxes and files.</span>
+<span class="k">if</span> <span class="p">(</span><span class="nb">isset</span><span class="p">(</span><span class="nv">$element</span><span class="p">[</span><span class="s1">'#process'</span><span class="p">])</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nv">$element</span><span class="p">[</span><span class="s1">'#processed'</span><span class="p">])</span> <span class="p">{</span>
+  <span class="k">foreach</span> <span class="p">(</span><span class="nv">$element</span><span class="p">[</span><span class="s1">'#process'</span><span class="p">]</span> <span class="k">as</span> <span class="nv">$callback</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nv">$complete_form</span> <span class="o">=</span> <span class="o">&amp;</span><span class="nv">$form_state</span><span class="o">-&gt;</span><span class="na">getCompleteForm</span><span class="p">();</span>
+    <span class="nv">$element</span> <span class="o">=</span> <span class="nb">call_user_func_array</span><span class="p">(</span><span class="nv">$form_state</span><span class="o">-&gt;</span><span class="na">prepareCallback</span><span class="p">(</span><span class="nv">$callback</span><span class="p">),</span> <span class="p">[</span><span class="o">&amp;</span><span class="nv">$element</span><span class="p">,</span> <span class="o">&amp;</span><span class="nv">$form_state</span><span class="p">,</span> <span class="o">&amp;</span><span class="nv">$complete_form</span><span class="p">]);</span>
+  <span class="p">}</span>
+  <span class="nv">$element</span><span class="p">[</span><span class="s1">'#processed'</span><span class="p">]</span> <span class="o">=</span> <span class="k">TRUE</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div><p>Any access requirements are also applied.</p>
+
+        <p>After this we see <code>doBuildForm()</code> invoked for all children of the current element&#8212;it will continue to be recursively called until the whole of the form tree is processed. It uses the helpful <code>Element::children()</code> method, which iterates through all array children with integer keys.</p>
+
+        <p>Within this loop we again see the element defaults applied from the <code>elementInfo</code>. Any access requirements are inherited from the parent, and <code>#tree</code> values are preserved for later rendering and processing. We also see the value of <code>#parents</code> set here for children, where this will be a full array of parents if <code>#tree</code> is set and an array consisting of the element key if not. However, <code>#array_parents</code> set below will always be a full parent array accorind to the form structure, regardless of the value of <code>#tree</code>. After dealing with weights and sorting, the call then recurses into <code>doBuildForm()</code>.</p>
+
+        <p>After the child processing loop, any <code>#after_build</code> callbacks are invoked with the <code>$element</code> and <code>$form_state</code>. </p>
+
+        <p>Finally we return to processing for the top-level form once all other elements have been processed. The encoding is set if the form contains file elements, and some browser issues are fixed. It then looks at which button is used to submit the element, and sets the validation and submit handlers accordingly if any are attached directly to the submitting element:</p>
+
+        <div class="highlight"><pre><span/><span class="nv">$triggering_element</span> <span class="o">=</span> <span class="nv">$form_state</span><span class="o">-&gt;</span><span class="na">getTriggeringElement</span><span class="p">();</span>
+
+<span class="c1">// If the triggering element specifies "button-level" validation and</span>
+<span class="c1">// submit handlers to run instead of the default form-level ones, then add</span>
+<span class="c1">// those to the form state.</span>
+<span class="k">if</span> <span class="p">(</span><span class="nb">isset</span><span class="p">(</span><span class="nv">$triggering_element</span><span class="p">[</span><span class="s1">'#validate'</span><span class="p">]))</span> <span class="p">{</span>
+  <span class="nv">$form_state</span><span class="o">-&gt;</span><span class="na">setValidateHandlers</span><span class="p">(</span><span class="nv">$triggering_element</span><span class="p">[</span><span class="s1">'#validate'</span><span class="p">]);</span>
+<span class="p">}</span>
+<span class="k">if</span> <span class="p">(</span><span class="nb">isset</span><span class="p">(</span><span class="nv">$triggering_element</span><span class="p">[</span><span class="s1">'#submit'</span><span class="p">]))</span> <span class="p">{</span>
+  <span class="nv">$form_state</span><span class="o">-&gt;</span><span class="na">setSubmitHandlers</span><span class="p">(</span><span class="nv">$triggering_element</span><span class="p">[</span><span class="s1">'#submit'</span><span class="p">]);</span>
+<span class="p">}</span>
+</pre></div><p>It also decides whether the triggering element causes the form to be submitted. This value is only <code>TRUE</code> for elements of <code>#type</code> 'submit' and not 'button', even though both of these are rendered as <code>&lt;input /&gt;</code> elements. There isn't a core <code>&lt;button /&gt;</code> render element&#8212;this is a long-running gripe that many have with Drupal forms, as buttons are useful for styling purposes but <a href="https://www.drupal.org/project/drupal/issues/1671190">are not used in Drupal by default</a>.</p>
+
+        <div class="highlight"><pre><span/><span class="c1">// If the triggering element executes submit handlers, then set the form</span>
+<span class="c1">// state key that's needed for those handlers to run.</span>
+<span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">empty</span><span class="p">(</span><span class="nv">$triggering_element</span><span class="p">[</span><span class="s1">'#executes_submit_callback'</span><span class="p">]))</span> <span class="p">{</span>
+  <span class="nv">$form_state</span><span class="o">-&gt;</span><span class="na">setSubmitted</span><span class="p">();</span>
+<span class="p">}</span>
+</pre></div><p>And with a final bit of tidying up for buttons, <code>doBuildForm()</code> is done.</p>
+
+        <h2 id="section-validation">Validation</h2>
+
+        <p>Now that the form and form state are completely built, we can move on to input processing. If the form is being submitted (i.e. if <code>$form_state-&gt;isProcessingInput()</code> is <code>TRUE</code>) then <code>$this-&gt;formValidator-&gt;validateForm()</code> is invoked, where <code>formValidator</code> is the <code>form_validator</code> service:</p>
+
+        <div class="highlight"><pre><span/><span class="nt">form_validator</span><span class="p">:</span>
+  <span class="nt">class</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">Drupal\Core\Form\FormValidator</span>
+  <span class="nt">arguments</span><span class="p">:</span>
+    <span class="p p-Indicator">-</span> <span class="s">'@request_stack'</span>
+    <span class="p p-Indicator">-</span> <span class="s">'@string_translation'</span>
+    <span class="p p-Indicator">-</span> <span class="s">'@csrf_token'</span>
+    <span class="p p-Indicator">-</span> <span class="s">'@logger.channel.form'</span>
+    <span class="p p-Indicator">-</span> <span class="s">'@form_error_handler'</span>
+</pre></div><p>After checking for previous validations, <code>validateForm()</code> again checks the CSRF token. If this isn't valid, the form validation automatically fails. Assuming this is correct, we call off to three callbacks on the <code>FormValidator</code>:</p>
+
+        <div class="highlight"><pre><span/><span class="c1">// Recursively validate each form element.</span>
+<span class="nv">$this</span><span class="o">-&gt;</span><span class="na">doValidateForm</span><span class="p">(</span><span class="nv">$form</span><span class="p">,</span> <span class="nv">$form_state</span><span class="p">,</span> <span class="nv">$form_id</span><span class="p">);</span>
+<span class="nv">$this</span><span class="o">-&gt;</span><span class="na">finalizeValidation</span><span class="p">(</span><span class="nv">$form</span><span class="p">,</span> <span class="nv">$form_state</span><span class="p">,</span> <span class="nv">$form_id</span><span class="p">);</span>
+<span class="nv">$this</span><span class="o">-&gt;</span><span class="na">handleErrorsWithLimitedValidation</span><span class="p">(</span><span class="nv">$form</span><span class="p">,</span> <span class="nv">$form_state</span><span class="p">,</span> <span class="nv">$form_id</span><span class="p">);</span>
+</pre></div><p>Much like <code>doBuildForm()</code>, <code>doValidateForm()</code> is called recursively for all form elements. For elements with <code>#needs_validation</code> set to true it first calls any built-in validation based on the element's attributes. From the <code>FormBuilder</code>, this will be set to <code>TRUE</code> if the element has a <code>#value</code> or if it's a <code>#required</code> element.</p>
+
+        <p>Before running the full validation, the form checks if <code>#limit_validation_errors</code> is set in <code>determineLimitValidationErrors()</code>. This will allow handlers to be triggered without running a full validation for particular action buttons.</p>
+
+        <p>If this isn't the case, the form gets fully validated. First required elements are checked for values; if empty, the <code>#required_but_empty</code> flag is set so that an appropriate error message can be shown.</p>
+
+        <p>After this we execute any validation handlers set:</p>
+
+        <div class="highlight"><pre><span/><span class="c1">// Call user-defined form level validators.</span>
+<span class="k">if</span> <span class="p">(</span><span class="nb">isset</span><span class="p">(</span><span class="nv">$form_id</span><span class="p">))</span> <span class="p">{</span>
+  <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">executeValidateHandlers</span><span class="p">(</span><span class="nv">$elements</span><span class="p">,</span> <span class="nv">$form_state</span><span class="p">);</span>
+<span class="p">}</span>
+<span class="c1">// Call any element-specific validators. These must act on the element</span>
+<span class="c1">// #value data.</span>
+<span class="k">elseif</span> <span class="p">(</span><span class="nb">isset</span><span class="p">(</span><span class="nv">$elements</span><span class="p">[</span><span class="s1">'#element_validate'</span><span class="p">]))</span> <span class="p">{</span>
+  <span class="k">foreach</span> <span class="p">(</span><span class="nv">$elements</span><span class="p">[</span><span class="s1">'#element_validate'</span><span class="p">]</span> <span class="k">as</span> <span class="nv">$callback</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nv">$complete_form</span> <span class="o">=</span> <span class="o">&amp;</span><span class="nv">$form_state</span><span class="o">-&gt;</span><span class="na">getCompleteForm</span><span class="p">();</span>
+    <span class="nb">call_user_func_array</span><span class="p">(</span><span class="nv">$form_state</span><span class="o">-&gt;</span><span class="na">prepareCallback</span><span class="p">(</span><span class="nv">$callback</span><span class="p">),</span> <span class="p">[</span><span class="o">&amp;</span><span class="nv">$elements</span><span class="p">,</span> <span class="o">&amp;</span><span class="nv">$form_state</span><span class="p">,</span> <span class="o">&amp;</span><span class="nv">$complete_form</span><span class="p">]);</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</pre></div><p>For the top-level form, we call <code>executeValidationHandlers()</code>. This either calls validation handlers set to the <code>$form_state</code> via <code>$form_state-&gt;setValidationHandlers()</code> or any form-level handlers in <code>$form['#validate']</code> (but not both). If running the handlers on <code>$form['#validate']</code> it will at minimum run the default <code>::validateForm()</code> on the form class. If we're validating an element, call any <code>#element_validate</code> callbacks. All of these callbacks have to be functions or static methods. If they're a string starting with <code>::</code> they're automatically called on the form object.</p>
+
+        <p>After these validation handlers are called, any required element errors are set on the <code>$form_state</code>, and <code>setLimitValidationErrors()</code> is turned off to begin validating the next form element.</p>
+
+        <h2 id="section-submission">Submission</h2>
+
+        <p>If the form passes validation, the next step is to submit the data. This time we call out to the <code>form_submitter</code> service via <code>doSubmitForm()</code>:</p>
+
+        <div class="highlight"><pre><span/><span class="nt">form_submitter</span><span class="p">:</span>
+  <span class="nt">class</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">Drupal\Core\Form\FormSubmitter</span>
+  <span class="nt">arguments</span><span class="p">:</span> <span class="p p-Indicator">[</span><span class="s">'@request_stack'</span><span class="p p-Indicator">,</span> <span class="s">'@url_generator'</span><span class="p p-Indicator">]</span>
+</pre></div><p>This does some processing that's very similar to that found in <code>doValidateForm()</code>. First it checks for submit handlers set on the <code>$form_state</code> for the triggering element, and if not uses handlers set on the form <code>#submit</code> attribute:</p>
+
+        <div class="highlight"><pre><span/><span class="c1">// If there was a button pressed, use its handlers.</span>
+<span class="nv">$handlers</span> <span class="o">=</span> <span class="nv">$form_state</span><span class="o">-&gt;</span><span class="na">getSubmitHandlers</span><span class="p">();</span>
+<span class="c1">// Otherwise, check for a form-level handler.</span>
+<span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nv">$handlers</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="k">empty</span><span class="p">(</span><span class="nv">$form</span><span class="p">[</span><span class="s1">'#submit'</span><span class="p">]))</span> <span class="p">{</span>
+  <span class="nv">$handlers</span> <span class="o">=</span> <span class="nv">$form</span><span class="p">[</span><span class="s1">'#submit'</span><span class="p">];</span>
+<span class="p">}</span>
+</pre></div><p>It also deals with processing batches if a batch processing is set for the form.</p>
+
+        <p>After calling form submission handlers and any batch processing, the submit handler may return a <code>Response</code> object or cause the form to redirect. If a redirect occurs at this point the form processing ends.</p>
+
+        <p>If the form doesn't redirect then the form processing continues in <code>processForm()</code>. After submission the form cache is cleared.  If the form returns a <code>Response</code> then this is returned, and the form submission ends. Remember that this is all being invoked from the <code>FormController</code>, so this is effectively returning the controller response. If this is a multi-step process then the form is rebuilt.</p>
+
+        <h2 id="section-finishing-up">Finishing up</h2>
+
+        <p>Now we're back in <code>FormBuilder-&gt;buildForm()</code>. At this point we start exiting the form processing altogether by throwing exceptions to direct the control flow. For excessively large requests, a <code>BrokenPostRequestException</code> is thrown. For AJAX forms a <code>FormAjaxException</code> is thrown to interrupt the form rendering. For forms that return a <code>Response</code> an <code>EnforcedResponseException</code> is thrown, to likewise prevent rendering.</p>
+
+        <div class="highlight"><pre><span/><span class="c1">// In case the post request exceeds the configured allowed size</span>
+<span class="c1">// (post_max_size), the post request is potentially broken. Add some</span>
+<span class="c1">// protection against that and at the same time have a nice error message.</span>
+<span class="k">if</span> <span class="p">(</span><span class="nv">$ajax_form_request</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nv">$request</span><span class="o">-&gt;</span><span class="na">request</span><span class="o">-&gt;</span><span class="na">has</span><span class="p">(</span><span class="s1">'form_id'</span><span class="p">))</span> <span class="p">{</span>
+  <span class="k">throw</span> <span class="k">new</span> <span class="nx">BrokenPostRequestException</span><span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">getFileUploadMaxSize</span><span class="p">());</span>
+<span class="p">}</span>
+
+<span class="c1">// After processing the form, if this is an AJAX form request, interrupt</span>
+<span class="c1">// form rendering and return by throwing an exception that contains the</span>
+<span class="c1">// processed form and form state. This exception will be caught by</span>
+<span class="c1">// \Drupal\Core\Form\EventSubscriber\FormAjaxSubscriber::onException() and</span>
+<span class="c1">// then passed through</span>
+<span class="c1">// \Drupal\Core\Form\FormAjaxResponseBuilderInterface::buildResponse() to</span>
+<span class="c1">// build a proper AJAX response.</span>
+<span class="c1">// Only do this when the form ID matches, since there is no guarantee from</span>
+<span class="c1">// $ajax_form_request that it's an AJAX request for this particular form.</span>
+<span class="k">if</span> <span class="p">(</span><span class="nv">$ajax_form_request</span> <span class="o">&amp;&amp;</span> <span class="nv">$form_state</span><span class="o">-&gt;</span><span class="na">isProcessingInput</span><span class="p">()</span> <span class="o">&amp;&amp;</span> <span class="nv">$request</span><span class="o">-&gt;</span><span class="na">request</span><span class="o">-&gt;</span><span class="na">get</span><span class="p">(</span><span class="s1">'form_id'</span><span class="p">)</span> <span class="o">==</span> <span class="nv">$form_id</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">throw</span> <span class="k">new</span> <span class="nx">FormAjaxException</span><span class="p">(</span><span class="nv">$form</span><span class="p">,</span> <span class="nv">$form_state</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="c1">// If the form returns a response, skip subsequent page construction by</span>
+<span class="c1">// throwing an exception.</span>
+<span class="c1">// @see Drupal\Core\EventSubscriber\EnforcedFormResponseSubscriber</span>
+<span class="c1">//</span>
+<span class="c1">// @todo Exceptions should not be used for code flow control. However, the</span>
+<span class="c1">//   Form API does not integrate with the HTTP Kernel based architecture of</span>
+<span class="c1">//   Drupal 8. In order to resolve this issue properly it is necessary to</span>
+<span class="c1">//   completely separate form submission from rendering.</span>
+<span class="c1">//   @see https://www.drupal.org/node/2367555</span>
+<span class="k">if</span> <span class="p">(</span><span class="nv">$response</span> <span class="nx">instanceof</span> <span class="nx">Response</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">throw</span> <span class="k">new</span> <span class="nx">EnforcedResponseException</span><span class="p">(</span><span class="nv">$response</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div><p>Otherwise, at this point the <code>$form</code> render array is returned and ends up being the final return value from <code>FormController-&gt;getContentResult()</code>. We then have a complete render array with a top-level element of type <code>#form</code>, so this is rendered as with any render array.</p>
+
+        <h2 id="section-in-conclusion">In conclusion</h2>
+
+        <p>This was a quick run through the form building process. It's not super complicated one you get into it&#8212;and knowing how it works can help when you're building or altering your own forms.</p>
+
+        <p>If you've found this helpful, or if you have any suggestions, let me know <a href="https://twitter.com/benkyriakou">on Twitter</a>.</p>
+
+      </div></article><footer class="article-footer"><div class="email-signup"><p>Thanks for reading. If you'd like to get notifications when I post new content, please sign up to my mailing list.</p><div class="email-signup__form"><form action="https://gmail.us3.list-manage.com/subscribe/post?u=20b45c0b3f0f59af11c016095&amp;id=64c922ea23" method="post" id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" class="validate" target="_blank" novalidate="novalidate"><input type="email" value="" name="EMAIL" class="email" id="mce-EMAIL" placeholder="email address" required="required"/><div style="position: absolute; left: -5000px;" aria-hidden="true"><input type="text" name="b_20b45c0b3f0f59af11c016095_64c922ea23" tabindex="-1" value=""/></div><input type="submit" value="Subscribe" name="subscribe" id="mc-embedded-subscribe" class="button"/></form></div></div></footer>
+  </main>
+    </div>
+  </body>
+</html>

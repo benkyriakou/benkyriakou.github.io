@@ -1,0 +1,729 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!DOCTYPE document [
+<!ENTITY mdash "&#8212;">
+]>
+
+<document type="article">
+  <title>Drupal 8 form builder</title>
+  <description>How is a Drupal 8 form made?</description>
+  <slug>/posts/drupal-8-form-builder</slug>
+  <content>
+    <article>
+      <title>Drupal 8 form builder</title>
+      <date datetime="2020-08">August 2020</date>
+      <content>
+        <p>Forms are a core part of any Drupal site. But how is a form actually made? The process is fairly simple, so let's take a stroll through Drupal 8's form code.</p>
+
+        <h2>Creating a basic form</h2>
+
+        <p>We'll be creating a basic form, then walking through how it works in the core form code. Most form code can be found in <code>core/lib/Drupal/Core/Form</code>. The classes we're immediately interested in are the <code>FormBuilder</code> and <code>FormBase</code>/<code>FormInterface</code>.</p>
+
+        <p><code>FormBuilder</code> is what creates forms&mdash;<code>FormInterface</code> is the interface for classes to implement the form object, and <code>FormBase</code> is the class that all forms will extend.</p>
+
+        <p>Outside of the core form code, we are also interested in the render elements that make up a form. We can see the form render element (along with other relevant render elements) in <code>core/lib/Drupal/Core/Render/Element</code>.</p>
+
+        <p>When we create a form, we create a form object that extends <code>FormBase</code>. This must implement the methods from <code>FormInterface</code>:</p>
+
+        <codeblock lang="php">
+          getFormId();
+          buildForm(array $form, FormStateInterface $form_state);
+          validateForm(array $form, FormStateInterface $form_state);
+          submitForm(array $form, FormStateInterface $form_state);
+        </codeblock>
+
+        <p>We can see that the signatures of most of these methods are the same, which suggests they're very closely related.</p>
+
+        <p>The simplest form implementation is directly tied to a route for display&mdash;we can generate one with Drupal Console using <code>drupal generate:form</code>. This gives us a route that looks like this:</p>
+
+        <codeblock lang="yaml">
+          example.example_form:
+            path: '/example/form/example'
+            defaults:
+              _form: '\Drupal\example\Form\ExampleForm'
+              _title: 'ExampleForm'
+            requirements:
+              _access: 'TRUE'
+        </codeblock>
+
+        <p>And a form that looks like this (simplified for brevity):</p>
+
+        <codeblock lang="php">
+          namespace Drupal\example_widget\Form;
+
+          use Drupal\Core\Form\FormBase;
+          use Drupal\Core\Form\FormStateInterface;
+
+          class ExampleForm extends FormBase {
+
+            public function getFormId() {
+              return 'example_form';
+            }
+
+            public function buildForm(array $form, FormStateInterface $form_state) {
+              $form = [];
+
+              $form['text'] = [
+                '#type' =&gt; 'textarea',
+                '#title' =&gt; $this-&gt;t('Text'),
+                '#weight' =&gt; '0',
+              ];
+
+              $form['submit'] = [
+                '#type' =&gt; 'submit',
+                '#value' =&gt; $this-&gt;t('Submit'),
+              ];
+
+              return $form;
+            }
+
+            public function validateForm(array &amp;$form, FormStateInterface $form_state) {
+              // ...
+            }
+
+            public function submitForm(array &amp;$form, FormStateInterface $form_state) {
+              // ...
+            }
+
+          }
+        </codeblock>
+
+        <p>We can see that the route uses <code>_form</code> rather than the usual <code>_controller</code> default. These requests are handled by the <code>HtmlFormController</code>, but how does this know which requests to handle?</p>
+
+        <h2>Form Controller</h2>
+
+        <p>We can see some form services defined in <code>core.services.yml</code>:</p>
+
+        <codeblock lang="yaml">
+        controller.form:
+          class: Drupal\Core\Controller\HtmlFormController
+          arguments: ['@http_kernel.controller.argument_resolver', '@form_builder', '@class_resolver']
+        controller.entity_form:
+          class: Drupal\Core\Entity\HtmlEntityFormController
+          arguments: ['@http_kernel.controller.argument_resolver', '@form_builder', '@entity_type.manager']
+        </codeblock>
+
+        <p>These are added as responders via a <a href="https://symfony.com/doc/current/cmf/bundles/routing/dynamic_customize.html">Route Enhancer</a> in <code>core/lib/Drupal/Core/Routing/Enhancer/FormRouteEnhancer.php</code>:</p>
+
+        <codeblock lang="php">
+        /**
+         * Enhancer to add a wrapping controller for _form routes.
+         */
+        class FormRouteEnhancer implements EnhancerInterface {
+
+          /**
+           * Returns whether the enhancer runs on the current route.
+           *
+           * @param \Drupal\Core\Routing\Enhancer\Route $route
+           *   The current route.
+           *
+           * @return bool
+           */
+          protected function applies(Route $route) {
+            return $route-&gt;hasDefault('_form') &amp;&amp; !$route-&gt;hasDefault('_controller');
+          }
+
+          /**
+           * {@inheritdoc}
+           */
+          public function enhance(array $defaults, Request $request) {
+            $route = $defaults[RouteObjectInterface::ROUTE_OBJECT];
+            if (!$this-&gt;applies($route)) {
+              return $defaults;
+            }
+
+            $defaults['_controller'] = 'controller.form:getContentResult';
+            return $defaults;
+          }
+
+        }
+        </codeblock>
+
+        <p>We can see this applies to any route that has a <code>_form</code> default without a <code>_controller</code>. This then adds a <code>_controller</code> value of <code>controller.form:getContentResult</code>.</p>
+
+        <p>This basically makes our route above a shorthand for:</p>
+
+        <codeblock lang="yaml">
+          example.example_form:
+            path: '/example/form/example'
+            defaults:
+              _controller: 'controller.form:getContentResult'
+              _form: '\Drupal\example_widget\Form\ExampleForm'
+              _title: 'ExampleForm'
+            requirements:
+              _access: 'TRUE'
+        </codeblock>
+
+        <p>The basic retrieval of the form object is straightforward&mdash;in <code>FormController-&gt;getContentResult()</code>:</p>
+
+        <codeblock lang="php">
+          public function getContentResult(Request $request, RouteMatchInterface $route_match) {
+            $form_arg = $this-&gt;getFormArgument($route_match);
+            $form_object = $this-&gt;getFormObject($route_match, $form_arg);
+
+            // Add the form and form_state to trick the getArguments method of the
+            // controller resolver.
+            $form_state = new FormState();
+            $request-&gt;attributes-&gt;set('form', []);
+            $request-&gt;attributes-&gt;set('form_state', $form_state);
+            $args = $this-&gt;argumentResolver-&gt;getArguments($request, [$form_object, 'buildForm']);
+            $request-&gt;attributes-&gt;remove('form');
+            $request-&gt;attributes-&gt;remove('form_state');
+
+            // Remove $form and $form_state from the arguments, and re-index them.
+            unset($args[0], $args[1]);
+            $form_state-&gt;addBuildInfo('args', array_values($args));
+
+            return $this-&gt;formBuilder-&gt;buildForm($form_object, $form_state);
+          }
+        </codeblock>
+
+        <p>First <code>$this->getFormObject()</code> is called with the value of the <code>_form</code> default we supplied in our route definition, which returns an instance of our form class via the Drupal <code>ClassResolver</code>. This also deals with any dependency injection if our form class implements <code>ContainerInjectionInterface</code>. The request is then modified to add our newly created form object, and an empty <code>FormState</code> object, before passing the <code>$request</code> to the argument resolver.</p>
+
+        <p>The argument resolver calls the <code>buildForm()</code> method on our form class, which returns the <code>$form</code> render array and updated <code>$form_state</code> object.</p>
+
+        <p>After this, the form render array and form state object are passed through to the <code>buildForm()</code> method on <code>$this->formBuilder</code>, which will almost always be the core <code>FormBuilder</code>. You could override this by creating a new <code>form_builder</code> service to supersede the one in <code>core.services.yml</code>:</p>
+
+        <codeblock lang="yaml">
+        form_builder:
+          class: Drupal\Core\Form\FormBuilder
+          arguments:
+            - '@form_validator'
+            - '@form_submitter'
+            - '@form_cache'
+            - '@module_handler'
+            - '@event_dispatcher'
+            - '@request_stack'
+            - '@class_resolver'
+            - '@element_info'
+            - '@theme.manager'
+            - '@?csrf_token'
+        </codeblock>
+
+        <h2>Form builder</h2>
+
+        <p><code>FormBuilder</code> is a bit of a kitchen-sink class, implementing many related interfaces:</p>
+
+        <codeblock lang="php">
+        class FormBuilder implements
+          FormBuilderInterface,
+          FormValidatorInterface,
+          FormSubmitterInterface,
+          FormCacheInterface,
+          TrustedCallbackInterface {
+        }
+        </codeblock>
+
+        <p>By the time we get to <code>$this->formBuilder->buildForm()</code>, the <code>FormController</code> has already resolved the form into a class. If this wasn't the case, <code>$form_arg</code> would be a string representing the class, which would be instantiated by <code>getFormId()</code>:</p>
+
+        <codeblock lang="php">
+        public function getFormId($form_arg, FormStateInterface &amp;$form_state) {
+          // If the $form_arg is the name of a class, instantiate it. Don't allow
+          // arbitrary strings to be passed to the class resolver.
+          if (is_string($form_arg) &amp;&amp; class_exists($form_arg)) {
+            $form_arg = $this-&gt;classResolver-&gt;getInstanceFromDefinition($form_arg);
+          }
+
+          if (!is_object($form_arg) || !($form_arg instanceof FormInterface)) {
+            throw new \InvalidArgumentException(&quot;The form argument $form_arg is not a valid form.&quot;);
+          }
+
+          // Add the $form_arg as the callback object and determine the form ID.
+          $form_state-&gt;setFormObject($form_arg);
+          if ($form_arg instanceof BaseFormIdInterface) {
+            $form_state-&gt;addBuildInfo('base_form_id', $form_arg-&gt;getBaseFormId());
+          }
+          return $form_arg-&gt;getFormId();
+        }
+        </codeblock>
+
+        <p>There are some confusing naming conventions here which are worth clarifying as we move forward&mdash;we have a few different variables we'll see related to forms:</p>
+
+        <ul>
+          <li><code>$form_id</code>: the string form ID as returned by the form class <code>getFormId()</code> method</li>
+          <li><code>$form</code>: the form structure array, representing the renderable form</li>
+          <li><code>$form_state</code>: the current state of the form, containing any submitted values and related data</li>
+          <li>The form object (here represented as <code>$form_arg</code>): an instance of current form class, stored on the <code>$form_state</code> and accessible via <code>$form_state-&gt;getFormObject()</code></li>
+        </ul>
+
+        <p>The most useful thing to be aware of is the distinction between <code>$form</code> as the renderable form structure, and the form object as an instance of the form class we've defined.</p>
+
+        <p>With that out of the way, let's return to the <code>FormBuilder</code> and <code>buildForm()</code>. After retrieving the form ID and resolving any arguments along the way it next deals with the current request, setting input values from the appropriate request type:</p>
+
+        <codeblock lang="php">
+          $request = $this-&gt;requestStack-&gt;getCurrentRequest();
+
+          // Inform $form_state about the request method that's building it, so that
+          // it can prevent persisting state changes during HTTP methods for which
+          // that is disallowed by HTTP: GET and HEAD.
+          $form_state-&gt;setRequestMethod($request-&gt;getMethod());
+
+          // Initialize the form's user input. The user input should include only the
+          // input meant to be treated as part of what is submitted to the form, so
+          // we base it on the form's method rather than the request's method. For
+          // example, when someone does a GET request for
+          // /node/add/article?destination=foo, which is a form that expects its
+          // submission method to be POST, the user input during the GET request
+          // should be initialized to empty rather than to ['destination' =&gt; 'foo'].
+          $input = $form_state-&gt;getUserInput();
+          if (!isset($input)) {
+            $input = $form_state-&gt;isMethodType('get') ? $request-&gt;query-&gt;all() : $request-&gt;request-&gt;all();
+            $form_state-&gt;setUserInput($input);
+          }
+        </codeblock>
+
+        <p>It then deals with batch processing and caching, before getting into the meat of the form processing. If we have a new form, as opposed to retrieving a value from the cache, <code>buildForm()</code> calls out to two two other methods:</p>
+
+        <codeblock lang="php">
+          $form = $this-&gt;retrieveForm($form_id, $form_state);
+          $this-&gt;prepareForm($form_id, $form, $form_state);
+        </codeblock>
+
+        <p>First it calls <code>retrieveForm</code>, which adds the <code>$form_id</code> to the <code>$form_state</code> (available via <code>$form_state-&gt;getBuildInfo()['form_id']</code>). It then copies the build info from the form (which at this point looks something like this) and supplies to the form callback function:</p>
+
+        <codeblock lang="php">
+          $args = [
+            'args' =&gt; [],
+            'files' =&gt; [],
+            'callback_object' =&gt; '...', // instance of Drupal\example\Form\ExampleForm
+            'form_id' =&gt; 'example_form',
+          ];
+        </codeblock>
+
+        <codeblock lang="php">
+          $callback = [$form_state-&gt;getFormObject(), 'buildForm'];
+
+          $form = [];
+          // Assign a default CSS class name based on $form_id.
+          // This happens here and not in self::prepareForm() in order to allow the
+          // form constructor function to override or remove the default class.
+          $form['#attributes']['class'][] = Html::getClass($form_id);
+          // Same for the base form ID, if any.
+          if (isset($build_info['base_form_id'])) {
+            $form['#attributes']['class'][] = Html::getClass($build_info['base_form_id']);
+          }
+
+          // We need to pass $form_state by reference in order for forms to modify it,
+          // since call_user_func_array() requires that referenced variables are
+          // passed explicitly.
+          $args = array_merge([$form, &amp;$form_state], $args);
+
+          $form = call_user_func_array($callback, $args);
+        </codeblock>
+
+        <p>At this point, <code>$form</code> is not very interesting:</p>
+
+        <codeblock lang="php">
+          $form = [
+            '#attributes' =&gt; [
+              'class' =&gt; [
+                0 =&gt; 'example-form',
+              ],
+            ],
+          ];
+        </codeblock>
+
+        <p>The build info is merged into the <code>$form</code> and <code>$form_state</code>, and these are then passed to the <code>buildForm()</code> method on the form class. After the form is built by the form class, <code>retrieveForm</code> returns a basic form that looks something like this:</p>
+
+        <codeblock lang="php">
+          array (
+            '#attributes' =&gt; 
+            array (
+              'class' =&gt; 
+              array (
+                0 =&gt; 'example-form',
+              ),
+            ),
+            'text' =&gt; 
+            array (
+              '#type' =&gt; 'textarea',
+              '#title' =&gt; 'Text',
+              )),
+              '#weight' =&gt; '0',
+            ),
+            'submit' =&gt; 
+            array (
+              '#type' =&gt; 'submit',
+              '#value' =&gt; 'Submit',
+              )),
+            ),
+            '#form_id' =&gt; 'example_form',
+          )
+        </codeblock>
+
+        <p>(I've elided some translatable values to strings for the purposes of simplicity).</p>
+
+        <p>After this, the nascent form is passed to <code>prepareForm()</code>. This first sets up the form array to be rendered as a <code>Form</code> render element:</p>
+
+        <codeblock lang="php">
+          $form['#type'] = 'form';
+        </codeblock>
+
+        <p>This is another shortcut&mdash;any render array that is returned from our form class <code>buildForm()</code> method is implicitly a form.</p>
+
+        <p>After this it does a bunch of safety checking and setting of CSRF tokens, which we're not going to get into here as it's not something you ever need to change. One part I do want to touch on is that some of this processing is not applied if the form has been submitted programmatically via <code>submitForm()</code>, which may be relevant to some of your form processing:</p>
+
+        <codeblock lang="php">
+          if ($form_state-&gt;isProgrammed() || (isset($form['#token']) &amp;&amp; $form['#token'] === FALSE)) {
+            unset($form['#token']);
+          }
+        </codeblock>
+
+        <p>We also see form IDs being set in the form array:</p>
+
+        <codeblock lang="php">
+          if (isset($form_id)) {
+            $form['form_id'] = [
+              '#type' =&gt; 'hidden',
+              '#value' =&gt; $form_id,
+              '#id' =&gt; Html::getUniqueId(&quot;edit-$form_id&quot;),
+              // Form processing and validation requires this value, so ensure the
+              // submitted form value appears literally, regardless of custom #tree
+              // and #parents being set elsewhere.
+              '#parents' =&gt; ['form_id'],
+            ];
+          }
+          if (!isset($form['#id'])) {
+            $form['#id'] = Html::getUniqueId($form_id);
+            // Provide a selector usable by JavaScript. As the ID is unique, its not
+            // possible to rely on it in JavaScript.
+            $form['#attributes']['data-drupal-selector'] = Html::getId($form_id);
+          }
+
+          $form += $this-&gt;elementInfo-&gt;getInfo('form');
+          $form += ['#tree' =&gt; FALSE, '#parents' =&gt; []];
+          $form['#validate'][] = '::validateForm';
+          $form['#submit'][] = '::submitForm';
+
+          $build_info = $form_state-&gt;getBuildInfo();
+          // If no #theme has been set, automatically apply theme suggestions.
+          // The form theme hook itself, which is rendered by form.html.twig,
+          // is in #theme_wrappers. Therefore, the #theme function only has to care
+          // for rendering the inner form elements, not the form itself.
+          if (!isset($form['#theme'])) {
+            $form['#theme'] = [$form_id];
+            if (isset($build_info['base_form_id'])) {
+              $form['#theme'][] = $build_info['base_form_id'];
+            }
+          }
+        </codeblock>
+
+        <p>And we get some base element info added according to the current active theme from the <code>ElementInfoManager</code>. These values can be seen on the relevant render element in the <code>getInfo()</code> method. This will look something like:</p>
+
+        <codeblock lang="php">
+          [
+            '#method' =&gt; 'post',
+            '#theme_wrappers' =&gt; [
+              0 =&gt; 'form',
+            ],
+            '#type' =&gt; 'form',
+            '#defaults_loaded' =&gt; true,
+          ]
+        </codeblock>
+
+        <p>Two important attributes are set if they don't already exist:</p>
+
+        <codeblock lang="php">
+          $form += ['#tree' =&gt; FALSE, '#parents' =&gt; []];
+        </codeblock>
+
+        <p>Setting <code>#tree</code> determines whether the form structure is flattened or not, which is important if you have multiple elements with the same name in a fieldset or similar structure. The value of <code>#parents</code> tells the form renderer if the element has a parent, and you'll see this later on individual form elements. For more information about what these values do, see <a href="https://www.drupal.org/docs/7/api/form-api/tree-and-parents">the Drupal documentation</a>.</p>
+
+        <p>Here we also see the default validate and submit handlers set for the <code>FormBuilder</code>:</p>
+
+        <codeblock lang="php">
+          $form['#validate'][] = '::validateForm';
+          $form['#submit'][] = '::submitForm';
+        </codeblock>
+
+        <p>Finally, a <code>#theme</code> suggestion is added to the form structure if one doesn't already exist:</p>
+
+        <codeblock lang="php">
+          '#theme' =&gt; [
+            0 =&gt; 'example_form',
+          ]
+        </codeblock>
+
+        <p>Finally, module and theme alter hooks are invoked for the built form structure:</p>
+
+        <codeblock lang="php">
+          // Invoke hook_form_alter(), hook_form_BASE_FORM_ID_alter(), and
+          // hook_form_FORM_ID_alter() implementations.
+          $hooks = ['form'];
+          if (isset($build_info['base_form_id'])) {
+            $hooks[] = 'form_' . $build_info['base_form_id'];
+          }
+          $hooks[] = 'form_' . $form_id;
+          $this-&gt;moduleHandler-&gt;alter($hooks, $form, $form_state, $form_id);
+          $this-&gt;themeManager-&gt;alter($hooks, $form, $form_state, $form_id);
+        </codeblock>
+
+        <p>Now we're done with the form generation in <code>buildForm()</code>. Next, we move to <code>processForm()</code>:</p>
+
+        <codeblock lang="php">
+          $response = $this-&gt;processForm($form_id, $form, $form_state);
+        </codeblock>
+
+        <p>The <code>processForm()</code> method takes the user's input and saves it to the form state, as well as as setting up a blank values array for <code>$form_state->setValues()</code> to be populated later:</p>
+
+        <codeblock lang="php">
+          $form_state-&gt;setValues([]);
+
+          // With GET, these forms are always submitted if requested.
+          if ($form_state-&gt;isMethodType('get') &amp;&amp; $form_state-&gt;getAlwaysProcess()) {
+            $input = $form_state-&gt;getUserInput();
+            if (!isset($input['form_build_id'])) {
+              $input['form_build_id'] = $form['#build_id'];
+            }
+            if (!isset($input['form_id'])) {
+              $input['form_id'] = $form_id;
+            }
+            if (!isset($input['form_token']) &amp;&amp; isset($form['#token'])) {
+              $input['form_token'] = $this-&gt;csrfToken-&gt;get($form['#token']);
+            }
+            $form_state-&gt;setUserInput($input);
+          }
+        </codeblock>
+
+        <p>We then jump into <code>doBuildForm()</code> which calls element <code>#process</code> functions. From the <a href="https://www.drupal.org/docs/8/api/form-api/form-render-elements">form documentation</a>:</p>
+
+        <codeblock lang="text">
+          #process: (array) Array of callables or function names, which are called during form building.
+                    Arguments: $element, $form_state, $form.
+        </codeblock>
+
+        <p>Again this adds on default element info per the theme, and assigns some default properties if they aren't already set:</p>
+
+        <codeblock lang="php">
+          $element += [
+            '#required' =&gt; FALSE,
+            '#attributes' =&gt; [],
+            '#title_display' =&gt; 'before',
+            '#description_display' =&gt; 'after',
+            '#errors' =&gt; NULL,
+          ];
+        </codeblock>
+
+        <p>There's also some special processing that happens for the top-level form element. The action URL is forced to HTTPS if it's external, and the entire form is stored in <code>$form_state</code> for use in callbacks:</p>
+
+        <codeblock lang="php">
+          // Store a reference to the complete form in $form_state prior to building
+          // the form. This allows advanced #process and #after_build callbacks to
+          // perform changes elsewhere in the form.
+          $form_state-&gt;setCompleteForm($element);
+        </codeblock>
+
+        <p>If we have user input, this also performs a check against the CSRF token to ensure that it's a valid submission. If not, the inputs are all cleared and an error is set. After this some IDs are set for the rendering and JS access of the element.</p>
+
+        <p>Elements that have <code>#input</code> set are handled have additional processing via <code>handleInputElement()</code>. This ensures that it has a <code>#name</code> and <code>#value</code>, as well as setting some usability and accessibility properties. I won't go into detail as to what goes on in here, since it's not directly relevant to the general building of a form, but if you're interested in what happens to <code>#input</code> elements this is the place to look. The two notable bits of processing here happen at the end of the function.</p>
+
+        <p>First, if the element is a button (it has <code>#is_button</code> set) then the triggering element is set on the <code>$form_state</code> for later use:</p>
+
+        <codeblock lang="php">
+          // If the form was submitted by the browser rather than via Ajax, then it
+          // can only have been triggered by a button, and we need to determine
+          // which button within the constraints of how browsers provide this
+          // information.
+          if (!empty($element['#is_button'])) {
+            // All buttons in the form need to be tracked for
+            // \Drupal\Core\Form\FormState::cleanValues() and for the
+            // self::doBuildForm() code that handles a form submission containing no
+            // button information in \Drupal::request()-&gt;request.
+            $buttons = $form_state-&gt;getButtons();
+            $buttons[] = $element;
+            $form_state-&gt;setButtons($buttons);
+            if ($this-&gt;buttonWasClicked($element, $form_state)) {
+              $form_state-&gt;setTriggeringElement($element);
+            }
+          }
+        </codeblock>
+
+        <p>Secondly, the element's value is set for <code>$form_state-&gt;getValues()</code> if it's not already set:</p>
+
+        <codeblock lang="php">
+          // Set the element's value in $form_state-&gt;getValues(), but only, if its key
+          // does not exist yet (a #value_callback may have already populated it).
+          if (!NestedArray::keyExists($form_state-&gt;getValues(), $element['#parents'])) {
+            $form_state-&gt;setValueForElement($element, $element['#value']);
+          }
+        </codeblock>
+
+        <p>We return to <code>doBuildForm()</code> as this is the meat of our form processing. After processing input elements the <code>#process</code> callbacks are called:</p>
+
+        <codeblock lang="php">
+          // Allow for elements to expand to multiple elements, e.g., radios,
+          // checkboxes and files.
+          if (isset($element['#process']) &amp;&amp; !$element['#processed']) {
+            foreach ($element['#process'] as $callback) {
+              $complete_form = &amp;$form_state-&gt;getCompleteForm();
+              $element = call_user_func_array($form_state-&gt;prepareCallback($callback), [&amp;$element, &amp;$form_state, &amp;$complete_form]);
+            }
+            $element['#processed'] = TRUE;
+          }
+        </codeblock>
+
+        <p>Any access requirements are also applied.</p>
+
+        <p>After this we see <code>doBuildForm()</code> invoked for all children of the current element&mdash;it will continue to be recursively called until the whole of the form tree is processed. It uses the helpful <code>Element::children()</code> method, which iterates through all array children with integer keys.</p>
+
+        <p>Within this loop we again see the element defaults applied from the <code>elementInfo</code>. Any access requirements are inherited from the parent, and <code>#tree</code> values are preserved for later rendering and processing. We also see the value of <code>#parents</code> set here for children, where this will be a full array of parents if <code>#tree</code> is set and an array consisting of the element key if not. However, <code>#array_parents</code> set below will always be a full parent array accorind to the form structure, regardless of the value of <code>#tree</code>. After dealing with weights and sorting, the call then recurses into <code>doBuildForm()</code>.</p>
+
+        <p>After the child processing loop, any <code>#after_build</code> callbacks are invoked with the <code>$element</code> and <code>$form_state</code>. </p>
+
+        <p>Finally we return to processing for the top-level form once all other elements have been processed. The encoding is set if the form contains file elements, and some browser issues are fixed. It then looks at which button is used to submit the element, and sets the validation and submit handlers accordingly if any are attached directly to the submitting element:</p>
+
+        <codeblock lang="php">
+        $triggering_element = $form_state-&gt;getTriggeringElement();
+
+        // If the triggering element specifies &quot;button-level&quot; validation and
+        // submit handlers to run instead of the default form-level ones, then add
+        // those to the form state.
+        if (isset($triggering_element['#validate'])) {
+          $form_state-&gt;setValidateHandlers($triggering_element['#validate']);
+        }
+        if (isset($triggering_element['#submit'])) {
+          $form_state-&gt;setSubmitHandlers($triggering_element['#submit']);
+        }
+        </codeblock>
+
+        <p>It also decides whether the triggering element causes the form to be submitted. This value is only <code>TRUE</code> for elements of <code>#type</code> 'submit' and not 'button', even though both of these are rendered as <code>&lt;input /&gt;</code> elements. There isn't a core <code>&lt;button /&gt;</code> render element&mdash;this is a long-running gripe that many have with Drupal forms, as buttons are useful for styling purposes but <a href="https://www.drupal.org/project/drupal/issues/1671190">are not used in Drupal by default</a>.</p>
+
+        <codeblock lang="php">
+        // If the triggering element executes submit handlers, then set the form
+        // state key that's needed for those handlers to run.
+        if (!empty($triggering_element['#executes_submit_callback'])) {
+          $form_state-&gt;setSubmitted();
+        }
+        </codeblock>
+
+        <p>And with a final bit of tidying up for buttons, <code>doBuildForm()</code> is done.</p>
+
+        <h2>Validation</h2>
+
+        <p>Now that the form and form state are completely built, we can move on to input processing. If the form is being submitted (i.e. if <code>$form_state-&gt;isProcessingInput()</code> is <code>TRUE</code>) then <code>$this-&gt;formValidator-&gt;validateForm()</code> is invoked, where <code>formValidator</code> is the <code>form_validator</code> service:</p>
+
+        <codeblock lang="yaml">
+        form_validator:
+          class: Drupal\Core\Form\FormValidator
+          arguments:
+            - '@request_stack'
+            - '@string_translation'
+            - '@csrf_token'
+            - '@logger.channel.form'
+            - '@form_error_handler'
+        </codeblock>
+
+        <p>After checking for previous validations, <code>validateForm()</code> again checks the CSRF token. If this isn't valid, the form validation automatically fails. Assuming this is correct, we call off to three callbacks on the <code>FormValidator</code>:</p>
+
+        <codeblock lang="php">
+        // Recursively validate each form element.
+        $this-&gt;doValidateForm($form, $form_state, $form_id);
+        $this-&gt;finalizeValidation($form, $form_state, $form_id);
+        $this-&gt;handleErrorsWithLimitedValidation($form, $form_state, $form_id);
+        </codeblock>
+
+        <p>Much like <code>doBuildForm()</code>, <code>doValidateForm()</code> is called recursively for all form elements. For elements with <code>#needs_validation</code> set to true it first calls any built-in validation based on the element's attributes. From the <code>FormBuilder</code>, this will be set to <code>TRUE</code> if the element has a <code>#value</code> or if it's a <code>#required</code> element.</p>
+
+        <p>Before running the full validation, the form checks if <code>#limit_validation_errors</code> is set in <code>determineLimitValidationErrors()</code>. This will allow handlers to be triggered without running a full validation for particular action buttons.</p>
+
+        <p>If this isn't the case, the form gets fully validated. First required elements are checked for values; if empty, the <code>#required_but_empty</code> flag is set so that an appropriate error message can be shown.</p>
+
+        <p>After this we execute any validation handlers set:</p>
+
+        <codeblock lang="php">
+        // Call user-defined form level validators.
+        if (isset($form_id)) {
+          $this-&gt;executeValidateHandlers($elements, $form_state);
+        }
+        // Call any element-specific validators. These must act on the element
+        // #value data.
+        elseif (isset($elements['#element_validate'])) {
+          foreach ($elements['#element_validate'] as $callback) {
+            $complete_form = &amp;$form_state-&gt;getCompleteForm();
+            call_user_func_array($form_state-&gt;prepareCallback($callback), [&amp;$elements, &amp;$form_state, &amp;$complete_form]);
+          }
+        }
+        </codeblock>
+
+        <p>For the top-level form, we call <code>executeValidationHandlers()</code>. This either calls validation handlers set to the <code>$form_state</code> via <code>$form_state-&gt;setValidationHandlers()</code> or any form-level handlers in <code>$form['#validate']</code> (but not both). If running the handlers on <code>$form['#validate']</code> it will at minimum run the default <code>::validateForm()</code> on the form class. If we're validating an element, call any <code>#element_validate</code> callbacks. All of these callbacks have to be functions or static methods. If they're a string starting with <code>::</code> they're automatically called on the form object.</p>
+
+        <p>After these validation handlers are called, any required element errors are set on the <code>$form_state</code>, and <code>setLimitValidationErrors()</code> is turned off to begin validating the next form element.</p>
+
+        <h2>Submission</h2>
+
+        <p>If the form passes validation, the next step is to submit the data. This time we call out to the <code>form_submitter</code> service via <code>doSubmitForm()</code>:</p>
+
+        <codeblock lang="yaml">
+        form_submitter:
+          class: Drupal\Core\Form\FormSubmitter
+          arguments: ['@request_stack', '@url_generator']
+        </codeblock>
+
+        <p>This does some processing that's very similar to that found in <code>doValidateForm()</code>. First it checks for submit handlers set on the <code>$form_state</code> for the triggering element, and if not uses handlers set on the form <code>#submit</code> attribute:</p>
+
+        <codeblock lang="php">
+        // If there was a button pressed, use its handlers.
+        $handlers = $form_state-&gt;getSubmitHandlers();
+        // Otherwise, check for a form-level handler.
+        if (!$handlers &amp;&amp; !empty($form['#submit'])) {
+          $handlers = $form['#submit'];
+        }
+        </codeblock>
+
+        <p>It also deals with processing batches if a batch processing is set for the form.</p>
+
+        <p>After calling form submission handlers and any batch processing, the submit handler may return a <code>Response</code> object or cause the form to redirect. If a redirect occurs at this point the form processing ends.</p>
+
+        <p>If the form doesn't redirect then the form processing continues in <code>processForm()</code>. After submission the form cache is cleared.  If the form returns a <code>Response</code> then this is returned, and the form submission ends. Remember that this is all being invoked from the <code>FormController</code>, so this is effectively returning the controller response. If this is a multi-step process then the form is rebuilt.</p>
+
+        <h2>Finishing up</h2>
+
+        <p>Now we're back in <code>FormBuilder-&gt;buildForm()</code>. At this point we start exiting the form processing altogether by throwing exceptions to direct the control flow. For excessively large requests, a <code>BrokenPostRequestException</code> is thrown. For AJAX forms a <code>FormAjaxException</code> is thrown to interrupt the form rendering. For forms that return a <code>Response</code> an <code>EnforcedResponseException</code> is thrown, to likewise prevent rendering.</p>
+
+        <codeblock lang="php">
+          // In case the post request exceeds the configured allowed size
+          // (post_max_size), the post request is potentially broken. Add some
+          // protection against that and at the same time have a nice error message.
+          if ($ajax_form_request &amp;&amp; !$request-&gt;request-&gt;has('form_id')) {
+            throw new BrokenPostRequestException($this-&gt;getFileUploadMaxSize());
+          }
+
+          // After processing the form, if this is an AJAX form request, interrupt
+          // form rendering and return by throwing an exception that contains the
+          // processed form and form state. This exception will be caught by
+          // \Drupal\Core\Form\EventSubscriber\FormAjaxSubscriber::onException() and
+          // then passed through
+          // \Drupal\Core\Form\FormAjaxResponseBuilderInterface::buildResponse() to
+          // build a proper AJAX response.
+          // Only do this when the form ID matches, since there is no guarantee from
+          // $ajax_form_request that it's an AJAX request for this particular form.
+          if ($ajax_form_request &amp;&amp; $form_state-&gt;isProcessingInput() &amp;&amp; $request-&gt;request-&gt;get('form_id') == $form_id) {
+            throw new FormAjaxException($form, $form_state);
+          }
+
+          // If the form returns a response, skip subsequent page construction by
+          // throwing an exception.
+          // @see Drupal\Core\EventSubscriber\EnforcedFormResponseSubscriber
+          //
+          // @todo Exceptions should not be used for code flow control. However, the
+          //   Form API does not integrate with the HTTP Kernel based architecture of
+          //   Drupal 8. In order to resolve this issue properly it is necessary to
+          //   completely separate form submission from rendering.
+          //   @see https://www.drupal.org/node/2367555
+          if ($response instanceof Response) {
+            throw new EnforcedResponseException($response);
+          }
+        </codeblock>
+
+        <p>Otherwise, at this point the <code>$form</code> render array is returned and ends up being the final return value from <code>FormController-&gt;getContentResult()</code>. We then have a complete render array with a top-level element of type <code>#form</code>, so this is rendered as with any render array.</p>
+
+        <h2>In conclusion</h2>
+
+        <p>This was a quick run through the form building process. It's not super complicated one you get into it&mdash;and knowing how it works can help when you're building or altering your own forms.</p>
+
+        <p>If you've found this helpful, or if you have any suggestions, let me know <a href="https://twitter.com/benkyriakou">on Twitter</a>.</p>
+
+      </content>
+    </article>
+  </content>
+</document>
