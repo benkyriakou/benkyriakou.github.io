@@ -419,7 +419,7 @@
         <div class="highlight"><pre><span/><span class="s1">'#theme'</span> <span class="o">=&gt;</span> <span class="p">[</span>
   <span class="mi">0</span> <span class="o">=&gt;</span> <span class="s1">'example_form'</span><span class="p">,</span>
 <span class="p">]</span>
-</pre></div><p>Finally, module and theme alter hooks are invoked for the built form structure:</p>
+</pre></div><p>And module and theme alter hooks are invoked for the built form structure:</p>
 
         <div class="highlight"><pre><span/><span class="c1">// Invoke hook_form_alter(), hook_form_BASE_FORM_ID_alter(), and</span>
 <span class="c1">// hook_form_FORM_ID_alter() implementations.</span>
@@ -472,7 +472,7 @@
 <span class="nv">$form_state</span><span class="o">-&gt;</span><span class="na">setCompleteForm</span><span class="p">(</span><span class="nv">$element</span><span class="p">);</span>
 </pre></div><p>If we have user input, this also performs a check against the CSRF token to ensure that it's a valid submission. If not, the inputs are all cleared and an error is set. After this some IDs are set for the rendering and JS access of the element.</p>
 
-        <p>Elements that have <code>#input</code> set are handled have additional processing via <code>handleInputElement()</code>. This ensures that it has a <code>#name</code> and <code>#value</code>, as well as setting some usability and accessibility properties. I won't go into detail as to what goes on in here, since it's not directly relevant to the general building of a form, but if you're interested in what happens to <code>#input</code> elements this is the place to look. The two notable bits of processing here happen at the end of the function.</p>
+        <p>Elements that have <code>#input</code> set have additional processing via <code>handleInputElement()</code>. This ensures that the element has a <code>#name</code> and <code>#value</code>, as well as setting some usability and accessibility properties. I won't go into detail as to what goes on in here, since it's not directly relevant to the general building of a form, but if you're interested in what happens to <code>#input</code> elements this is the place to look. The two notable bits of processing here happen at the end of the function.</p>
 
         <p>First, if the element is a button (it has <code>#is_button</code> set) then the triggering element is set on the <code>$form_state</code> for later use:</p>
 
@@ -514,7 +514,7 @@
 
         <p>After this we see <code>doBuildForm()</code> invoked for all children of the current element&#8212;it will continue to be recursively called until the whole of the form tree is processed. It uses the helpful <code>Element::children()</code> method, which iterates through all array children with integer keys.</p>
 
-        <p>Within this loop we again see the element defaults applied from the <code>elementInfo</code>. Any access requirements are inherited from the parent, and <code>#tree</code> values are preserved for later rendering and processing. We also see the value of <code>#parents</code> set here for children, where this will be a full array of parents if <code>#tree</code> is set and an array consisting of the element key if not. However, <code>#array_parents</code> set below will always be a full parent array accorind to the form structure, regardless of the value of <code>#tree</code>. After dealing with weights and sorting, the call then recurses into <code>doBuildForm()</code>.</p>
+        <p>Within this loop we again see the element defaults applied from the <code>elementInfo</code>. Any access requirements are inherited from the parent, and <code>#tree</code> values are preserved for later rendering and processing. We also see the value of <code>#parents</code> set here for children, where this will be a full array of parents if <code>#tree</code> is set and an array consisting of the element key if not. However, <code>#array_parents</code> set below will always be a full parent array according to the form structure, regardless of the value of <code>#tree</code>. After dealing with weights and sorting, the call then recurses into <code>doBuildForm()</code>.</p>
 
         <p>After the child processing loop, any <code>#after_build</code> callbacks are invoked with the <code>$element</code> and <code>$form_state</code>. </p>
 
