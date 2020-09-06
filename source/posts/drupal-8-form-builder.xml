@@ -13,6 +13,8 @@
       <title>Drupal 8 form builder</title>
       <date datetime="2020-08">August 2020</date>
       <content>
+        <p><em>As featured in <a href="http://www.theweeklydrop.com/archive/issue-453">issue 453 of TheWeeklyDrop</a>.</em></p>
+
         <p>Forms are a core part of any Drupal site. But how is a form actually made? The process is fairly simple, so let's take a stroll through Drupal 8's form code.</p>
 
         <h2>Creating a basic form</h2>
