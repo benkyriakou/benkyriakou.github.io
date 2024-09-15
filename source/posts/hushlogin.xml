@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!DOCTYPE document [
+  <!ENTITY mdash "&#8212;">
+  <!ENTITY hellip "&#8230;">
+]>
+
+<document type="article">
+  <title>.hushlogin</title>
+  <description>Disabling linux message-of-the-day with .hushlogin.</description>
+  <slug>/posts/hushlogin</slug>
+  <content>
+    <article>
+      <title>.hushlogin</title>
+      <date datetime="2024-09">September 2024</date>
+      <content>
+        <p>I was recently setting up a headless server for my home network and wanted to disable the MOTD when ssh-ing in. In doing so, I discovered an alternative to editing the <code>/etc/motd</code> file.</p>
+
+        <p>Per <code>man login</code>, the login service will suppress the MOTD if a <code>$HOME/.hushlogin</code> file exists for the user. Alternatively, you can also set the file that this will check by configuring the <code>HUSHLOGIN_FILE</code> in <code>etc/login.defs</code>.</p>
+
+        <p>The more you know&hellip;</p>
+      </content>
+    </article>
+  </content>
+</document>
