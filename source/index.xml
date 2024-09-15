@@ -6,6 +6,7 @@
   <description>Expulsions from the mind of Ben Kyriakou. Programming and pedantry.</description>
   <slug></slug>
   <content>
+    <xi:include href="posts/hushlogin.xml" parse="xml" xpointer="xpointer(/document)" />
     <xi:include href="posts/drupal-8-form-builder.xml" parse="xml" xpointer="xpointer(/document)" />
     <xi:include href="posts/drupal-8-page-rendering.xml" parse="xml" xpointer="xpointer(/document)" />
     <xi:include href="posts/xdebug-docker-phpstorm.xml" parse="xml" xpointer="xpointer(/document)" />
