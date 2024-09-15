@@ -61,12 +61,12 @@
 
         <p>Enable xdebug on the relevant Docker container. For docker4drupal this means uncommenting these lines in the <code>docker-compose.yml</code> file:</p>
 
-        <div class="highlight"><pre><span/><span class="nt">PHP_XDEBUG</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">1</span>
-<span class="nt">PHP_XDEBUG_DEFAULT_ENABLE</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">1</span>
-<span class="nt">PHP_XDEBUG_REMOTE_CONNECT_BACK</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">0</span>
-<span class="nt">PHP_IDE_CONFIG</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">serverName=PHPSTORM</span>
-<span class="nt">PHP_XDEBUG_IDEKEY</span><span class="p">:</span> <span class="s">"PHPSTORM"</span>
-<span class="nt">PHP_XDEBUG_REMOTE_HOST</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">172.17.0.1</span> <span class="c1"># Linux</span>
+        <div class="highlight"><pre><span/><span class="nt">PHP_XDEBUG</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1</span><span class="w"/>
+<span class="nt">PHP_XDEBUG_DEFAULT_ENABLE</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1</span><span class="w"/>
+<span class="nt">PHP_XDEBUG_REMOTE_CONNECT_BACK</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0</span><span class="w"/>
+<span class="nt">PHP_IDE_CONFIG</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">serverName=PHPSTORM</span><span class="w"/>
+<span class="nt">PHP_XDEBUG_IDEKEY</span><span class="p">:</span><span class="w"> </span><span class="s">"PHPSTORM"</span><span class="w"/>
+<span class="nt">PHP_XDEBUG_REMOTE_HOST</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">172.17.0.1</span><span class="w"> </span><span class="c1"># Linux</span><span class="w"/>
 </pre></div><p>If you enable these after you've created the PHP container, remember to restart the container so that xdebug is enabled and configured.</p>
 
         <p>Now go to Settings &gt; Languages &amp; Frameworks &gt; PHP and set your language level as required. Add a new CLI interpreter by clicking <code>...</code>. Click the <code>+</code> on the top left and add a new Docker configuration. Select Docker Compose and the php service, then use the default options for everything else. Save this and apply.</p>

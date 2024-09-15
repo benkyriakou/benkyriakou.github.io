@@ -79,13 +79,13 @@
 
         <p>The simplest form implementation is directly tied to a route for display&#8212;we can generate one with Drupal Console using <code>drupal generate:form</code>. This gives us a route that looks like this:</p>
 
-        <div class="highlight"><pre><span/><span class="nt">example.example_form</span><span class="p">:</span>
-  <span class="nt">path</span><span class="p">:</span> <span class="s">'/example/form/example'</span>
-  <span class="nt">defaults</span><span class="p">:</span>
-    <span class="nt">_form</span><span class="p">:</span> <span class="s">'\Drupal\example\Form\ExampleForm'</span>
-    <span class="nt">_title</span><span class="p">:</span> <span class="s">'ExampleForm'</span>
-  <span class="nt">requirements</span><span class="p">:</span>
-    <span class="nt">_access</span><span class="p">:</span> <span class="s">'TRUE'</span>
+        <div class="highlight"><pre><span/><span class="nt">example.example_form</span><span class="p">:</span><span class="w"/>
+<span class="w">  </span><span class="nt">path</span><span class="p">:</span><span class="w"> </span><span class="s">'/example/form/example'</span><span class="w"/>
+<span class="w">  </span><span class="nt">defaults</span><span class="p">:</span><span class="w"/>
+<span class="w">    </span><span class="nt">_form</span><span class="p">:</span><span class="w"> </span><span class="s">'\Drupal\example\Form\ExampleForm'</span><span class="w"/>
+<span class="w">    </span><span class="nt">_title</span><span class="p">:</span><span class="w"> </span><span class="s">'ExampleForm'</span><span class="w"/>
+<span class="w">  </span><span class="nt">requirements</span><span class="p">:</span><span class="w"/>
+<span class="w">    </span><span class="nt">_access</span><span class="p">:</span><span class="w"> </span><span class="s">'TRUE'</span><span class="w"/>
 </pre></div><p>And a form that looks like this (simplified for brevity):</p>
 
         <div class="highlight"><pre><span/><span class="k">namespace</span> <span class="nx">Drupal\example_widget\Form</span><span class="p">;</span>
@@ -131,12 +131,12 @@
 
         <p>We can see some form services defined in <code>core.services.yml</code>:</p>
 
-        <div class="highlight"><pre><span/><span class="nt">controller.form</span><span class="p">:</span>
-  <span class="nt">class</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">Drupal\Core\Controller\HtmlFormController</span>
-  <span class="nt">arguments</span><span class="p">:</span> <span class="p p-Indicator">[</span><span class="s">'@http_kernel.controller.argument_resolver'</span><span class="p p-Indicator">,</span> <span class="s">'@form_builder'</span><span class="p p-Indicator">,</span> <span class="s">'@class_resolver'</span><span class="p p-Indicator">]</span>
-<span class="nt">controller.entity_form</span><span class="p">:</span>
-  <span class="nt">class</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">Drupal\Core\Entity\HtmlEntityFormController</span>
-  <span class="nt">arguments</span><span class="p">:</span> <span class="p p-Indicator">[</span><span class="s">'@http_kernel.controller.argument_resolver'</span><span class="p p-Indicator">,</span> <span class="s">'@form_builder'</span><span class="p p-Indicator">,</span> <span class="s">'@entity_type.manager'</span><span class="p p-Indicator">]</span>
+        <div class="highlight"><pre><span/><span class="nt">controller.form</span><span class="p">:</span><span class="w"/>
+<span class="w">  </span><span class="nt">class</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Drupal\Core\Controller\HtmlFormController</span><span class="w"/>
+<span class="w">  </span><span class="nt">arguments</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">'@http_kernel.controller.argument_resolver'</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">'@form_builder'</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">'@class_resolver'</span><span class="p p-Indicator">]</span><span class="w"/>
+<span class="nt">controller.entity_form</span><span class="p">:</span><span class="w"/>
+<span class="w">  </span><span class="nt">class</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Drupal\Core\Entity\HtmlEntityFormController</span><span class="w"/>
+<span class="w">  </span><span class="nt">arguments</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">'@http_kernel.controller.argument_resolver'</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">'@form_builder'</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">'@entity_type.manager'</span><span class="p p-Indicator">]</span><span class="w"/>
 </pre></div><p>These are added as responders via a <a href="https://symfony.com/doc/current/cmf/bundles/routing/dynamic_customize.html">Route Enhancer</a> in <code>core/lib/Drupal/Core/Routing/Enhancer/FormRouteEnhancer.php</code>:</p>
 
         <div class="highlight"><pre><span/><span class="sd">/**</span>
@@ -174,14 +174,14 @@
 
         <p>This basically makes our route above a shorthand for:</p>
 
-        <div class="highlight"><pre><span/><span class="nt">example.example_form</span><span class="p">:</span>
-  <span class="nt">path</span><span class="p">:</span> <span class="s">'/example/form/example'</span>
-  <span class="nt">defaults</span><span class="p">:</span>
-    <span class="nt">_controller</span><span class="p">:</span> <span class="s">'controller.form:getContentResult'</span>
-    <span class="nt">_form</span><span class="p">:</span> <span class="s">'\Drupal\example_widget\Form\ExampleForm'</span>
-    <span class="nt">_title</span><span class="p">:</span> <span class="s">'ExampleForm'</span>
-  <span class="nt">requirements</span><span class="p">:</span>
-    <span class="nt">_access</span><span class="p">:</span> <span class="s">'TRUE'</span>
+        <div class="highlight"><pre><span/><span class="nt">example.example_form</span><span class="p">:</span><span class="w"/>
+<span class="w">  </span><span class="nt">path</span><span class="p">:</span><span class="w"> </span><span class="s">'/example/form/example'</span><span class="w"/>
+<span class="w">  </span><span class="nt">defaults</span><span class="p">:</span><span class="w"/>
+<span class="w">    </span><span class="nt">_controller</span><span class="p">:</span><span class="w"> </span><span class="s">'controller.form:getContentResult'</span><span class="w"/>
+<span class="w">    </span><span class="nt">_form</span><span class="p">:</span><span class="w"> </span><span class="s">'\Drupal\example_widget\Form\ExampleForm'</span><span class="w"/>
+<span class="w">    </span><span class="nt">_title</span><span class="p">:</span><span class="w"> </span><span class="s">'ExampleForm'</span><span class="w"/>
+<span class="w">  </span><span class="nt">requirements</span><span class="p">:</span><span class="w"/>
+<span class="w">    </span><span class="nt">_access</span><span class="p">:</span><span class="w"> </span><span class="s">'TRUE'</span><span class="w"/>
 </pre></div><p>The basic retrieval of the form object is straightforward&#8212;in <code>FormController-&gt;getContentResult()</code>:</p>
 
         <div class="highlight"><pre><span/><span class="k">public</span> <span class="k">function</span> <span class="nf">getContentResult</span><span class="p">(</span><span class="nx">Request</span> <span class="nv">$request</span><span class="p">,</span> <span class="nx">RouteMatchInterface</span> <span class="nv">$route_match</span><span class="p">)</span> <span class="p">{</span>
@@ -209,19 +209,19 @@
 
         <p>After this, the form render array and form state object are passed through to the <code>buildForm()</code> method on <code>$this-&gt;formBuilder</code>, which will almost always be the core <code>FormBuilder</code>. You could override this by creating a new <code>form_builder</code> service to supersede the one in <code>core.services.yml</code>:</p>
 
-        <div class="highlight"><pre><span/><span class="nt">form_builder</span><span class="p">:</span>
-  <span class="nt">class</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">Drupal\Core\Form\FormBuilder</span>
-  <span class="nt">arguments</span><span class="p">:</span>
-    <span class="p p-Indicator">-</span> <span class="s">'@form_validator'</span>
-    <span class="p p-Indicator">-</span> <span class="s">'@form_submitter'</span>
-    <span class="p p-Indicator">-</span> <span class="s">'@form_cache'</span>
-    <span class="p p-Indicator">-</span> <span class="s">'@module_handler'</span>
-    <span class="p p-Indicator">-</span> <span class="s">'@event_dispatcher'</span>
-    <span class="p p-Indicator">-</span> <span class="s">'@request_stack'</span>
-    <span class="p p-Indicator">-</span> <span class="s">'@class_resolver'</span>
-    <span class="p p-Indicator">-</span> <span class="s">'@element_info'</span>
-    <span class="p p-Indicator">-</span> <span class="s">'@theme.manager'</span>
-    <span class="p p-Indicator">-</span> <span class="s">'@?csrf_token'</span>
+        <div class="highlight"><pre><span/><span class="nt">form_builder</span><span class="p">:</span><span class="w"/>
+<span class="w">  </span><span class="nt">class</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Drupal\Core\Form\FormBuilder</span><span class="w"/>
+<span class="w">  </span><span class="nt">arguments</span><span class="p">:</span><span class="w"/>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">'@form_validator'</span><span class="w"/>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">'@form_submitter'</span><span class="w"/>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">'@form_cache'</span><span class="w"/>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">'@module_handler'</span><span class="w"/>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">'@event_dispatcher'</span><span class="w"/>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">'@request_stack'</span><span class="w"/>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">'@class_resolver'</span><span class="w"/>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">'@element_info'</span><span class="w"/>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">'@theme.manager'</span><span class="w"/>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">'@?csrf_token'</span><span class="w"/>
 </pre></div><h2 id="section-form-builder">Form builder</h2>
 
         <p><code>FormBuilder</code> is a bit of a kitchen-sink class, implementing many related interfaces:</p>
@@ -546,14 +546,14 @@
 
         <p>Now that the form and form state are completely built, we can move on to input processing. If the form is being submitted (i.e. if <code>$form_state-&gt;isProcessingInput()</code> is <code>TRUE</code>) then <code>$this-&gt;formValidator-&gt;validateForm()</code> is invoked, where <code>formValidator</code> is the <code>form_validator</code> service:</p>
 
-        <div class="highlight"><pre><span/><span class="nt">form_validator</span><span class="p">:</span>
-  <span class="nt">class</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">Drupal\Core\Form\FormValidator</span>
-  <span class="nt">arguments</span><span class="p">:</span>
-    <span class="p p-Indicator">-</span> <span class="s">'@request_stack'</span>
-    <span class="p p-Indicator">-</span> <span class="s">'@string_translation'</span>
-    <span class="p p-Indicator">-</span> <span class="s">'@csrf_token'</span>
-    <span class="p p-Indicator">-</span> <span class="s">'@logger.channel.form'</span>
-    <span class="p p-Indicator">-</span> <span class="s">'@form_error_handler'</span>
+        <div class="highlight"><pre><span/><span class="nt">form_validator</span><span class="p">:</span><span class="w"/>
+<span class="w">  </span><span class="nt">class</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Drupal\Core\Form\FormValidator</span><span class="w"/>
+<span class="w">  </span><span class="nt">arguments</span><span class="p">:</span><span class="w"/>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">'@request_stack'</span><span class="w"/>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">'@string_translation'</span><span class="w"/>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">'@csrf_token'</span><span class="w"/>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">'@logger.channel.form'</span><span class="w"/>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">'@form_error_handler'</span><span class="w"/>
 </pre></div><p>After checking for previous validations, <code>validateForm()</code> again checks the CSRF token. If this isn't valid, the form validation automatically fails. Assuming this is correct, we call off to three callbacks on the <code>FormValidator</code>:</p>
 
         <div class="highlight"><pre><span/><span class="c1">// Recursively validate each form element.</span>
@@ -588,9 +588,9 @@
 
         <p>If the form passes validation, the next step is to submit the data. This time we call out to the <code>form_submitter</code> service via <code>doSubmitForm()</code>:</p>
 
-        <div class="highlight"><pre><span/><span class="nt">form_submitter</span><span class="p">:</span>
-  <span class="nt">class</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">Drupal\Core\Form\FormSubmitter</span>
-  <span class="nt">arguments</span><span class="p">:</span> <span class="p p-Indicator">[</span><span class="s">'@request_stack'</span><span class="p p-Indicator">,</span> <span class="s">'@url_generator'</span><span class="p p-Indicator">]</span>
+        <div class="highlight"><pre><span/><span class="nt">form_submitter</span><span class="p">:</span><span class="w"/>
+<span class="w">  </span><span class="nt">class</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Drupal\Core\Form\FormSubmitter</span><span class="w"/>
+<span class="w">  </span><span class="nt">arguments</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">'@request_stack'</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">'@url_generator'</span><span class="p p-Indicator">]</span><span class="w"/>
 </pre></div><p>This does some processing that's very similar to that found in <code>doValidateForm()</code>. First it checks for submit handlers set on the <code>$form_state</code> for the triggering element, and if not uses handlers set on the form <code>#submit</code> attribute:</p>
 
         <div class="highlight"><pre><span/><span class="c1">// If there was a button pressed, use its handlers.</span>

@@ -124,8 +124,8 @@
 <span class="p">}</span>
 </pre></div><p>First it makes sure that Drupal is installed&#8212;if not, the user is redirected to the install page and the usual routing process ends. Otherwise, the request is passed down the chain to <code>$this-&gt;getHttpKernel()-&gt;handle()</code>. This retrieves the kernel from the core <code>http_kernel</code> service, which by default is:</p>
 
-        <div class="highlight"><pre><span/><span class="nt">http_kernel</span><span class="p">:</span>
-  <span class="nt">class</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">Stack\StackedHttpKernel</span>
+        <div class="highlight"><pre><span/><span class="nt">http_kernel</span><span class="p">:</span><span class="w"/>
+<span class="w">  </span><span class="nt">class</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Stack\StackedHttpKernel</span><span class="w"/>
 </pre></div><p>The <code>StackedHttpKernel</code> is a Symfony Dependency Injection class, again implementing a Symfony interface <code>HttpKernelInterface</code>.</p>
 
         <p>The <code>handle()</code> method here is equally as exciting:</p>
@@ -369,25 +369,25 @@
 <span class="nv">$response</span> <span class="o">=</span> <span class="nv">$renderer</span><span class="o">-&gt;</span><span class="na">renderResponse</span><span class="p">(</span><span class="nv">$result</span><span class="p">,</span> <span class="nv">$request</span><span class="p">,</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">routeMatch</span><span class="p">);</span>
 </pre></div><p>The subscriber service definition:</p>
 
-        <div class="highlight"><pre><span/><span class="nt">main_content_view_subscriber</span><span class="p">:</span>
-  <span class="nt">class</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">Drupal\Core\EventSubscriber\MainContentViewSubscriber</span>
-  <span class="nt">arguments</span><span class="p">:</span> <span class="p p-Indicator">[</span><span class="s">'@class_resolver'</span><span class="p p-Indicator">,</span> <span class="s">'@current_route_match'</span><span class="p p-Indicator">,</span> <span class="s">'%main_content_renderers%'</span><span class="p p-Indicator">]</span>
-  <span class="nt">tags</span><span class="p">:</span>
-    <span class="p p-Indicator">-</span> <span class="p p-Indicator">{</span><span class="nt"> name</span><span class="p">:</span> <span class="nv">event_subscriber</span> <span class="p p-Indicator">}</span>
+        <div class="highlight"><pre><span/><span class="nt">main_content_view_subscriber</span><span class="p">:</span><span class="w"/>
+<span class="w">  </span><span class="nt">class</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Drupal\Core\EventSubscriber\MainContentViewSubscriber</span><span class="w"/>
+<span class="w">  </span><span class="nt">arguments</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">'@class_resolver'</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">'@current_route_match'</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">'%main_content_renderers%'</span><span class="p p-Indicator">]</span><span class="w"/>
+<span class="w">  </span><span class="nt">tags</span><span class="p">:</span><span class="w"/>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="p p-Indicator">{</span><span class="nt"> name</span><span class="p">:</span><span class="w"> </span><span class="nv">event_subscriber</span><span class="w"> </span><span class="p p-Indicator">}</span><span class="w"/>
 </pre></div><p>An example of a content renderer service definition:</p>
 
-        <div class="highlight"><pre><span/><span class="nt">main_content_renderer.html</span><span class="p">:</span>
-  <span class="nt">class</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">Drupal\Core\Render\MainContent\HtmlRenderer</span>
-  <span class="nt">arguments</span><span class="p">:</span>
-    <span class="p p-Indicator">-</span> <span class="s">'@title_resolver'</span>
-    <span class="p p-Indicator">-</span> <span class="s">'@plugin.manager.display_variant'</span>
-    <span class="p p-Indicator">-</span> <span class="s">'@event_dispatcher'</span>
-    <span class="p p-Indicator">-</span> <span class="s">'@module_handler'</span>
-    <span class="p p-Indicator">-</span> <span class="s">'@renderer'</span>
-    <span class="p p-Indicator">-</span> <span class="s">'@render_cache'</span>
-    <span class="p p-Indicator">-</span> <span class="s">'%renderer.config%'</span>
-  <span class="nt">tags</span><span class="p">:</span>
-    <span class="p p-Indicator">-</span> <span class="p p-Indicator">{</span><span class="nt"> name</span><span class="p">:</span> <span class="nv">render.main_content_renderer</span><span class="p p-Indicator">,</span><span class="nt"> format</span><span class="p">:</span> <span class="nv">html</span> <span class="p p-Indicator">}</span>
+        <div class="highlight"><pre><span/><span class="nt">main_content_renderer.html</span><span class="p">:</span><span class="w"/>
+<span class="w">  </span><span class="nt">class</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Drupal\Core\Render\MainContent\HtmlRenderer</span><span class="w"/>
+<span class="w">  </span><span class="nt">arguments</span><span class="p">:</span><span class="w"/>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">'@title_resolver'</span><span class="w"/>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">'@plugin.manager.display_variant'</span><span class="w"/>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">'@event_dispatcher'</span><span class="w"/>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">'@module_handler'</span><span class="w"/>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">'@renderer'</span><span class="w"/>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">'@render_cache'</span><span class="w"/>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">'%renderer.config%'</span><span class="w"/>
+<span class="w">  </span><span class="nt">tags</span><span class="p">:</span><span class="w"/>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="p p-Indicator">{</span><span class="nt"> name</span><span class="p">:</span><span class="w"> </span><span class="nv">render.main_content_renderer</span><span class="p p-Indicator">,</span><span class="nt"> format</span><span class="p">:</span><span class="w"> </span><span class="nv">html</span><span class="w"> </span><span class="p p-Indicator">}</span><span class="w"/>
 </pre></div><p>Content renderers are collected from services tagged with <code>name: render.main_content_renderer</code> as part of the Kernel compilation by another <code>CompilerPass</code> class&#8212;<code>MainContentRenderersPass</code>:</p>
 
         <div class="highlight"><pre><span/><span class="sd">/**</span>
