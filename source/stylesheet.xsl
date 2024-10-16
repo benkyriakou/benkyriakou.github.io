@@ -70,12 +70,6 @@
           <li class="site-header__item">
             <a href="/about">About</a>
           </li>
-          <li class="site-header__item">
-            <a href="//drupal.org/u/ben.kyriakou">Drupal.org</a>
-          </li>
-          <li class="site-header__item">
-            <a href="//twitter.com/benkyriakou">Twitter</a>
-          </li>
         </ul>
       </nav>
     </div>
