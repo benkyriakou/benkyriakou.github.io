@@ -8,13 +8,23 @@
     <article>
       <title>About me</title>
       <content>
-        <p>My name is Ben. I'm currently a Senior Programmer at <a href="http://cogapp.com" rel="external">Cogapp</a>. I mostly work on web-based projects for museums and cultural institutions.</p>
+        <p>My name is Ben. I'm currently a Software Engineer at <a href="https://gocardless.com" rel="external">GoCardless</a>. I mostly work on the scalability of our internal payment-processing systems.</p>
 
-        <h2>I've used a lot of</h2>
+        <h2>I currently use a lot of</h2>
 
         <ul>
-          <li>Drupal</li>
-          <li>PHP</li>
+          <li>Ruby / Rails / Sorbet</li>
+          <li>Postgres</li>
+          <li>Prometheus / Grafana / PromQL</li>
+          <li>BigQuery / Looker</li>
+          <li>Kubernetes</li>
+          <li>GitHub actions</li>
+        </ul>
+
+        <h2>In a past life I used a lot of</h2>
+
+        <ul>
+          <li>Drupal / PHP</li>
           <li>Python</li>
           <li>(S)CSS</li>
           <li>HTML</li>
@@ -25,20 +35,17 @@
         <ul>
           <li>JavaScript</li>
           <li>XSLT</li>
-          <li>Docker</li>
-          <li>Ansible</li>
-          <li>Vagrant</li>
+          <li>Docker / Ansible / Vagrant</li>
           <li>CircleCI</li>
-          <li>Grunt/Gulp</li>
+          <li>Grunt / Gulp</li>
         </ul>
 
         <h2>I'm interested in</h2>
 
         <ul>
-          <li>Tricky technical problems</li>
           <li>Translating complex problems into simple solutions</li>
-          <li>Leading technical teams</li>
-          <li>Diacritics</li>
+          <li>Robustness and scalability</li>
+          <li><a href="https://boringtechnology.club" rel="external">Boring technology</a></li>
         </ul>
 
         <h2>I'm also pretty good at</h2>
