@@ -1,0 +1,411 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!DOCTYPE document [
+  <!ENTITY mdash "&#8212;">
+]>
+
+<document type="article">
+  <title>What's the time Mr Matsumoto?</title>
+  <description>Some notes on dealing with timezones robustly in Ruby/Rails.</description>
+  <slug>/posts/whats-the-time-mr-matsumoto</slug>
+  <content>
+    <article>
+      <title>What's the time Mr Matsumoto?</title>
+      <date datetime="2023-05">May 2023</date>
+      <content>
+        <p>An adaptation of a presentation I gave on writing robust code across timezones in Ruby/Rails. You can see the <a href="/pdfs/whats-the-time-mr-matsumoto.pdf">original presentation here</a>.</p>
+
+        <p>Some things I've learned from writing cross-timezone code in Ruby. Thinking across timezones is hard; UTC isn't enough.</p>
+
+        <p>Let's establish some common ground. Computers generally deal with time in UTC (<a href="https://en.wikipedia.org/wiki/Coordinated_Universal_Time">Coordinated Universal Time</a>). This is great if you're dealing with other computers that are also using UTC, but when dealing with the real world it isn't super useful. UTC represents a datum timezone at 0° longitude, and isn't adjusted for DST (daylight savings time), so if you want to do something relative to a real time like 11am in Sydney you're going to have to deal with timezones.</p>
+
+        <p>Real timezones are messy, but they're necessary if you want to represent times in the real world. For example, UTC is fine for tasks like "I want to run this job once an hour". However, what if you want t to run a job at 02:00. First, 02:00 in which timezone? Does it need to be adjusted for DST? Does it matter if it runs early/late? What if 02:00 doesn't exist on that day in that timezone?</p>
+
+        <h2>What tools do we have in Ruby?</h2>
+
+        <ul>
+          <li><a href="https://ruby-doc.org/current/Time.html">Time</a></li>
+          <li><a href="https://ruby-doc.org/current/exts/date/Date.html">Date</a></li>
+          <li><a href="https://ruby-doc.org/current/exts/date/DateTime.html">DateTime</a> (deprecated in favour of Time)</li>
+        </ul>
+
+        <p>Note that the core Ruby library does not include a TimeZone class.</p>
+
+        <codeblock lang="ruby">
+          &gt; time = Time.now
+          =&gt; 2023-04-06 16:25:08.108773 +0100
+
+          &gt; time.zone
+          =&gt; "BST"
+
+          &gt; require 'date'
+          &gt; date = Date.today
+          =&gt; #&lt;Date: 2023-04-06 ((2460041j,0s,0n),+0s,2299161j)&gt;
+        </codeblock>
+
+        <h2>Enter ActiveSupport</h2>
+
+        <p>ActiveSupport in Rails provides us with some extensions to time which give us both a way of dealing explicitly with timezones (via <code>ActiveSupport::TimeZone</code>) and associating them with times (via <code>ActiveSupport::TimeWithZone</code>).</p>
+
+        <codeblock lang="ruby">
+          &gt; require 'active_support'
+          &gt; require 'active_support/time'
+          &gt; Time.zone
+          =&gt; nil
+          &gt; Time.zone = Time.find_zone!("UTC")
+          &gt; Time.zone
+          =&gt; #&lt;ActiveSupport::TimeZone:0x0000000105f456b8
+               @name="UTC",
+               @tzinfo=#&lt;TZInfo::DataTimezone: Etc/UTC&gt;,
+               @utc_offset=nil&gt;
+          &gt; Time.zone.now
+          =&gt; Thu, 06 Apr 2023 15:32:55.127999000 UTC +00:00
+          &gt; Time.zone.now + 1.day + 1.hour
+          =&gt; Fri, 07 Apr 2023 16:33:05.759982000 UTC +00:00
+          &gt; Time.zone.now.in_time_zone("Australia/Sydney")
+          =&gt; Fri, 07 Apr 2023 01:34:12.413260000 AEST +10:00
+        </codeblock>
+
+        <p>When using ActiveSupport we can configure the default timezone (Rails will do this for you):</p>
+
+        <codeblock lang="ruby">
+          &gt; require 'active_support'
+          &gt; require 'active_support/time'
+          &gt; Time.zone
+          =&gt; nil
+
+          &gt; Time.zone = Time.find_zone!("UTC")
+          &gt; Time.zone.class
+          =&gt; ActiveSupport::TimeZone
+
+          &gt; Time.zone.now
+          =&gt; Thu, 06 Apr 2023 15:32:55.127999000 UTC +00:00
+
+          &gt; Time.zone.now.class
+          =&gt; ActiveSupport::TimeWithZone
+        </codeblock>
+
+        <h2>A note on timezones</h2>
+
+        <p>Where does the computer's notion of timezones come from? On linux-like systems, they're stored in <code>/usr/share/zoneinfo/</code>:</p>
+
+        <codeblock>
+          &gt; tree /usr/share/zoneinfo/
+          /usr/share/zoneinfo/
+          ├── +VERSION
+          ├── Africa
+          │   ├── Abidjan
+          │   ├── Accra
+          │   ├── Addis_Ababa
+          │   ├── Algiers
+          │   ├── Asmara
+          │   ├── Asmera
+          │   ├── Bamako
+          │   ├── Bangui
+          │   ├── Banjul
+          │   ├── Bissau
+          │   ├── Blantyre
+        </codeblock>
+
+        <p>What do these tell us?</p>
+
+        <codeblock>
+          &gt; zdump -v /usr/share/zoneinfo/Europe/London | tail -n 6
+          /usr/share/zoneinfo/Europe/London  Sun Mar 29 00:59:59 2037 UTC = Sun Mar 29 00:59:59 2037 GMT isdst=0
+          /usr/share/zoneinfo/Europe/London  Sun Mar 29 01:00:00 2037 UTC = Sun Mar 29 02:00:00 2037 BST isdst=1
+          /usr/share/zoneinfo/Europe/London  Sun Oct 25 00:59:59 2037 UTC = Sun Oct 25 01:59:59 2037 BST isdst=1
+          /usr/share/zoneinfo/Europe/London  Sun Oct 25 01:00:00 2037 UTC = Sun Oct 25 01:00:00 2037 GMT isdst=0
+          /usr/share/zoneinfo/Europe/London  Mon Jan 18 03:14:07 2038 UTC = Mon Jan 18 03:14:07 2038 GMT isdst=0
+          /usr/share/zoneinfo/Europe/London  Tue Jan 19 03:14:07 2038 UTC = Tue Jan 19 03:14:07 2038 GMT isdst=0
+        </codeblock>
+
+        <p>If you’re curious about the last two lines, Google the "Epochalypse" (yes, that’s a thing). If you're using a language like Go you'll see that it represents datetimes as an int64 to avoid this problem</p>
+
+        <p>By default TZInfo in Ruby actually uses the <code>tzinfo-data</code> gem as its source. You can force it to use zoneinfo with <code>TZInfo::DataSource.set(:zoneinfo)</code></p>
+
+        <codeblock lang="ruby">
+          &gt; require "tzinfo"
+          &gt; london = TZInfo::Timezone.get("Europe/London")
+          =&gt; #&lt;TZInfo::DataTimezone: Europe/London&gt;
+          &gt; london.canonical_identifier
+          =&gt; "Europe/London"
+          &gt; london.observed_utc_offset
+          =&gt; 3600
+          &gt; london.now
+          =&gt; 2023-04-07 22:25:16.077745 +0100
+
+          # Also available on an ActiveSupport::TimeZone:
+
+          &gt; london = Time.find_zone!("Europe/London")
+          &gt; london.tzinfo
+          =&gt; #&lt;TZInfo::DataTimezone: Europe/London&gt;
+        </codeblock>
+
+        <h2>What about ActiveRecord?</h2>
+
+        <p>There are actually two types of timestamp column you can create with Rails (in Postgres, at least):</p>
+
+        <codeblock>
+          &gt; rails generate model widget \
+            title:string utc_timestamp:timestamp tz_timestamp:timestamptz
+
+          ---
+
+          class CreateWidgets &lt; ActiveRecord::Migration[7.0]
+            def change
+              create_table :widgets do |t|
+                t.string :title
+                t.timestamp :utc_timestamp
+                t.timestamptz :tz_timestamp
+
+                t.timestamps
+              end
+            end
+          end
+        </codeblock>
+
+        <p>The difference is that, in the database, one is stored with timezone information:</p>
+
+        <codeblock>
+              Column     |              Type
+          ---------------+-------------------------------
+           id            | bigint
+           title         | character varying
+           utc_timestamp | timestamp without time zone
+           tz_timestamp  | timestamp with time zone
+           created_at    | timestamp(6) without time zone
+           updated_at    | timestamp(6) without time zone
+        </codeblock>
+
+        <p>By default this will use the timezone set in the database:</p>
+
+        <codeblock>
+          rails_test_development=> SELECT * FROM widgets;
+          -[ RECORD 1 ]-+------------------------------
+          id            | 1
+          title         | my_widget
+          utc_timestamp | 2023-04-08 20:07:34.545792
+          tz_timestamp  | 2023-04-08 21:07:34.545792+01
+
+          rails_test_development=> SHOW TIMEZONE;
+          -[ RECORD 1 ]-----------
+          TimeZone | Europe/London
+        </codeblock>
+
+        <p>This doesn't <em>actually</em> matter in Rails since it will convert everything to UTC (or your configured Rails timezone) on models:</p>
+
+        <codeblock lang="ruby">
+          now = Time.find_zone!("Australia/Sydney").now
+
+          Widget.create(
+            title: "my_widget",
+            tz_timestamp: now,
+            utc_timestamp: now,
+          )
+
+          #&lt;Widget:0x0000000106d14780
+           id: 1,
+           title: "my_widget",
+           utc_timestamp: Sat, 08 Apr 2023 20:07:34.545792000 UTC +00:00,
+           tz_timestamp: Sat, 08 Apr 2023 20:07:34.545792000 UTC +00:00,
+           created_at: Sat, 08 Apr 2023 20:07:57.445968000 UTC +00:00,
+           updated_at: Sat, 08 Apr 2023 20:07:57.445968000 UTC +00:00&gt;
+        </codeblock>
+
+        <p>We can see this in the SQL executed:</p>
+
+        <codeblock lang="ruby">
+          Widget.create(
+            title: "my_widget",
+            tz_timestamp: Time.find_zone!("Europe/London").now,
+            utc_timestamp: Time.find_zone!("Australia/Sydney").now,
+          )
+
+          INSERT INTO "widgets" ("title", "utc_timestamp", "tz_timestamp", "created_at", "updated_at")
+          VALUES ($1, $2, $3, $4, $5) RETURNING "id"
+          [
+            ["title", "my_widget"],
+            ["utc_timestamp", "2023-04-27 15:25:04.389264"],
+            ["tz_timestamp", "2023-04-27 15:25:04.382907"],
+            ["created_at", "2023-04-27 15:25:04.392253"],
+            ["updated_at", "2023-04-27 15:25:04.392253"]
+          ]
+        </codeblock>
+
+        <p>The simplest thing is to store everything in the database as a <code>timestamp</code> and let Rails take care of the UTC conversion.</p>
+
+        <h2>Things to avoid</h2>
+
+        <h3>Manual UTC offsetting</h3>
+
+        <p>Especially don’t do this:</p>
+
+        <codeblock lang="ruby">
+          &gt; Time.find_zone!("Europe/London").utc_offset
+          =&gt; 0
+
+          &gt; Date.today
+          =&gt; Fri, 07 Apr 2023
+
+          &gt; Timecop.freeze("01 November 2023") do
+              Time.find_zone!("Europe/London").utc_offset
+            end
+          =&gt; 0
+        </codeblock>
+
+        This is equivalent to the constant:
+
+        <codeblock lang="ruby">
+          &gt; Time.find_zone!("Europe/London").tzinfo.base_utc_offset
+          =&gt; 0
+        </codeblock>
+
+        If you have to do this, use observed_utc_offset:
+
+        <codeblock lang="ruby">
+          &gt; Time.find_zone!("Europe/London").tzinfo.observed_utc_offset
+          =&gt; 3600
+
+          &gt; Date.today
+          =&gt; Fri, 07 Apr 2023
+        </codeblock>
+
+        This will return different values depending on the current DST offset:
+
+        <codeblock lang="ruby">
+          &gt; Timecop.freeze("01 November 2023") do
+              Time.find_zone!("Europe/London").tzinfo.observed_utc_offset
+            end
+          =&gt; 0
+        </codeblock>
+
+        <h3><code>.parse</code> methods</h3>
+
+        <p>These are far too permissive in what they consider valid:</p>
+
+        <codeblock lang="ruby">
+          &gt; Date.parse("Monday 26rd September 2016")
+          =&gt; #&lt;Date: 2016-09-26 ((2457658j,0s,0n),+0s,2299161j)&gt;
+
+          &gt; Date.parse("fri1feb3bc4pm+5")
+          =&gt; #&lt;Date: -0002-02-01 ((1720359j,0s,0n),+0s,2299161j)&gt;
+
+          &gt; Date.parse("2O15-O2-01")
+          =&gt; #&lt;Date: 2022-09-15 ((2459838j,0s,0n),+0s,2299161j)&gt;
+
+          &gt; Date.parse("20189")
+          =&gt; Tue, 07 Jul 2020
+        </codeblock>
+
+        <p>Use the <code>iso8601</code> methods instead, or <code>strptime</code> for nonstandard formats:</p>
+
+        <codeblock lang="ruby">
+          &gt; Date.iso8601("2022-01-01")
+          =&gt; Sat, 01 Jan 2022
+
+          &gt; Time.zone.iso8601("2022-01-01T12:00")
+          =&gt; Sat, 01 Jan 2022 12:00:00.000000000 UTC +00:00
+
+          &gt; Time.zone.now.iso8601
+          =&gt; "2023-04-08T15:07:06Z"
+
+          &gt; Time.zone.strptime("8 April 2023, 12:00", "%d %B %Y, %k:%M")
+          =&gt; Sat, 08 Apr 2023 12:00:00.000000000 UTC +00:00
+        </codeblock>
+
+        <h3>"Implicit" timezones, poor conversion</h3>
+
+        <p>Interpreting a datetime without specifying the timezone may give unexpected results:</p>
+
+        <codeblock lang="ruby">
+          &gt; Time.iso8601("2022-06-17T16:00").in_time_zone("Europe/London")
+          =&gt; Fri, 17 Jun 2022 16:00:00.000000000 BST +01:00
+          &gt; Time.zone.iso8601("2022-06-17T16:00").in_time_zone("Europe/London")
+          =&gt; Fri, 17 Jun 2022 17:00:00.000000000 BST +01:00
+          &gt; Time.zone.iso8601("2022-06-17T16:00")
+          =&gt; Fri, 17 Jun 2022 16:00:00.000000000 UTC +00:00
+
+          # Specify the timezone as context
+          &gt; Time.find_zone!("Europe/London").iso8601("2022-06-17T16:00")
+          =&gt; Fri, 17 Jun 2022 16:00:00.000000000 BST +01:00
+
+          # Even "now" should have a timezone context
+          &gt; Time.now
+          =&gt; 2023-04-07 22:40:34.782764 +0100
+          &gt; Time.local(2023, 1, 1).zone
+          =&gt; "GMT"
+          &gt; Time.zone.name
+          =&gt; "UTC"
+        </codeblock>
+
+        <h3>Don't pass around dates</h3>
+
+        <p>Without a timezone context a date is meaningless:</p>
+
+        <codeblock lang="ruby">
+          &gt; beginning_of_day = Time.find_zone!("Australia/Sydney").now.beginning_of_day
+          =&gt; Fri, 07 Apr 2023 00:00:00.000000000 AEST +10:00
+          &gt; date = beginning_of_day.to_date
+          =&gt; Fri, 07 Apr 2023
+
+          # in some other code
+
+          &gt; now_somewhere_else = Time.zone.iso8601(date.iso8601)
+          =&gt; Fri, 07 Apr 2023 00:00:00.000000000 UTC +00:00
+          &gt; beginning_of_day.to_i - now_somewhere_else.to_i
+          =&gt; -36000
+        </codeblock>
+
+        <h2>Best practices</h2>
+
+        <h3>Use strict methods</h3>
+
+        <p>Avoid using methods that can silently do the wrong thing:</p>
+
+        <codeblock lang="ruby">
+          # don’t use this - returns nil
+          Time.find_zone("Foo/Bar")
+
+          # don’t use this - returns nil
+          ActiveSupport::TimeZone.new("Foo/Bar")
+
+          # raises TZInfo::InvalidTimezoneIdentifier
+          TZInfo::Timezone.get("Foo/Bar")
+
+          # raises ArgumentError
+          Time.find_zone!("Foo/Bar")
+        </codeblock>
+
+        <p>Using methods that raise errors should always be preferred, as if you aren't checking your return values you can end up with more insidious bugs:</p>
+
+        <codeblock lang="ruby">
+          &gt; london = Time.find_zone("Europe/Londn")
+          =&gt; nil
+          &gt; Time.find_zone!("UTC").now.in_time_zone(london)
+          =&gt; 2023-04-06 11:11:03.449456 UTC
+
+          # vs
+
+          &gt; london = Time.find_zone!("Europe/Londn")
+          lib/active_support/core_ext/time/zones.rb:85:in `find_zone!':
+          Invalid Timezone: Europe/Londn (ArgumentError)
+        </codeblock>
+
+        <h3>Use specific names</h3>
+
+        <p>Prefer specific timezone names, which will also be enforced  by using strict methods. Avoid using legacy names.</p>
+
+        <p> For example: prefer 'America/New_York' to 'US/Eastern' or 'EST5EDT'. This also applies when discussing/specifying timezones. Referring to 'Europe/London' as GMT or 'America/New_York' as EST is wrong about 50% of the year.</p>
+
+        <h3>Test in multiple timezones</h3>
+
+        <ul>
+          <li>Don’t fall into the trap of Europe/London or UTC being the "one true timezone"</li>
+          <li>Test that time-sensitive code works correctly in multiple timezones</li>
+          <li>Make use of Timecop to account for DST and any other relevant changes over time</li>
+          <li>Make use of the internet or tzinfo to find out when DST happens</li>
+        </ul>
+      </content>
+    </article>
+  </content>
+</document>
