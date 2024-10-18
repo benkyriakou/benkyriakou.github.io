@@ -108,7 +108,7 @@ for item in os.walk(SOURCE_DIR):
         code = code_block.text
         leader_indent = len(re.match(r'\s+', code).group(0)) - 1
         code = '\n'.join([l[leader_indent:] for l in code.split('\n')])
-        lang = code_block.get('lang')
+        lang = code_block.get('lang', default='text')
         options = {}
 
         if lang == 'php':
