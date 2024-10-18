@@ -255,14 +255,20 @@ TimeZone | Europe/London
     <span class="no">Time</span><span class="o">.</span><span class="n">find_zone!</span><span class="p">(</span><span class="s2">"Europe/London"</span><span class="p">)</span><span class="o">.</span><span class="n">utc_offset</span>
   <span class="k">end</span>
 <span class="o">=&gt;</span> <span class="mi">0</span>
-</pre></div><div class="highlight"><pre><span/><span class="o">&gt;</span> <span class="no">Time</span><span class="o">.</span><span class="n">find_zone!</span><span class="p">(</span><span class="s2">"Europe/London"</span><span class="p">)</span><span class="o">.</span><span class="n">tzinfo</span><span class="o">.</span><span class="n">base_utc_offset</span>
+</pre></div><p>This is equivalent to the constant:</p>
+
+        <div class="highlight"><pre><span/><span class="o">&gt;</span> <span class="no">Time</span><span class="o">.</span><span class="n">find_zone!</span><span class="p">(</span><span class="s2">"Europe/London"</span><span class="p">)</span><span class="o">.</span><span class="n">tzinfo</span><span class="o">.</span><span class="n">base_utc_offset</span>
 <span class="o">=&gt;</span> <span class="mi">0</span>
-</pre></div><div class="highlight"><pre><span/><span class="o">&gt;</span> <span class="no">Time</span><span class="o">.</span><span class="n">find_zone!</span><span class="p">(</span><span class="s2">"Europe/London"</span><span class="p">)</span><span class="o">.</span><span class="n">tzinfo</span><span class="o">.</span><span class="n">observed_utc_offset</span>
+</pre></div><p>If you have to do this, use observed_utc_offset:</p>
+
+        <div class="highlight"><pre><span/><span class="o">&gt;</span> <span class="no">Time</span><span class="o">.</span><span class="n">find_zone!</span><span class="p">(</span><span class="s2">"Europe/London"</span><span class="p">)</span><span class="o">.</span><span class="n">tzinfo</span><span class="o">.</span><span class="n">observed_utc_offset</span>
 <span class="o">=&gt;</span> <span class="mi">3600</span>
 
 <span class="o">&gt;</span> <span class="no">Date</span><span class="o">.</span><span class="n">today</span>
 <span class="o">=&gt;</span> <span class="no">Fri</span><span class="p">,</span> <span class="mo">07</span> <span class="no">Apr</span> <span class="mi">2023</span>
-</pre></div><div class="highlight"><pre><span/><span class="o">&gt;</span> <span class="no">Timecop</span><span class="o">.</span><span class="n">freeze</span><span class="p">(</span><span class="s2">"01 November 2023"</span><span class="p">)</span> <span class="k">do</span>
+</pre></div><p>This will return different values depending on the current DST offset:</p>
+
+        <div class="highlight"><pre><span/><span class="o">&gt;</span> <span class="no">Timecop</span><span class="o">.</span><span class="n">freeze</span><span class="p">(</span><span class="s2">"01 November 2023"</span><span class="p">)</span> <span class="k">do</span>
     <span class="no">Time</span><span class="o">.</span><span class="n">find_zone!</span><span class="p">(</span><span class="s2">"Europe/London"</span><span class="p">)</span><span class="o">.</span><span class="n">tzinfo</span><span class="o">.</span><span class="n">observed_utc_offset</span>
   <span class="k">end</span>
 <span class="o">=&gt;</span> <span class="mi">0</span>

@@ -253,14 +253,14 @@
           =&gt; 0
         </codeblock>
 
-        This is equivalent to the constant:
+        <p>This is equivalent to the constant:</p>
 
         <codeblock lang="ruby">
           &gt; Time.find_zone!("Europe/London").tzinfo.base_utc_offset
           =&gt; 0
         </codeblock>
 
-        If you have to do this, use observed_utc_offset:
+        <p>If you have to do this, use observed_utc_offset:</p>
 
         <codeblock lang="ruby">
           &gt; Time.find_zone!("Europe/London").tzinfo.observed_utc_offset
@@ -270,7 +270,7 @@
           =&gt; Fri, 07 Apr 2023
         </codeblock>
 
-        This will return different values depending on the current DST offset:
+        <p>This will return different values depending on the current DST offset:</p>
 
         <codeblock lang="ruby">
           &gt; Timecop.freeze("01 November 2023") do
