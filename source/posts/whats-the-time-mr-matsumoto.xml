@@ -167,14 +167,14 @@
         <p>The difference is that, in the database, one is stored with timezone information:</p>
 
         <codeblock>
-              Column     |              Type
-          ---------------+-------------------------------
-           id            | bigint
-           title         | character varying
-           utc_timestamp | timestamp without time zone
-           tz_timestamp  | timestamp with time zone
-           created_at    | timestamp(6) without time zone
-           updated_at    | timestamp(6) without time zone
+          |    Column     |              Type              |
+          +---------------+--------------------------------+
+          | id            | bigint                         |
+          | title         | character varying              |
+          | utc_timestamp | timestamp without time zone    |
+          | tz_timestamp  | timestamp with time zone       |
+          | created_at    | timestamp(6) without time zone |
+          | updated_at    | timestamp(6) without time zone |
         </codeblock>
 
         <p>By default this will use the timezone set in the database:</p>

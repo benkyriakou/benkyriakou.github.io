@@ -183,14 +183,14 @@ class CreateWidgets &lt; ActiveRecord::Migration[7.0]
 end
 </pre></div><p>The difference is that, in the database, one is stored with timezone information:</p>
 
-        <div class="highlight"><pre><span/>Column     |              Type
------------+-------------------------------
-           | bigint
-le         | character varying
-_timestamp | timestamp without time zone
-timestamp  | timestamp with time zone
-ated_at    | timestamp(6) without time zone
-ated_at    | timestamp(6) without time zone
+        <div class="highlight"><pre><span/>|    Column     |              Type              |
++---------------+--------------------------------+
+| id            | bigint                         |
+| title         | character varying              |
+| utc_timestamp | timestamp without time zone    |
+| tz_timestamp  | timestamp with time zone       |
+| created_at    | timestamp(6) without time zone |
+| updated_at    | timestamp(6) without time zone |
 </pre></div><p>By default this will use the timezone set in the database:</p>
 
         <div class="highlight"><pre><span/>rails_test_development=&gt; SELECT * FROM widgets;
