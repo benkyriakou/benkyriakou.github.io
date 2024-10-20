@@ -10,6 +10,7 @@
       <content>
         <ul>
           <li><a href="/pdfs/whats-the-time-mr-matsumoto.pdf">What's the time Mr Matsumoto?</a></li>
+          <li><a href="/pdfs/rails-and-zeitwerk.pdf">Rails and Zeitwerk</a></li>
           <li><a href="/pdfs/docker-compose-2019.pdf">A summary of Docker Compose</a></li>
           <li><a href="/pdfs/git-2018.pdf">Practical Git tips</a></li>
           <li><a href="/pdfs/drupal-2018.pdf">An overview of Drupal 8</a></li>
