@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!DOCTYPE document [
+  <!ENTITY mdash "&#8212;">
+  <!ENTITY hellip "&#8230;">
+]>
+
+<document type="article">
+  <title>Rails and Zeitwerk</title>
+  <description>A primer on using Zeitwerk with Rails.</description>
+  <slug>/posts/rails-and-zeitwerk</slug>
+  <content>
+    <article>
+      <title>Rails and Zeitwerk</title>
+      <date datetime="2021-09">September 2021</date>
+      <content>
+        <p>As part of our migration from the Classic autoloader to Zeitwerk in Rails, I gave a short presentation on the high-level aspects of Zeitwerk worth knowing about.</p>
+
+        <p>To go along with this, I wrote <a href="https://github.com/benkyriakou/ztwrk">ztwrk</a>, an abbreviated autoloader which takes the core parts of Zeitwerk to demonstrate how it works in conjunction with the <code>autoload</code> and <code>Kernel.require</code> methods to implement dynamic autoloading.</p>
+
+        <p>Check it out!</p>
+      </content>
+    </article>
+  </content>
+</document>

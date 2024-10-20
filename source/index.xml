@@ -8,6 +8,7 @@
   <content>
     <xi:include href="posts/hushlogin.xml" parse="xml" xpointer="xpointer(/document)" />
     <xi:include href="posts/whats-the-time-mr-matsumoto.xml" parse="xml" xpointer="xpointer(/document)" />
+    <xi:include href="posts/rails-and-zeitwerk.xml" parse="xml" xpointer="xpointer(/document)" />
     <xi:include href="posts/drupal-8-form-builder.xml" parse="xml" xpointer="xpointer(/document)" />
     <xi:include href="posts/drupal-8-page-rendering.xml" parse="xml" xpointer="xpointer(/document)" />
     <xi:include href="posts/xdebug-docker-phpstorm.xml" parse="xml" xpointer="xpointer(/document)" />
