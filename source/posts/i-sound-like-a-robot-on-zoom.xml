@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!DOCTYPE document [
+  <!ENTITY mdash "&#8212;">
+  <!ENTITY hellip "&#8230;">
+]>
+
+<document type="article">
+  <title>I sound like a robot on Zoom</title>
+  <description>A setting which can make you sound like a robot on Zoom.</description>
+  <slug>/posts/i-sound-like-a-robot-on-zoom</slug>
+  <content>
+    <article>
+      <title>I sound like a robot on Zoom</title>
+      <date datetime="2024-11">November 2024</date>
+      <content>
+        <p>If you sound like a robot on Zoom, but not on other voice recordings, you might need to change your microphone settings to disable voice isolation.</p>
+
+        <p>However, the setting isn't in a very obvious place. Instead of looking in the Zoom settings, instead look for the taskbar icon that appears when the settings are open and disable voice isolation.</p>
+
+        <img src="/images/articles/zoom/mic-settings.png" alt="Zoom microphone settings" />
+
+        <p>I'm not sure why this causes issues&mdash;my theory is that because I'm using a cardioid microphone the lack of background noise confuses the voice isolation. In any case, turning this off fixed the issue. Hope this helps!</p>
+      </content>
+    </article>
+  </content>
+</document>
