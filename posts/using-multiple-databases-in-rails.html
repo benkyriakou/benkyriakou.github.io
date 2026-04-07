@@ -61,55 +61,55 @@
 
         <p>As a bit of background if you're not familiar with Rails&#8212;the core framework has good support for multiple databases, as detailed <a href="https://guides.rubyonrails.org/active_record_multiple_databases.html">in this guide</a>, supporting any number of database connections. When setting up your databases the core config is managed in the database.yml file&#8212;here's a basic example of a primary database with a read-replica, and a secondary database for additional content:</p>
 
-        <div class="highlight"><pre><span/><span class="nt">production</span><span class="p">:</span><span class="w"/>
-<span class="w"> </span><span class="c1"># Both the primary and replica connect to the same database,</span><span class="w"/>
-<span class="w"> </span><span class="c1"># but with different roles.</span><span class="w"/>
-<span class="w"> </span><span class="nt">primary</span><span class="p">:</span><span class="w"/>
-<span class="w">   </span><span class="nt">host</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">primarydb.vpc.local</span><span class="w"/>
-<span class="w">   </span><span class="nt">adapter</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">postgresql</span><span class="w"/>
-<span class="w">   </span><span class="nt">username</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">foo</span><span class="w"/>
-<span class="w">   </span><span class="nt">password</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">bar</span><span class="w"/>
-<span class="w">   </span><span class="nt">database</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">blog</span><span class="w"/>
-<span class="w"> </span><span class="nt">replica</span><span class="p">:</span><span class="w"/>
-<span class="w">   </span><span class="nt">host</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">replicadb.vpc.local</span><span class="w"/>
-<span class="w">   </span><span class="nt">adapter</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">postgresql</span><span class="w"/>
-<span class="w">   </span><span class="nt">username</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">foo</span><span class="w"/>
-<span class="w">   </span><span class="nt">password</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">bar</span><span class="w"/>
-<span class="w">   </span><span class="nt">database</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">blog</span><span class="w"/>
-<span class="w">   </span><span class="nt">replica</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span><span class="w"/>
-<span class="w"> </span><span class="c1"># This connects to a different database. This might store information</span><span class="w"/>
-<span class="w"> </span><span class="c1"># on records we don't always need to access.</span><span class="w"/>
-<span class="w"> </span><span class="nt">secondary</span><span class="p">:</span><span class="w"/>
-<span class="w">   </span><span class="nt">host</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">commentdb.vpc.local</span><span class="w"/>
-<span class="w">   </span><span class="nt">adapter</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">postgresql</span><span class="w"/>
-<span class="w">   </span><span class="nt">username</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">bar</span><span class="w"/>
-<span class="w">   </span><span class="nt">password</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">baz</span><span class="w"/>
-<span class="w">   </span><span class="nt">database</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">comment_metadata</span><span class="w"/>
+        <div class="highlight"><pre><span/><span class="nt">production</span><span class="p">:</span>
+<span class="w"> </span><span class="c1"># Both the primary and replica connect to the same database,</span>
+<span class="w"> </span><span class="c1"># but with different roles.</span>
+<span class="w"> </span><span class="nt">primary</span><span class="p">:</span>
+<span class="w">   </span><span class="nt">host</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">primarydb.vpc.local</span>
+<span class="w">   </span><span class="nt">adapter</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">postgresql</span>
+<span class="w">   </span><span class="nt">username</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">foo</span>
+<span class="w">   </span><span class="nt">password</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">bar</span>
+<span class="w">   </span><span class="nt">database</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">blog</span>
+<span class="w"> </span><span class="nt">replica</span><span class="p">:</span>
+<span class="w">   </span><span class="nt">host</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">replicadb.vpc.local</span>
+<span class="w">   </span><span class="nt">adapter</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">postgresql</span>
+<span class="w">   </span><span class="nt">username</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">foo</span>
+<span class="w">   </span><span class="nt">password</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">bar</span>
+<span class="w">   </span><span class="nt">database</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">blog</span>
+<span class="w">   </span><span class="nt">replica</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="w"> </span><span class="c1"># This connects to a different database. This might store information</span>
+<span class="w"> </span><span class="c1"># on records we don't always need to access.</span>
+<span class="w"> </span><span class="nt">secondary</span><span class="p">:</span>
+<span class="w">   </span><span class="nt">host</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">commentdb.vpc.local</span>
+<span class="w">   </span><span class="nt">adapter</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">postgresql</span>
+<span class="w">   </span><span class="nt">username</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">bar</span>
+<span class="w">   </span><span class="nt">password</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">baz</span>
+<span class="w">   </span><span class="nt">database</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">comment_metadata</span>
 </pre></div><p>The primary configuration will be used by default per Rails naming conventions. If we want to direct queries to our replica to offload some read traffic we can use the appropriate helpers to configure the appropriate database for the writing and reading roles:</p>
 
         <div class="highlight"><pre><span/><span class="c1"># Set the base ApplicationRecord to use the replica when reading.</span>
-<span class="k">class</span> <span class="nc">ApplicationRecord</span> <span class="o">&lt;</span> <span class="no">ActiveRecord</span><span class="o">::</span><span class="no">Base</span>
- <span class="nb">self</span><span class="o">.</span><span class="n">abstract_class</span> <span class="o">=</span> <span class="kp">true</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">ApplicationRecord</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="no">ActiveRecord</span><span class="o">::</span><span class="no">Base</span>
+<span class="w"> </span><span class="nb">self</span><span class="o">.</span><span class="n">abstract_class</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kp">true</span>
 
- <span class="n">connects_to</span> <span class="ss">database</span><span class="p">:</span> <span class="p">{</span> <span class="ss">writing</span><span class="p">:</span> <span class="ss">:primary</span><span class="p">,</span> <span class="ss">reading</span><span class="p">:</span> <span class="ss">:replica</span> <span class="p">}</span>
+<span class="w"> </span><span class="n">connects_to</span><span class="w"> </span><span class="ss">database</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="ss">writing</span><span class="p">:</span><span class="w"> </span><span class="ss">:primary</span><span class="p">,</span><span class="w"> </span><span class="ss">reading</span><span class="p">:</span><span class="w"> </span><span class="ss">:replica</span><span class="w"> </span><span class="p">}</span>
 <span class="k">end</span>
 
 <span class="c1"># When code should connect to the replica, set the role with connected_to.</span>
-<span class="no">ActiveRecord</span><span class="o">::</span><span class="no">Base</span><span class="o">.</span><span class="n">connected_to</span><span class="p">(</span><span class="ss">role</span><span class="p">:</span> <span class="ss">:reading</span><span class="p">,</span> <span class="ss">prevent_writes</span><span class="p">:</span> <span class="kp">true</span><span class="p">)</span> <span class="k">do</span>
- <span class="c1"># code to use the replica goes here</span>
+<span class="no">ActiveRecord</span><span class="o">::</span><span class="no">Base</span><span class="o">.</span><span class="n">connected_to</span><span class="p">(</span><span class="ss">role</span><span class="p">:</span><span class="w"> </span><span class="ss">:reading</span><span class="p">,</span><span class="w"> </span><span class="ss">prevent_writes</span><span class="p">:</span><span class="w"> </span><span class="kp">true</span><span class="p">)</span><span class="w"> </span><span class="k">do</span>
+<span class="w"> </span><span class="c1"># code to use the replica goes here</span>
 <span class="k">end</span>
 </pre></div><p>Switching between actual databases is configured in a similar manner, we just swap out our primary and replica connections for the secondary database:</p>
 
         <div class="highlight"><pre><span/><span class="c1"># Abstract base class for models.</span>
-<span class="k">class</span> <span class="nc">SecondaryRecord</span> <span class="o">&lt;</span> <span class="no">ApplicationRecord</span>
- <span class="nb">self</span><span class="o">.</span><span class="n">abstract_class</span> <span class="o">=</span> <span class="kp">true</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">SecondaryRecord</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="no">ApplicationRecord</span>
+<span class="w"> </span><span class="nb">self</span><span class="o">.</span><span class="n">abstract_class</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kp">true</span>
 
- <span class="n">connects_to</span> <span class="ss">database</span><span class="p">:</span> <span class="p">{</span> <span class="ss">writing</span><span class="p">:</span> <span class="ss">:secondary</span><span class="p">,</span> <span class="ss">reading</span><span class="p">:</span> <span class="ss">:secondary</span> <span class="p">}</span>
+<span class="w"> </span><span class="n">connects_to</span><span class="w"> </span><span class="ss">database</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="ss">writing</span><span class="p">:</span><span class="w"> </span><span class="ss">:secondary</span><span class="p">,</span><span class="w"> </span><span class="ss">reading</span><span class="p">:</span><span class="w"> </span><span class="ss">:secondary</span><span class="w"> </span><span class="p">}</span>
 <span class="k">end</span>
 
 <span class="c1"># Concrete model class for a blog post.</span>
-<span class="k">class</span> <span class="nc">BlogPost</span> <span class="o">&lt;</span> <span class="no">SecondaryRecord</span>
- <span class="c1"># Model-specific code goes here.</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">BlogPost</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="no">SecondaryRecord</span>
+<span class="w"> </span><span class="c1"># Model-specific code goes here.</span>
 <span class="k">end</span>
 </pre></div><p>This is the approach we took for our research project, although as you'll see there were some other considerations we had to make to isolate ourselves entirely from the primary database.</p>
 
@@ -132,38 +132,38 @@
 <span class="c1">#   primary: [:writing, :reading],</span>
 <span class="c1">#   replica: [:reading],</span>
 <span class="c1"># }</span>
-<span class="no">RSpec</span><span class="o">::</span><span class="no">Matchers</span><span class="o">.</span><span class="n">define</span> <span class="ss">:exactly_query_databases</span> <span class="k">do</span> <span class="o">|</span><span class="n">expected_dbs</span><span class="o">|</span>
- <span class="n">match</span> <span class="k">do</span> <span class="o">|</span><span class="n">block</span><span class="o">|</span>
-   <span class="vi">@expected_dbs</span> <span class="o">=</span> <span class="n">expected_dbs</span><span class="o">.</span><span class="n">transform_values</span><span class="p">(</span><span class="o">&amp;</span><span class="ss">:to_set</span><span class="p">)</span><span class="o">.</span><span class="n">with_indifferent_access</span>
-   <span class="vi">@actual_dbs</span> <span class="o">=</span> <span class="no">Hash</span><span class="o">.</span><span class="n">new</span> <span class="p">{</span> <span class="o">|</span><span class="n">h</span><span class="p">,</span> <span class="n">k</span><span class="o">|</span> <span class="n">h</span><span class="o">[</span><span class="n">k</span><span class="o">]</span> <span class="o">=</span> <span class="no">Set</span><span class="o">.</span><span class="n">new</span> <span class="p">}</span><span class="o">.</span><span class="n">with_indifferent_access</span>
+<span class="no">RSpec</span><span class="o">::</span><span class="no">Matchers</span><span class="o">.</span><span class="n">define</span><span class="w"> </span><span class="ss">:exactly_query_databases</span><span class="w"> </span><span class="k">do</span><span class="w"> </span><span class="o">|</span><span class="n">expected_dbs</span><span class="o">|</span>
+<span class="w"> </span><span class="n">match</span><span class="w"> </span><span class="k">do</span><span class="w"> </span><span class="o">|</span><span class="n">block</span><span class="o">|</span>
+<span class="w">   </span><span class="vi">@expected_dbs</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">expected_dbs</span><span class="o">.</span><span class="n">transform_values</span><span class="p">(</span><span class="o">&amp;</span><span class="ss">:to_set</span><span class="p">)</span><span class="o">.</span><span class="n">with_indifferent_access</span>
+<span class="w">   </span><span class="vi">@actual_dbs</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="no">Hash</span><span class="o">.</span><span class="n">new</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="o">|</span><span class="n">h</span><span class="p">,</span><span class="w"> </span><span class="n">k</span><span class="o">|</span><span class="w"> </span><span class="n">h</span><span class="o">[</span><span class="n">k</span><span class="o">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="no">Set</span><span class="o">.</span><span class="n">new</span><span class="w"> </span><span class="p">}</span><span class="o">.</span><span class="n">with_indifferent_access</span>
 
-   <span class="no">ActiveSupport</span><span class="o">::</span><span class="no">Notifications</span><span class="o">.</span>
-     <span class="n">subscribe</span><span class="p">(</span><span class="s2">"sql.active_record"</span><span class="p">)</span> <span class="k">do</span> <span class="o">|</span><span class="n">_name</span><span class="p">,</span> <span class="n">_start</span><span class="p">,</span> <span class="n">_finish</span><span class="p">,</span> <span class="n">_id</span><span class="p">,</span> <span class="n">payload</span><span class="o">|</span>
-       <span class="n">pool</span> <span class="o">=</span> <span class="n">payload</span><span class="o">.</span><span class="n">fetch</span><span class="p">(</span><span class="ss">:connection</span><span class="p">)</span><span class="o">.</span><span class="n">pool</span>
+<span class="w">   </span><span class="no">ActiveSupport</span><span class="o">::</span><span class="no">Notifications</span><span class="o">.</span>
+<span class="w">     </span><span class="n">subscribe</span><span class="p">(</span><span class="s2">"sql.active_record"</span><span class="p">)</span><span class="w"> </span><span class="k">do</span><span class="w"> </span><span class="o">|</span><span class="n">_name</span><span class="p">,</span><span class="w"> </span><span class="n">_start</span><span class="p">,</span><span class="w"> </span><span class="n">_finish</span><span class="p">,</span><span class="w"> </span><span class="n">_id</span><span class="p">,</span><span class="w"> </span><span class="n">payload</span><span class="o">|</span>
+<span class="w">       </span><span class="n">pool</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">payload</span><span class="o">.</span><span class="n">fetch</span><span class="p">(</span><span class="ss">:connection</span><span class="p">)</span><span class="o">.</span><span class="n">pool</span>
 
-       <span class="k">next</span> <span class="k">if</span> <span class="n">pool</span><span class="o">.</span><span class="n">is_a?</span><span class="p">(</span><span class="no">ActiveRecord</span><span class="o">::</span><span class="no">ConnectionAdapters</span><span class="o">::</span><span class="no">NullPool</span><span class="p">)</span>
+<span class="w">       </span><span class="k">next</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="n">pool</span><span class="o">.</span><span class="n">is_a?</span><span class="p">(</span><span class="no">ActiveRecord</span><span class="o">::</span><span class="no">ConnectionAdapters</span><span class="o">::</span><span class="no">NullPool</span><span class="p">)</span>
 
-       <span class="nb">name</span> <span class="o">=</span> <span class="n">pool</span><span class="o">.</span><span class="n">db_config</span><span class="o">.</span><span class="n">name</span>
-       <span class="n">role</span> <span class="o">=</span> <span class="n">pool</span><span class="o">.</span><span class="n">role</span>
+<span class="w">       </span><span class="nb">name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">pool</span><span class="o">.</span><span class="n">db_config</span><span class="o">.</span><span class="n">name</span>
+<span class="w">       </span><span class="n">role</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">pool</span><span class="o">.</span><span class="n">role</span>
 
-       <span class="vi">@actual_dbs</span><span class="o">[</span><span class="nb">name</span><span class="o">]</span> <span class="o">&lt;&lt;</span> <span class="n">role</span>
-     <span class="k">end</span>
+<span class="w">       </span><span class="vi">@actual_dbs</span><span class="o">[</span><span class="nb">name</span><span class="o">]</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">role</span>
+<span class="w">     </span><span class="k">end</span>
 
-   <span class="n">block</span><span class="o">.</span><span class="n">call</span>
+<span class="w">   </span><span class="n">block</span><span class="o">.</span><span class="n">call</span>
 
-   <span class="vi">@actual_dbs</span> <span class="o">==</span> <span class="vi">@expected_dbs</span>
- <span class="k">end</span>
+<span class="w">   </span><span class="vi">@actual_dbs</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="vi">@expected_dbs</span>
+<span class="w"> </span><span class="k">end</span>
 
- <span class="n">failure_message</span> <span class="k">do</span> <span class="o">|</span><span class="n">_block</span><span class="o">|</span>
-   <span class="s2">"expected to query exactly </span><span class="si">#{</span><span class="vi">@expected_dbs</span><span class="si">}</span><span class="s2">, but queried </span><span class="si">#{</span><span class="vi">@actual_dbs</span><span class="si">}</span><span class="s2">"</span>
- <span class="k">end</span>
+<span class="w"> </span><span class="n">failure_message</span><span class="w"> </span><span class="k">do</span><span class="w"> </span><span class="o">|</span><span class="n">_block</span><span class="o">|</span>
+<span class="w">   </span><span class="s2">"expected to query exactly </span><span class="si">#{</span><span class="vi">@expected_dbs</span><span class="si">}</span><span class="s2">, but queried </span><span class="si">#{</span><span class="vi">@actual_dbs</span><span class="si">}</span><span class="s2">"</span>
+<span class="w"> </span><span class="k">end</span>
 
- <span class="n">supports_block_expectations</span>
+<span class="w"> </span><span class="n">supports_block_expectations</span>
 <span class="k">end</span>
 </pre></div><p>This then lets us add simple assertions to our specs like:</p>
 
-        <div class="highlight"><pre><span/><span class="n">it</span> <span class="s2">"doesn't query the primary database"</span> <span class="k">do</span>
- <span class="n">expect</span> <span class="p">{</span> <span class="n">some_query</span> <span class="p">}</span><span class="o">.</span><span class="n">to</span> <span class="n">exactly_query_databases</span><span class="p">({</span> <span class="ss">secondary</span><span class="p">:</span> <span class="o">[</span><span class="ss">:writing</span><span class="o">]</span> <span class="p">})</span>
+        <div class="highlight"><pre><span/><span class="n">it</span><span class="w"> </span><span class="s2">"doesn't query the primary database"</span><span class="w"> </span><span class="k">do</span>
+<span class="w"> </span><span class="n">expect</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">some_query</span><span class="w"> </span><span class="p">}</span><span class="o">.</span><span class="n">to</span><span class="w"> </span><span class="n">exactly_query_databases</span><span class="p">({</span><span class="w"> </span><span class="ss">secondary</span><span class="p">:</span><span class="w"> </span><span class="o">[</span><span class="ss">:writing</span><span class="o">]</span><span class="w"> </span><span class="p">})</span>
 <span class="k">end</span>
 </pre></div><h2 id="section-learnings">Learnings</h2>
 
@@ -173,22 +173,22 @@
 
         <p>The first learning and refactor in our code was that, now that we used different connections depending on the model we're querying, we should use the methods on the appropriate model to use the correct database connection. For our SecondaryRecord this would mean that instead of:</p>
 
-        <div class="highlight"><pre><span/><span class="no">ActiveRecord</span><span class="o">::</span><span class="no">Base</span><span class="o">.</span><span class="n">transaction</span><span class="p">(</span><span class="ss">requires_new</span><span class="p">:</span> <span class="kp">true</span><span class="p">)</span> <span class="k">do</span>
- <span class="c1"># code involving records in the secondary database</span>
+        <div class="highlight"><pre><span/><span class="no">ActiveRecord</span><span class="o">::</span><span class="no">Base</span><span class="o">.</span><span class="n">transaction</span><span class="p">(</span><span class="ss">requires_new</span><span class="p">:</span><span class="w"> </span><span class="kp">true</span><span class="p">)</span><span class="w"> </span><span class="k">do</span>
+<span class="w"> </span><span class="c1"># code involving records in the secondary database</span>
 <span class="k">end</span>
 </pre></div><p>We should instead do:</p>
 
-        <div class="highlight"><pre><span/><span class="no">SecondaryRecord</span><span class="o">.</span><span class="n">transaction</span><span class="p">(</span><span class="ss">requires_new</span><span class="p">:</span> <span class="kp">true</span><span class="p">)</span> <span class="k">do</span>
- <span class="c1"># code involving records in the secondary database</span>
+        <div class="highlight"><pre><span/><span class="no">SecondaryRecord</span><span class="o">.</span><span class="n">transaction</span><span class="p">(</span><span class="ss">requires_new</span><span class="p">:</span><span class="w"> </span><span class="kp">true</span><span class="p">)</span><span class="w"> </span><span class="k">do</span>
+<span class="w"> </span><span class="c1"># code involving records in the secondary database</span>
 <span class="k">end</span>
 </pre></div><p>With the <code>connects_to</code> configuration above, this seamlessly swaps the connection as appropriate for the environment we're using. We implemented our <code>connects_to</code> block conditionally like this:</p>
 
-        <div class="highlight"><pre><span/><span class="k">class</span> <span class="nc">SecondaryRecord</span> <span class="o">&lt;</span> <span class="no">ApplicationRecord</span>
- <span class="nb">self</span><span class="o">.</span><span class="n">abstract_class</span> <span class="o">=</span> <span class="kp">true</span>
+        <div class="highlight"><pre><span/><span class="k">class</span><span class="w"> </span><span class="nc">SecondaryRecord</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="no">ApplicationRecord</span>
+<span class="w"> </span><span class="nb">self</span><span class="o">.</span><span class="n">abstract_class</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kp">true</span>
 
- <span class="k">if</span> <span class="no">Helper</span><span class="o">.</span><span class="n">test_environment?</span>
-   <span class="n">connects_to</span> <span class="ss">database</span><span class="p">:</span> <span class="p">{</span> <span class="ss">writing</span><span class="p">:</span> <span class="ss">:secondary</span><span class="p">,</span> <span class="ss">reading</span><span class="p">:</span> <span class="ss">:secondary</span> <span class="p">}</span>
- <span class="k">end</span>
+<span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="no">Helper</span><span class="o">.</span><span class="n">test_environment?</span>
+<span class="w">   </span><span class="n">connects_to</span><span class="w"> </span><span class="ss">database</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="ss">writing</span><span class="p">:</span><span class="w"> </span><span class="ss">:secondary</span><span class="p">,</span><span class="w"> </span><span class="ss">reading</span><span class="p">:</span><span class="w"> </span><span class="ss">:secondary</span><span class="w"> </span><span class="p">}</span>
+<span class="w"> </span><span class="k">end</span>
 <span class="k">end</span>
 </pre></div><p>That way we could manage the connections on an infrastructure level with the appropriate pod configuration, and didn't have to rely on branching application logic.</p>
 
@@ -198,23 +198,23 @@
 
         <p>We took a conditional approach depending on whether we wanted these feature-flags to be enabled or toggle-able. In the case where we could make them permanently enabled in our test environment, we could simply check:</p>
 
-        <div class="highlight"><pre><span/><span class="k">if</span> <span class="no">Helper</span><span class="o">.</span><span class="n">test_environment?</span> <span class="o">||</span> <span class="no">Flipper</span><span class="o">.</span><span class="n">enabled?</span><span class="p">(</span><span class="ss">:feature_flag</span><span class="p">)</span>
- <span class="c1"># do the thing</span>
+        <div class="highlight"><pre><span/><span class="k">if</span><span class="w"> </span><span class="no">Helper</span><span class="o">.</span><span class="n">test_environment?</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="no">Flipper</span><span class="o">.</span><span class="n">enabled?</span><span class="p">(</span><span class="ss">:feature_flag</span><span class="p">)</span>
+<span class="w"> </span><span class="c1"># do the thing</span>
 <span class="k">end</span>
 </pre></div><p>Otherwise we could check the value of the feature-flag against the replica, rather than using the primary connection:</p>
 
-        <div class="highlight"><pre><span/><span class="n">feature_flag</span> <span class="o">=</span> <span class="no">ActiveRecord</span><span class="o">::</span><span class="no">Base</span><span class="o">.</span><span class="n">connected_to</span><span class="p">(</span><span class="ss">role</span><span class="p">:</span> <span class="ss">:reading</span><span class="p">,</span> <span class="ss">prevent_writes</span><span class="p">:</span> <span class="kp">true</span><span class="p">)</span> <span class="k">do</span>
- <span class="no">Flipper</span><span class="o">.</span><span class="n">enabled?</span><span class="p">(</span><span class="ss">:feature_flag</span><span class="p">)</span>
+        <div class="highlight"><pre><span/><span class="n">feature_flag</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="no">ActiveRecord</span><span class="o">::</span><span class="no">Base</span><span class="o">.</span><span class="n">connected_to</span><span class="p">(</span><span class="ss">role</span><span class="p">:</span><span class="w"> </span><span class="ss">:reading</span><span class="p">,</span><span class="w"> </span><span class="ss">prevent_writes</span><span class="p">:</span><span class="w"> </span><span class="kp">true</span><span class="p">)</span><span class="w"> </span><span class="k">do</span>
+<span class="w"> </span><span class="no">Flipper</span><span class="o">.</span><span class="n">enabled?</span><span class="p">(</span><span class="ss">:feature_flag</span><span class="p">)</span>
 <span class="k">end</span>
 
-<span class="k">if</span> <span class="n">feature_flag</span>
- <span class="c1"># do the thing</span>
+<span class="k">if</span><span class="w"> </span><span class="n">feature_flag</span>
+<span class="w"> </span><span class="c1"># do the thing</span>
 <span class="k">end</span>
 </pre></div><p>For other cases where we had specific edge-cases where we had tables to check on the primary we didn't want to replicate to the secondary, we'd directly stub the code to return a sensible response:</p>
 
-        <div class="highlight"><pre><span/><span class="k">def</span> <span class="nf">has_extra_configuration?</span>
- <span class="k">return</span> <span class="kp">false</span> <span class="k">if</span> <span class="no">Helper</span><span class="o">.</span><span class="n">test_environment?</span>
- <span class="c1"># otherwise call the real code and connect to the primary</span>
+        <div class="highlight"><pre><span/><span class="k">def</span><span class="w"> </span><span class="nf">has_extra_configuration?</span>
+<span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="kp">false</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="no">Helper</span><span class="o">.</span><span class="n">test_environment?</span>
+<span class="w"> </span><span class="c1"># otherwise call the real code and connect to the primary</span>
 <span class="k">end</span>
 </pre></div><h2 id="section-statesman">Statesman</h2>
 
