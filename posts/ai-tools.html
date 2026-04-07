@@ -1,0 +1,79 @@
+<!DOCTYPE html SYSTEM "about:legacy-compat">
+<html lang="en">
+  <head>
+    <meta charset="utf-8"/>
+    <meta name="theme-color" content="#333"/>
+    <meta name="description" content="My take on the current state of AI tools."/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=1"/>
+    <link rel="canonical" href="https://benkyriakou.com/posts/ai-tools"/>
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon"/>
+    <title>AI tools | Ben Kyriakou</title>
+    <link rel="stylesheet" href="/css/style.css" type="text/css"/>
+    <meta property="og:url" content="http://benkyriakou.com/posts/ai-tools"/>
+    <meta property="og:title" content="AI tools"/>
+    <meta property="og:description" content="My take on the current state of AI tools."/>
+    <meta property="og:image" content="http://benkyriakou.com/images/global/twitter-card-image.png"/>
+    <meta name="twitter:card" content="summary"/>
+    <meta name="twitter:site" content="@benkyriakou"/>
+    <meta name="twitter:title" content="AI tools"/>
+    <meta name="twitter:description" content="My take on the current state of AI tools."/>
+    <meta name="twitter:image" content="http://benkyriakou.com/images/global/twitter-card-image.png"/>
+    <script>
+      window.onload = function() {
+        (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+        (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+        m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+        })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+        ga('create', 'UA-64337321-1', 'auto');
+        ga('send', 'pageview');
+      };
+    </script>
+  </head>
+  <body>
+    <div class="wrapper">
+      <header class="site-header">
+        <div class="center-wrapper">
+          <nav>
+            <ul class="site-header__items">
+              <li class="site-header__item">
+                <a href="/">Home</a>
+              </li>
+              <li class="site-header__item">
+                <a href="/pdfs">PDFs</a>
+              </li>
+              <li class="site-header__item">
+                <a href="/about">About</a>
+              </li>
+            </ul>
+          </nav>
+        </div>
+      </header>
+      <main class="center-wrapper">
+    <article class="article"><time class="article__date" datetime="2026-04">April 2026</time><h1 class="article__header">AI tools</h1><div class="article__content">
+        <p>AI is front-and-centre in the media right now, and much of the discussion around it is polarised - AI is either the deux ex machina or the downfall of modern civilisation. My experience has been that there is a middle path, and after having what feels like the same conversations with people I want to write down some of my thoughts.</p>
+
+        <p>As a preface, I would categorise myself as a late-adopter and AI skeptic. I absolutely believe there are impending negative effects of AI: the amplification of false information; the loss of human creativity; the wasteful nature of AI &#8220;slop&#8221;; and the massive power generation and resource-hoarding involved.</p>
+
+        <p>However, as a tool I also believe that there are beneficial uses of AI, and this is how I&#8217;d like to see it used more. It&#8217;s become a trope, but in my opinion AI will make the world a better place by doing our cleaning so that we can spend more time making art - not by replacing artists so they have more time to clean. Crucially, I see the improvements being much less dramatic than claimed, as <a href="https://shkspr.mobi/blog/2026/02/this-time-is-different">others have already covered</a>.</p>
+
+        <p>My interest is in AI as a programming and productivity tool. I&#8217;ve used a range of AI coding tools over the past couple of years: Gemini, Windsurf, Cursor, Copilot, and now Claude. Most of these I picked up to try, then shortly put back down when they required too much babysitting for little benefit. After the past few months of using Claude, I finally feel like the tool is saving me time and letting me focus on more of what I enjoy (developing products and systems) and less of what I don&#8217;t (dealing with syntax errors and remembering how libraries work).</p>
+
+        <p>I treat Claude like having robot engineers working for me. They aren&#8217;t smart, but they have great recall and breadth of knowledge. Given strict instruction they can output my ideas with a great deal of fidelity, and even handle vagueness in my recall when it comes to some of the details. They can be taught through memories and configuration, although they still require correction from time to time.</p>
+
+        <p>The advantage is that the price of these robots&#8217; time is a fraction of that of a similar human - for tens of pounds a day I&#8217;ve got as many hands at my disposal as I desire. There&#8217;s a practical limit to the leverage they give me; experience has shown I need to be able to review everything they produce. However, I am still able to produce more code with the time I have available to me, and crucially (at least from my perspective) I can output better features than I feel I would in the robots&#8217; absence.</p>
+
+        <p>One of the things I enjoy most is that the time cost of experimenting is drastically reduced - with a tool that can easily do refactors across a service, and prototype and test different approaches, the sunk cost is far smaller. I can have a robot whip me up something in five minutes, give it a test and review to see how it feels, and then either keep going in the same direction or unwind the whole thing and start again.</p>
+
+        <p>I also enjoy the conversational aspect of developing with the robots - I can have an idea and fire off an initial prompt, then think about the next steps whilst that executes. I can interrupt the flow if I see something going in a direction that I don&#8217;t like and course-correct. I can even set another robot off to do some research in parallel to inform future steps or check my understanding.</p>
+
+        <p>This development style still requires a reasonable amount of my attention. For me, that&#8217;s a good thing - I don&#8217;t want my tools to do things that I&#8217;m not aware of or aren&#8217;t under my control. This, I feel, is the flaw in the &#8220;vibe-coding&#8221; approach to AI development and the conversations I see from non-technical folks using AI to produce code.</p>
+
+        <p>Here is where we find the sharp edge. By all means, use AI tools to vibe-code prototypes, but I would not currently trust the robot to ship anything to production without human review. Although much less prone to wild hallucinations than its predecessors, the robot will make guesses and lie to you with a confidence that requires human scrutiny to refute; it will stray from your instruction and require admonishment to follow the correct conventions and best practices; and it often struggles to see the big picture, even with tools like planning mode - the human brain has a far larger context window than the robot.</p>
+
+        <p>No tool is perfect, and even with the sharp edges I&#8217;m going to keep using and experimenting with AI. I&#8217;m thankful that I&#8217;m working for a company that is supporting the use of these tools and is enabling people to use them across the business, not only as a coding assistant. However, I&#8217;m keeping <a href="https://knowyourmeme.com/photos/2069350-twitter-x">one hand on my gun</a>; just in case&#8230;</p>
+      </div></article>
+  </main>
+    </div>
+  </body>
+</html>
