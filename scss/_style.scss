@@ -1,4 +1,11 @@
 /* Variables */
+:root {
+  --darkmode-text: #DDD;
+  --darkmode-background: #000;
+  --darkmode-link: lightgreen;
+  --darkmode-hint: #AAA;
+}
+
 $link_blue: #341DFF;
 $code_grey: #EDEDED;
 
@@ -10,7 +17,9 @@ $code_grey: #EDEDED;
 }
 
 html {
-  font-family: 'Georgia', serif;
+  background-color: var(--darkmode-background);
+  color: var(--darkmode-text);
+  font-family: 'Helvetica Neue', 'Helvetica', Arial, sans-serif; 
   font-size: 16px;
   line-height: 1.5;
 }
@@ -25,7 +34,6 @@ h3,
 h4,
 h5,
 h6 {
-  font-family: 'Arial', sans-serif;
   font-weight: 900;
   margin-top: 0;
 }
@@ -40,7 +48,7 @@ h3 {
 }
 
 a {
-  color: $link_blue;
+  color: var(--darkmode-link);
   outline-color: transparent;
   text-decoration: underline;
   transition-duration: 0.25s;
@@ -433,7 +441,7 @@ $header-colour: #333;
 
 .article__date,
 .article__external {
-  color: #777;
+  color: var(--darkmode-hint);
   font-family: 'Trebuchet MS', sans-serif;
 }
 
