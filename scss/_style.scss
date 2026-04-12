@@ -57,9 +57,9 @@ a {
 
   &:hover,
   &:focus {
-    background-color: $link_blue;
-    color: #FFF;
-    outline: 2px $link_blue solid;
+    background-color: var(--darkmode-link);
+    color: var(--darkmode-background);
+    outline: 2px var(--darkmode-link) solid;
     text-decoration: none;
   }
 
@@ -82,7 +82,6 @@ hr {
 input,
 button {
   font-size: 1rem;
-  font-family: 'Arial', sans-serif;
 
   @media screen and (min-width: 35rem) {
     font-size: 1.125rem;
@@ -371,7 +370,6 @@ $header-colour: #333;
 
 .site-header__item {
   flex-grow: 1;
-  font-family: 'Trebuchet MS', sans-serif;
   font-weight: 900;
   margin: 0;
   padding: 0;
@@ -403,8 +401,9 @@ $header-colour: #333;
 }
 
 .article--teaser {
+  align-items: center;
+  display: flex;
   margin-bottom: 1rem;
-  position: relative;
 
   @media screen and (min-width: 35rem) {
     margin-bottom: 1.5rem;
@@ -428,28 +427,16 @@ $header-colour: #333;
   }
 }
 
-.article__link--teaser {
-  &:after {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    top: 0;
-  }
-}
-
 .article__date,
 .article__external {
   color: var(--darkmode-hint);
-  font-family: 'Trebuchet MS', sans-serif;
 }
 
 .article__date {
-  display: block;
-  float: left;
+  display: flex;
+  justify-content: right;
   font-weight: 400;
-  text-transform: uppercase;
+  width: 10rem;
 
   + .article__header {
     clear: left;
@@ -457,21 +444,21 @@ $header-colour: #333;
 
   /* 24rem larger than the max wrapper size */
   @media screen and (min-width: 76rem) {
-    float: none;
-    font-family: 'Trebuchet MS', sans-serif;
-    left: -12rem;
+    left: -10rem;
     line-height: 1;
-    margin-top: 0.3rem;
-    padding: 0 1.25rem 0 1rem;
+    padding: 0 0 0 1rem;
     position: absolute;
-    text-align: right;
-    top: 0;
-    width: 12rem;
+  }
+}
+
+.article__date--teaser {  
+  &:after {
+    content: "⬥";
+    padding: 0 0.4rem;
   }
 }
 
 .article__external {
-
   &:before {
     content: '—';
   }
@@ -480,7 +467,7 @@ $header-colour: #333;
   @media screen and (min-width: 76rem) {
     display: block;
     left: -12rem;
-    padding: 0 1.25rem 0 1rem;
+    padding: 0 1.25rem 0 0.5rem;
     position: absolute;
     text-align: right;
     top: 2.8125rem;

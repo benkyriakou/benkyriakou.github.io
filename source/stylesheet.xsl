@@ -276,9 +276,6 @@
           <xsl:value-of select=".//article/title" />
         </a>
       </h2>
-      <div class="article__content article__content--teaser">
-        <p><xsl:value-of select="description" /></p>
-      </div>
     </article>
   </xsl:template>
 
