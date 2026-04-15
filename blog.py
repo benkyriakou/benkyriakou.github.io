@@ -46,7 +46,7 @@ if args.all or args.css:
   PYGMENTS_FILE = os.path.join(BASE_DIR, 'scss', 'pygments.scss')
 
   with open(PYGMENTS_FILE, 'w', encoding='utf8') as fh:
-    fh.write(HtmlFormatter().get_style_defs('.highlight'))
+    fh.write(HtmlFormatter(style='monokai').get_style_defs('.highlight'))
 
   # Get a sorted list of files for consistency.
   scss_files = os.listdir(SCSS_BASE)
