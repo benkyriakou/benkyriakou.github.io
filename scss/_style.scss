@@ -436,7 +436,7 @@ $header-colour: #333;
   display: flex;
   justify-content: right;
   font-weight: 400;
-  width: 10rem;
+  width: 12rem;
 
   + .article__header {
     clear: left;
@@ -444,7 +444,7 @@ $header-colour: #333;
 
   /* 24rem larger than the max wrapper size */
   @media screen and (min-width: 76rem) {
-    left: -10rem;
+    left: -12rem;
     line-height: 1;
     padding: 0 0 0 1rem;
     position: absolute;
