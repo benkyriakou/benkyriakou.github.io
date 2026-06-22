@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!DOCTYPE document [
+  <!ENTITY hellip "&#8230;">
+]>
+
+<document type="article">
+  <title>Can you do this for me?</title>
+  <description>Before you say yes, consider this&hellip;</description>
+  <slug>/posts/can-you-do-this-for-me</slug>
+  <content>
+    <article>
+      <title>Can you do this for me?</title>
+      <date datetime="2026-06">June 2026</date>
+      <content>
+        <p>An everyday situation - you're at your desk, and someone asks you for something. It could be adding a feature, designing a new system, or just fixing something they think is broken. Before saying "yes" too fast there are a few questions you should ask yourself to avoid future pain.</p>
+
+        <h2>Triage</h2>
+
+        <p>Are you the right person to ask? If someone else owns the domain, simply redirect it to them.</p>
+
+        <p>Do you understand the underlying problem motivating the ask? Asks often come with a "what" instead of a "why", but the "why" generally yields more useful context.</p>
+
+        <p>Once you understand the problem, does the solution already exist? If so, point them to it and go on your way.</p>
+
+        <p>Should this problem even <em>be</em> solved? Maybe there's a good reason the solution doesn't exist - it's a deliberate design choice or it subverts another process or control. Again, an easy resolution, although you might have to convince the asker to accept your "no" (a topic for another time).</p>
+
+        <h2>Prioritisation</h2>
+
+        <p>If you've established it's something that needs to be done, then we need to figure out if it's something that needs to be done <em>now</em>.</p>
+
+        <p>How urgent is it compared to the rest of your to-do list? Is it a big thing or a small thing? Is it going to have a big impact, solve an immediate incident, or do something else that would pull it outside of the usual prioritisation?</p>
+
+        <p>Be mindful of the difference between urgent and important - is this something that actually has to happen now? Is it something with strategic value? Things  are often portrayed as being urgent to persuade you to do them, so watch out for that.</p>
+
+        <p>If it's not important or urgent then put it in the to-do list and continue the decision-making process once you get to tackling it. Make sure you let whoever you report to know too, just in case they have a different opinion.</p>
+
+        <h2>Understanding</h2>
+
+        <p>If you've established it should be done, you can still dig deeper.</p>
+
+        <p>Who is asking for it? Has this come from the person who's talking to you or someone else? Has it come from someone outside of the organisation like a customer or a supplier? Has it come from an actual need that's going to help the product? Is it solving a need for us, or for our customers?</p>
+
+        <p>This is important for understanding both the asker's motivation and the requirements, particularly if the request has come down a chain.</p>
+
+        <p>When asks are coming second- or third-hand you always risk a game of telephone. Involve the original asker as soon as possible - either by talking with them directly or getting their review on the proposal. Otherwise you risk having to change direction later on once you find out that some crucial details haven't made it to you.</p>
+
+        <p>Depending on your seniority you can take this even further. Maybe it checks a lot of the boxes of something "worth" doing, but it's still not something to be done. If it overlaps with another project, defer. If causing temporary pain, wait for it to be healed. If isn't worth the time and money to solve right now, or it doesn't fit into the wider strategy, reject.</p>
+
+        <p>This is when saying "no" becomes a lot harder, especially if you have to make your case to someone more senior than you (again, a topic for another time).</p>
+
+        <h2>Acceptance</h2>
+
+        <p>If you've gotten this far, congratulations, you should do it.</p>
+
+        <p>Now you just need to write the proposal, engage the stakeholders, get the signoff, have the meetings, and maybe even write a bit of code. It's a thankless job.</p>
+      </content>
+    </article>
+  </content>
+</document>
