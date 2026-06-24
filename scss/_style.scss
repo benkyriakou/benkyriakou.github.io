@@ -1,6 +1,22 @@
 /* Variables */
-$link_blue: #341DFF;
-$code_grey: #EDEDED;
+
+:root {
+  --link: #341DFF;
+  --link-hover: #FFF;
+  --link-hover-bg: #341DFF;
+  --link-active-bg: #897CFF;
+
+  --header-bg: #333;
+  --header-link: #FFF;
+  --header-link-hover-bg: #FFF;
+  --header-link-active-bg: #888;
+
+  --border-generic: #AAA;
+  --code-bg: #EDEDED;
+
+  --base-font: 'Georgia', serif;
+  --accent-font: 'Trebuchet MS', sans-serif;
+}
 
 /* Core element styles */
 
@@ -10,7 +26,7 @@ $code_grey: #EDEDED;
 }
 
 html {
-  font-family: 'Georgia', serif;
+  font-family: var(--base-font);
   font-size: 16px;
   line-height: 1.5;
 }
@@ -40,7 +56,7 @@ h3 {
 }
 
 a {
-  color: $link_blue;
+  color: var(--link);
   outline-color: transparent;
   text-decoration: underline;
   transition-duration: 0.25s;
@@ -49,15 +65,15 @@ a {
 
   &:hover,
   &:focus {
-    background-color: $link_blue;
-    color: #FFF;
-    outline: 2px $link_blue solid;
+    background-color: var(--link-hover-bg);
+    color: var(--link-hover);
+    outline: 2px var(--link-hover-bg) solid;
     text-decoration: none;
   }
 
   &:active {
-    background-color: #897CFF;
-    outline-color: #897CFF;
+    background-color: var(--link-active-bg);
+    outline-color: var(--link-active-bg);
   }
 }
 
@@ -89,7 +105,7 @@ input[type='email'] {
   transition-property: outline-color;
 
   &:focus {
-    outline: 2px $link_blue solid;
+    outline: 2px var(--link-hover-bg) solid;
   }
 }
 
@@ -106,7 +122,7 @@ input[type='submit'] {
 
   &:hover,
   &:focus {
-    background-color: $link_blue;
+    background-color: var(--link-hover-bg);
     outline: none;
   }
 }
@@ -164,7 +180,7 @@ input[type='submit'] {
   }
 
   pre {
-    background-color: $code_grey;
+    background-color: var(--code-bg);
   }
 
   picture {
@@ -275,7 +291,7 @@ input[type='submit'] {
   .checklist {
     background: #FDF8C4;
     background: linear-gradient(to bottom right, #FDF8C4, #E0DBA2);
-    border: 1px #AAA solid;
+    border: 1px var(--border-generic) solid;
     box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.8);
     margin-left: auto;
     margin-right: auto;
@@ -287,7 +303,7 @@ input[type='submit'] {
     }
 
     li {
-      border-bottom: 1px #AAA solid;
+      border-bottom: 1px var(--border-generic) solid;
     }
 
     li:last-child {
@@ -297,11 +313,8 @@ input[type='submit'] {
 }
 
 /* Header styles */
-
-$header-colour: #333;
-
 .site-header {
-  background: $header-colour;
+  background: var(--header-bg);
   border-bottom: 1px #CCC solid;
   box-shadow: 0px 0px 2px 2px #EFEFEF;
   margin-bottom: 1.5rem;
@@ -311,21 +324,21 @@ $header-colour: #333;
   }
 
   a {
-    color: #FFF;
+    color: var(--header-link);
     display: block;
     padding: 0.5rem 0;
     text-decoration: none;
 
     &:hover,
     &:focus {
-      color: $header-colour;
-      background-color: #FFF;
-      outline-color: #FFF;
+      color: var(--header-bg);
+      background-color: var(--header-link-hover-bg);
+      outline-color: var(--header-link-hover-bg);
     }
 
     &:active {
-      background-color: #888;
-      outline-color: #888;
+      background-color: var(--header-link-active-bg);
+      outline-color: var(--header-link-active-bg);
     }
 
     @media screen and (min-width: 35rem) {
@@ -334,8 +347,8 @@ $header-colour: #333;
 
       &:hover {
         background-color: transparent;
-        border-bottom: 3px #FFF solid;
-        color: #FFF;
+        border-bottom: 3px var(--header-link-hover-bg) solid;
+        color: var(--header-link-hover-bg);
         outline: none;
         transition-property: border;
       }
@@ -363,7 +376,7 @@ $header-colour: #333;
 
 .site-header__item {
   flex-grow: 1;
-  font-family: 'Trebuchet MS', sans-serif;
+  font-family: var(--accent-font);
   font-weight: 900;
   margin: 0;
   padding: 0;
@@ -434,7 +447,7 @@ $header-colour: #333;
 .article__date,
 .article__external {
   color: #777;
-  font-family: 'Trebuchet MS', sans-serif;
+  font-family: var(--accent-font);
 }
 
 .article__date {
@@ -450,7 +463,7 @@ $header-colour: #333;
   /* 24rem larger than the max wrapper size */
   @media screen and (min-width: 76rem) {
     float: none;
-    font-family: 'Trebuchet MS', sans-serif;
+    font-family: var(--accent-font);
     left: -12rem;
     line-height: 1;
     margin-top: 0.3rem;
