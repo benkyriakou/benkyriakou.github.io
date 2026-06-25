@@ -1,24 +1,28 @@
 /* Variables */
 
 :root {
-  --link: #341DFF;
+  --link: #F15BB5;
   --link-hover: #FFF;
-  --link-hover-bg: #341DFF;
+  --link-hover-bg: color-mix(in oklab, var(--link), black 20%);;
   --link-active-bg: #897CFF;
 
-  --header-bg: #333;
+  --header-bg: #1D184B;
   --header-link: #FFF;
-  --header-link-hover-bg: #FFF;
+  --header-link-hover: var(--link);
   --header-link-active-bg: #888;
 
   --border-generic: #AAA;
+
   --code-bg: #EDEDED;
+  --code-color: #111;
+
+  --base-color: #EEE;
+  --base-bg: #3D348B;
+  --highlight-bg: #483E9F;
+  --pale-color: #DDD;
 
   --base-font: "Noto Sans", sans-serif;
   --accent-font: "Noto Sans", sans-serif;
-
-  --base-color: #111;
-  --pale-color: #777;
 }
 
 /* Core element styles */
@@ -29,6 +33,7 @@
 }
 
 html {
+  background-color: var(--base-bg);
   color: var(--base-color);
   font-family: var(--base-font);
   font-size: 16px;
@@ -168,7 +173,7 @@ input[type='submit'] {
   }
 
   li {
-    margin-bottom: 0.5rem
+    margin-bottom: 0.5rem;
   }
 
   /* 560px */
@@ -189,6 +194,7 @@ input[type='submit'] {
 
   pre {
     background-color: var(--code-bg);
+    color: var(--code-color);
   }
 
   picture {
@@ -301,6 +307,7 @@ input[type='submit'] {
     background: linear-gradient(to bottom right, #FDF8C4, #E0DBA2);
     border: 1px var(--border-generic) solid;
     box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.8);
+    color: #111;
     margin-left: auto;
     margin-right: auto;
     padding: 0.5rem 1rem 1rem 2.5rem;
@@ -323,8 +330,7 @@ input[type='submit'] {
 /* Header styles */
 .site-header {
   background: var(--header-bg);
-  border-bottom: 1px #CCC solid;
-  box-shadow: 0px 0px 2px 2px #EFEFEF;
+  box-shadow: 0px 0px 5px 2px rgba(255, 255, 255, 0.1);
   margin-bottom: 1.5rem;
 
   @media print {
@@ -337,29 +343,20 @@ input[type='submit'] {
     padding: 0.5rem 0;
     text-decoration: none;
 
+    &:hover {
+      outline: none;
+    }
+
     &:hover,
     &:focus {
-      color: var(--header-bg);
-      background-color: var(--header-link-hover-bg);
+      background: transparent;
+      color: var(--header-link-hover);
+      transition-duration: 0.25s;
+      transition-property: color;
+    }
+
+    &:focus {
       outline-color: var(--header-link-hover-bg);
-    }
-
-    &:active {
-      background-color: var(--header-link-active-bg);
-      outline-color: var(--header-link-active-bg);
-    }
-
-    @media screen and (min-width: 35rem) {
-      display: inline;
-      padding: 0;
-
-      &:hover {
-        background-color: transparent;
-        border-bottom: 3px var(--header-link-hover-bg) solid;
-        color: var(--header-link-hover-bg);
-        outline: none;
-        transition-property: border;
-      }
     }
   }
 
@@ -391,7 +388,7 @@ input[type='submit'] {
 
   @media screen and (min-width: 35rem) {
     flex-grow: 0;
-    font-size: 1.25rem;
+    font-size: 1.5rem;
     margin: 0 1rem;
   }
 }
@@ -578,6 +575,8 @@ input[type='submit'] {
 /* Pygments */
 
 .highlight {
+  background-color: var(--highlight-bg) !important;
+
   pre {
     margin-left: auto;
     margin-right: auto;
