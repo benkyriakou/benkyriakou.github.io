@@ -441,7 +441,7 @@ input[type='submit'] {
 }
 
 .article__link {
-  display: block;
+  display: inline-block;
 
   &--teaser {
     &:after {
