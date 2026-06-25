@@ -21,6 +21,9 @@
 
         <title><xsl:apply-templates select="document/title" /></title>
 
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="" />
+        <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:ital,wght@0,100..900;1,100..900&amp;display=swap" rel="stylesheet" />
         <link rel="stylesheet" href="/css/style.css" type="text/css" />
 
         <xsl:call-template name="open-graph" />
