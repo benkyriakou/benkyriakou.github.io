@@ -39,6 +39,7 @@
           <main class="center-wrapper">
             <xsl:apply-templates select="document" />
           </main><!-- /main -->
+          <footer class="site-footer"></footer>
         </div>
       </body>
     </html>
