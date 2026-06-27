@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<document type="article">
+  <title>AI tools - part 2</title>
+  <description>Some principles that I follow when using AI.</description>
+  <slug>/posts/ai-tools-part-2</slug>
+  <content>
+    <article>
+      <title>AI tools - part 2</title>
+      <date datetime="2026-06">June 2026</date>
+      <content>
+        <p>In <a href="/posts/ai-tools">AI Tools - Part 1</a> I covered some high-level thoughts on the usage and development of AI tools - this time I’m going to dig more into the specific principles I use with tooling day-to-day.</p>
+
+        <p>I continue to make a lot of use of Claude for work purposes, but I have also been playing around with using local models like gemma-4 and qwen-3.5 via ollama for my personal projects, so I also have some experience with those and the different considerations required when using them.</p>
+
+        <h2>Keep a human in the loop</h2>
+
+        <p>Unsurprisingly, given where I left off, my first principle is to keep a human in the loop. Although AI is good at <em>knowing a lot</em>, it’s not as good at tying together what it knows in sensible ways. Keeping a human in the loop provides both control, and an ability to look beyond the mechanics of the immediate problem to see a wider picture.</p>
+
+        <p>Without this human interaction and oversight, small inefficiencies in the output accumulate over time. Instead of inventing sensible patterns, the model will prefer to limit context and do something that fixes the problem at hand. This will then need another tweak for the next problem, and so on, and so on. A human would (hopefully) look at these emerging trends and see the pattern; condensing these one-offs into an over-arching solution.</p>
+
+        <h2>Prompt for the desired solution</h2>
+
+        <p>Although I maintain that “prompt engineering” isn’t really a thing, there is an art to asking the AI for what it is that you actually want. I didn’t realise how different my method of prompting was until I watched other people use AI assistants and saw them throw one-line tasks at it “make me x”, “fix y”.</p>
+
+        <p>Unless I’m in the flow of a task context, I take great care in my prompts to lay out the bounds of the problem to solve, providing specific context of the files and methods that are affected, and preferrably including additional references or examples. This is much more likely to lead to a solution that meets my expectations, and removes some of the AI “creativity” from the equation.</p>
+
+        <p>This is still not foolproof. Even the model, with plenty of context, will sometimes get stuck in a loop when it believes it has conflicting requirements - trying and failing to find a solution, or spending an excessively long time thinking about an imagined problem. I haven’t yet found a good solution here other than interrupting and pointing it in the right direction - hopefully in time they will become better at introspecting on their own thought processes.</p>
+
+        <h2>Review <em>all</em> of the output</h2>
+
+        <p>Even with the best prompts in the world, things can still go wrong. A recent trend in Anthropic’s models has been the love of verbosity in the output; whether in terms of the code, the test suite, or the paragraph-long comments on every function. A more general issue is that the output simply doesn’t solve the problem.</p>
+
+        <p>I’ve gone through cycles of becoming overly trusting of the model and only giving cursory reviews, which then comes back to bite me when someone else takes a look and points out something that is missing or unnecessary.</p>
+
+        <p>I now make sure that I treat the model’s output like that of any other engineer - even with guard rails in place I still review every line of the output, treating them as defense in depth rather than a universal panacea. Even with iteration and heuristics, this almost always catches something that I need to change or fix.</p>
+
+        <h2>Check for truthfulness</h2>
+
+        <p>Hallucination isn’t nearly as common as it was a year ago, but it does still happen. I occasionally catch the model imagining code or services; trying to use APIs that don’t exist; or feeding me facts that, on closer inspection, are falsehoods.</p>
+
+        <p>We’ve seen enough of this in the media with <a href="https://www.techradar.com/pro/a-major-kpmg-report-on-ai-was-found-to-be-chock-full-of-ai-hallucinations">imagined reports from consultancies</a> and <a href="https://www.nature.com/articles/d41586-026-00969-z">fabricated references in publications</a> that we should still be wary of this happening in anything we consider critical. In code this problem is generally self-solving because an imagined API won’t pass testing; in writing and research you have to follow the previous principles and make sure that you’re inserting yourself in the loop and reviewing the output with a level of understanding that lets you pick up these issues.</p>
+
+        <h2>Skills pay the bills</h2>
+
+        <p>In aid of keeping the model on task, <a href="https://platform.claude.com/docs/en/agents-and-tools/agent-skills/overview">skills are a fantastic tool</a>. If you don’t have some version of the <a href="https://github.com/anthropics/skills/blob/main/skills/skill-creator/SKILL.md">skill creator</a> skill already I’d recommend starting with Anthropic’s version to teach Claude how to dogfood creation.</p>
+
+        <p>Under the hood, skills are basically a piece of markdown front-matter with supporting tools, which gives the robot a repeatable way of executing a task. You can further refine this by giving it a range of known capabilities, and optimise things like how much context the output of the skill requires. As with any primitive tool, you can then mix-and-match these to make more complicated tools and workflows.</p>
+
+        <p>Skills don’t necessarily encapsulate a job the model couldn’t figure out on its own, but asking it to figure it out every time is inefficient and unpredictable. For non-trivial tasks it will either string together bash commands or script something out; a fragile approach needing multiple, potentially dangerous, command approvals from you as the driver. A skill will one-shot the task correctly every time.</p>
+
+        <p>I recently had a workflow that required downloading webpages and converting them to markdown, amongst other things. As a generic job I wrote a little bash script using curl and pandoc to do the bulk of the work, getting Claude to hook it up as a task. Now I have a single tool that I’m confident does the task safely and repeatably, and can be extended with more capabilities if needed.</p>
+
+        <p>The natural extension of local skills is an MCP server, but that’s a topic for another time.</p>
+
+        <h2>Loop-de-loop</h2>
+
+        <p>The current old new thing is <a href="https://addyosmani.com/blog/loop-engineering/">loop engineering</a>, where the engineering profession has discovered that you can apply iteration to AI development.</p>
+
+        <p>I have to admit, this is pretty much how I’ve been using AI for a while - give it a prompt and some heuristics and guard rails, then get it to iterate on the job. How it loops depends on your task - you can give it a reviewer that it has to appease, some tests that it has to pass, an output it has to fulfil, or a combination of the above.</p>
+
+        <p>I still use this in conjunction with the above principles - I’m not at <a href="https://www.youtube.com/watch?v=SlGRN8jh2RI">Boris Cherny’s level of trust</a> where I’d let AI prompt and loop itself exclusively. If you really want to go all-in on AI-driven development then go for it, but I’d be wary that those small inefficiencies will grow into structural issues unless you have a way to prevent it.</p>
+
+        <h2>This <em>my</em> way, not <em>the</em> way</h2>
+
+        <p>I’ll end with the caveat that I’m not claiming that this is the “right” way to do AI, but it’s the way that’s working for me. I’m sure the AI landscape will continue to change in the coming months - we’re already seeing costs fluctuate as we approach the popping of the enterprise AI bubble, and now growing concern around the regulation of models by the US government. I’ll return with a part 3 in due course.</p>
+      </content>
+    </article>
+  </content>
+</document>
