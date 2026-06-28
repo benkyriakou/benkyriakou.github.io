@@ -1,7 +1,7 @@
 import os
 import re
-import sass
 import argparse
+from csscompressor import compress
 from PIL import Image
 from lxml import etree
 from lxml.etree import XSLTApplyError, XSLTParseError
@@ -35,47 +35,39 @@ except XSLTParseError as e:
 
   exit(1)
 
-# Build CSS from SCSS.
+# Combine together CSS.
 if args.all or args.css:
-  print('\nGenerating CSS\n')
+  print('\nCombining CSS\n')
 
-  SCSS_BASE = os.path.join(BASE_DIR, 'scss')
-  CSS_FILE = os.path.join(BASE_DIR, 'css', 'style.css')
+  CSS_SOURCE = os.path.join(BASE_DIR, 'source/css')
+  CSS_DEST = os.path.join(BASE_DIR, 'css', 'style.css')
 
   # Generate the Pygments styles.
-  PYGMENTS_FILE = os.path.join(BASE_DIR, 'scss', 'pygments.scss')
+  PYGMENTS_DEST = os.path.join(CSS_SOURCE, 'pygments.css')
 
-  with open(PYGMENTS_FILE, 'w', encoding='utf8') as fh:
+  with open(PYGMENTS_DEST, 'w', encoding='utf8') as fh:
     fh.write(HtmlFormatter().get_style_defs('.highlight'))
 
   # Get a sorted list of files for consistency.
-  scss_files = os.listdir(SCSS_BASE)
-  scss_files.sort()
+  css_files = sorted(os.listdir(CSS_SOURCE))
 
-  # Filter out anything without a .scss extension
-  scss_files = [f for f in scss_files if f.endswith('.scss')]
+  # Filter out anything without a .css extension
+  css_files = [f for f in css_files if f.endswith('.css')]
 
   css_string = ''
 
   # Build the new compiled file
-  for scss_file in scss_files:
-    print('Processing {!s}'.format(scss_file))
+  for css_file in css_files:
+    print('Processing {!s}'.format(css_file))
 
-    css_string += sass.compile(
-      filename=os.path.join(SCSS_BASE, scss_file),
-      output_style='compressed'
-    )
+    with open(os.path.join(CSS_SOURCE, css_file), 'r', encoding='utf8') as fh:
+      css_string += fh.read()
 
   # Write the new CSS file
-  with open(CSS_FILE, 'w', encoding='utf8') as fh:
-    print('Writing CSS to {!s}'.format(CSS_FILE.replace(BASE_DIR, '')))
+  with open(CSS_DEST, 'w', encoding='utf8') as fh:
+    print('Writing CSS to {!s}'.format(CSS_DEST.replace(BASE_DIR, '')))
 
-    # Strip BOM from string
-    # @todo: Figure out whether this comes from libsass or the pip
-    # package. See https://github.com/dahlia/libsass-python/pull/52.
-    css_string = css_string.replace('\uFEFF', '')
-
-    fh.write(css_string)
+    fh.write(compress(css_string))
 
 print('Generating HTML\n')
 
