@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<?xml-stylesheet type="text/xsl" href="stylesheet.xsl"?>
+
+<document type="homepage" xmlns:xi="http://www.w3.org/2001/XInclude">
+  <title>Tips</title>
+  <description>Short thoughts and musings.</description>
+  <slug></slug>
+  <content>
+    <xi:include href="tips/i-sound-like-a-robot-on-zoom.xml" parse="xml" xpointer="xpointer(/document)" />
+    <xi:include href="tips/hushlogin.xml" parse="xml" xpointer="xpointer(/document)" />
+    <xi:include href="tips/xdebug-docker-phpstorm.xml" parse="xml" xpointer="xpointer(/document)" />
+    <xi:include href="tips/solarium-query-example-drupal-8.xml" parse="xml" xpointer="xpointer(/document)" />
+    <xi:include href="tips/ip-conflict-ubuntu.xml" parse="xml" xpointer="xpointer(/document)" />
+    <xi:include href="tips/docker-args-empty.xml" parse="xml" xpointer="xpointer(/document)" />
+    <xi:include href="tips/cookie-cache-context-drupal-8.xml" parse="xml" xpointer="xpointer(/document)" />
+  </content>
+</document>
