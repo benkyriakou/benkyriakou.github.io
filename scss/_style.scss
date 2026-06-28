@@ -3,7 +3,7 @@
 :root {
   --link: #F15BB5;
   --link-hover: #FFF;
-  --link-hover-bg: color-mix(in oklab, var(--link), black 20%);;
+  --link-hover-bg: var(--link);
   --link-active-bg: #897CFF;
 
   --header-bg: #1D184B;
@@ -17,7 +17,7 @@
   --code-color: #111;
 
   --base-color: #EEE;
-  --base-bg: #3D348B;
+  --base-bg: #302970;
   --highlight-bg: #483E9F;
   --pale-color: #DDD;
 
@@ -81,6 +81,7 @@ a {
     color: var(--link-hover);
     outline: 2px var(--link-hover-bg) solid;
     text-decoration: none;
+    text-shadow: 0 0 3px rgba(48, 41, 112, 1);
   }
 
   &:active {
