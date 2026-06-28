@@ -394,7 +394,14 @@ input[type='submit'] {
   }
 }
 
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
 .center-wrapper {
+  flex-grow: 1;
   margin: 0 auto;
   max-width: 52rem;
   padding: 0 1rem;
