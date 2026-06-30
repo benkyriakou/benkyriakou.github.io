@@ -1,0 +1,163 @@
+<!DOCTYPE html SYSTEM "about:legacy-compat">
+<html lang="en">
+  <head>
+    <meta charset="utf-8"/>
+    <meta name="theme-color" content="#333"/>
+    <meta name="description" content="Using rebase as a part of your Git workflow."/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=1"/>
+    <link rel="canonical" href="https://benkyriakou.com/posts/a-case-for-rebase"/>
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon"/>
+    <title>A case for rebase | Ben Kyriakou</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com"/>
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin=""/>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:ital,wght@0,100..900;1,100..900&amp;display=swap" rel="stylesheet"/>
+    <link rel="stylesheet" href="/css/style.css" type="text/css"/>
+    <meta property="og:url" content="http://benkyriakou.com/posts/a-case-for-rebase"/>
+    <meta property="og:title" content="A case for rebase"/>
+    <meta property="og:description" content="Using rebase as a part of your Git workflow."/>
+    <meta property="og:image" content="http://benkyriakou.com/images/global/twitter-card-image.png"/>
+    <meta name="twitter:card" content="summary"/>
+    <meta name="twitter:site" content="@benkyriakou"/>
+    <meta name="twitter:title" content="A case for rebase"/>
+    <meta name="twitter:description" content="Using rebase as a part of your Git workflow."/>
+    <meta name="twitter:image" content="http://benkyriakou.com/images/global/twitter-card-image.png"/>
+    <script>
+      window.onload = function() {
+        (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+        (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+        m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+        })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+        ga('create', 'UA-64337321-1', 'auto');
+        ga('send', 'pageview');
+      };
+    </script>
+  </head>
+  <body>
+    <div class="wrapper">
+      <header class="site-header">
+        <div class="center-wrapper">
+          <nav>
+            <ul class="site-header__items">
+              <li class="site-header__item">
+                <a href="/">Home</a>
+              </li>
+              <li class="site-header__item">
+                <a href="/tips">Tips</a>
+              </li>
+              <li class="site-header__item">
+                <a href="/pdfs">PDFs</a>
+              </li>
+              <li class="site-header__item">
+                <a href="/about">About</a>
+              </li>
+            </ul>
+          </nav>
+        </div>
+      </header>
+      <main class="center-wrapper">
+    <article class="article"><time class="article__date" datetime="2026-07">July 2026</time><h1 class="article__header">A case for rebase</h1><div class="article__content">
+        <p>Of all the commands <code>git</code> has to offer, I feel <code>rebase</code> gets the most negative attention for being something that can torpedo your workflow. I would like to make the argument for positive uses of rebase, and suggest how it can make your life and general workflow better.</p>
+
+        <p>This advice is given in the context of a feature branch where you are the sole committer. If you are working against a shared branch or on someone else&#8217;s commits, using <code>rebase</code> will cause much confusion when used on public commits (see "May the <code>--force</code> be with you" to understand why this is the case).</p>
+
+        <h2 id="section-what-is-rebase">What is rebase?</h2>
+
+        <p><code>git rebase</code> lets you play back a series of commits and, if desired, interactively alter them. The two common usages are:</p>
+
+        <ul>
+          <li>as an alternative to <code>git merge</code> when pulling in changes from a base branch like <code>main</code></li>
+          <li>as a way to go back in time and massage your commits on a branch, combining or altering the commit history</li>
+        </ul>
+
+        <p>The <a href="https://git-scm.com/docs/git-rebase">git documentation</a> does a better job than I could of describing how this works in depth, so give that a read first if you&#8217;d like more detail.</p>
+
+        <h2 id="section-replacing-git-merge">Replacing <code>git merge</code></h2>
+
+        <p>Using <code>git merge</code> is one way to integrate changes into your branch from a base branch - most commonly seen when bringing your branch up to speed with new commits from <code>main</code>. The way that <code>merge</code> works is to take any differing commits from the base branch, and apply them on top of your feature branch with an additional merge commit.</p>
+
+        <div class="highlight"><pre><span/>A---B---C topic
+         \
+--F---G---H main
+</pre></div><p>This is fine, and does the job, but results in a very messy branch history if you make some changes, merge from <code>main</code> make some more changes, etc.</p>
+
+        <p>As an alternative, <code>rebase</code> will still find the divergent commits from the base branch, but instead of applying them <em>on top</em> of your changes, it will start from the point the branches diverged and pull in the base commits from <code>main</code> first, then replay your changes on top.</p>
+
+        <div class="highlight"><pre><span/>A'--B'--C' topic
+               /
+  D---E---F---G main
+</pre></div><p>The branch history is then much cleaner - operations like <code>git diff</code> or <code>git log</code> will have a nice linear series of commits, where your changes are on top.</p>
+
+        <p>The reason this is discouraged for shared branches is that the commits are now different - replaying <code>A</code>, <code>B</code>, and <code>C</code> onto the branch effectively re-commits them, so their hashes will be different from the public history and can&#8217;t be reconciled, causing problems if someone else tries to pull the branch.</p>
+
+        <p>If you do try and re-fetch someone else&#8217;s branch which has been rebased and get an error, the simplest thing to do (if you don&#8217;t have your own commits on the local copy) is switch back to <code>main</code>, remove your local copy of the branch with <code>git branch -D &lt;branchname&gt;</code>, then pull a new local copy with <code>git checkout &lt;branchname&gt;</code>.</p>
+
+        <h2 id="section-rewriting-your-branch-history">Rewriting your branch history</h2>
+
+        <p>The other main use of <code>rebase</code> is to let you rewrite the history of your branch. If you&#8217;re a reflexive committer like me, you probably end up with a feature branch with a bunch of small commits, undos, and fixes as you&#8217;re working on a feature.</p>
+
+        <p>This is all fine, but it makes it a bit of a nightmare for someone reviewing your branch since there&#8217;s no logical grouping of changes, and it looks messy, which doesn&#8217;t inspire confidence. What we can do here is use an interactive rebase. Give it a starting reference and you can interactively alter the commits that it applies.</p>
+
+        <p>The simplest way to do this is by using your base branch as the starting point, e.g.&#160;<code>git rebase main -i</code>. However, you can also be more discerning by picking a specific commit to start from - if I know I need to rebase a certain number of commits I&#8217;ll often use something like <code>git rebase HEAD~3 -i</code>, which lets me rebase the last three commits (for more detail on what that construction means, see <a href="https://git-scm.com/book/en/v2/Git-Tools-Revision-Selection">the git documentation</a>).</p>
+
+        <p>Once you&#8217;ve kicked off the rebase you&#8217;ll be presented with an editor window where each commit is on its own line with a command, SHA, and commit message (as a comment). Note that you can&#8217;t edit the commit message in this window, but you have a range of actions available: <code>pick</code>, <code>reword</code>, <code>edit</code>, <code>squash</code>, <code>fixup</code>, <code>exec</code>, <code>break</code>, <code>drop</code>, <code>label</code>, <code>reset</code>, <code>merge</code>, and <code>update-ref</code>.</p>
+
+        <p>Frankly, I only use a small subset of these, so for more comprehensive information check out <a href="https://git-scm.com/docs/git-rebase">the git documentation</a>. The ones that are of general interest are:</p>
+
+        <ul>
+          <li><strong><code>pick</code></strong> - the default, which means &#8220;use this commit as-is&#8221;</li>
+          <li><strong><code>reword</code></strong> - drops you into an editor so that you can edit the commit message</li>
+          <li><strong><code>edit</code></strong> - stops during the rebase after this commit, so you can make changes before continuing</li>
+          <li><strong><code>squash</code></strong> - combine the contents of this commit with the previous, allowing you to interactively edit the commit messages</li>
+          <li><strong><code>fixup</code></strong> - combine the contents of this commit with the previous, discarding the commit message</li>
+          <li><strong><code>drop</code></strong> - throw away this commit</li>
+        </ul>
+
+        <p>Most of my interactive rebasing is a combination of <code>fixup</code> and <code>reword</code> , but the other actions are also handy. Simply edit the lines to change the action to the one you&#8217;d like to perform, save and exit the rebase editor, and <code>git</code> will take care of the rest.</p>
+
+        <p>You can also re-order the lines in the editor to re-order the commits, but beware that if you rearrange commits which depend on each other you will get merge conflicts, so better to <code>squash</code> them together first.</p>
+
+        <h2 id="section-may-the-force-be-with-you">May the <code>--force</code> be with you</h2>
+
+        <p>You will have to make a change to how you push your changes if you start using <code>rebase</code> - a regular <code>git push</code> will no longer work, so you&#8217;ll have to <code>git push --force</code> (or <code>gitp -f</code> if you have shortcuts set up) instead. Rather than just pushing up any new commits to the branch this will instead remove and overwrite the existing commits with your new ones, something <code>git push</code> on its own doesn&#8217;t allow.</p>
+
+        <p>For a safer, if more verbose, option, use <code>git push --force-with-lease --force-if-includes</code> (or create an alias for same). This will prevent you from pushing to the branch if anyone else has pushed commits in the interim, forcing you to either integrate those commits or make a conscious decision to overwrite them.</p>
+
+        <h2 id="section-being-a-good-neighbour">Being a good neighbour</h2>
+
+        <p>One case where you may choose to proactively not rebase is when you&#8217;re pushing review changes to a branch - the downside of rebasing at this point is that the reviewer has no visibility over what has changed since it&#8217;s absorbed into your previous commits.</p>
+
+        <p>Instead, push your changes into a new commit without rebasing the old commits - when it&#8217;s merged they all still get squashed into one commit so this makes little difference to how it lands in <code>main</code>. Your reviewer will thank you.</p>
+
+        <h2 id="section-something-has-gone-catastrophically-wrong">Something has gone catastrophically wrong</h2>
+
+        <p>A common concern with <code>rebase</code> is that you&#8217;ll get into a state where you have started an operation and gotten stuck somewhere, either in the middle of a set of changes or after the <code>rebase</code> has completed. This is a legitimate concern, but <code>git</code> provides you with the tools to deal with this.</p>
+
+        <p>If you&#8217;re stuck in the middle of a <code>rebase</code>, you can get out of it and return to where you started at any time with <code>git rebase --abort</code>. This will take you back to where you initiated the <code>git rebase</code>, and you can choose what to do from there.</p>
+
+        <p>If you&#8217;ve completed the rebase (or multiple rebases) and you&#8217;re unhappy with where you&#8217;ve ended up this won&#8217;t work. However, at this point you can make use of another magical command - <code>git reflog</code>. This stores the history of all of the changes that have happened in your local repository, so you can simply use this history to pick a commit before things went wrong and rewind to it with <code>git reset --hard &lt;commit&gt;</code>. Now you&#8217;re again back to a safe spot, and you can do what you want from there.</p>
+
+        <h2 id="section-helpful-commands">Helpful commands</h2>
+
+        <p>I use the following command a lot; it automates the dance required to update your main branch and rebase your current branch against it (requires the zsh git helper functions):</p>
+
+        <div class="highlight"><pre><span/><span class="c1"># Rebase the current branch from main branch</span>
+<span class="k">function</span><span class="w"> </span>grmb<span class="o">()</span><span class="w"> </span><span class="o">{</span>
+<span class="w">  </span><span class="nv">CURRENT_BRANCH</span><span class="o">=</span><span class="s2">"</span><span class="k">$(</span>git_current_branch<span class="k">)</span><span class="s2">"</span>
+
+<span class="w">  </span><span class="k">if</span><span class="w"> </span><span class="o">[[</span><span class="w"> </span><span class="s2">"</span><span class="nv">$CURRENT_BRANCH</span><span class="s2">"</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s2">"</span><span class="k">$(</span>git_main_branch<span class="k">)</span><span class="s2">"</span><span class="w"> </span><span class="o">]]</span><span class="p">;</span><span class="w"> </span><span class="k">then</span>
+<span class="w">    </span><span class="nb">echo</span><span class="w"> </span><span class="s2">"Can't run this on the main branch"</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="m">1</span>
+<span class="w">  </span><span class="k">fi</span>
+
+<span class="w">  </span>git<span class="w"> </span>checkout<span class="w"> </span><span class="s2">"</span><span class="k">$(</span>git_main_branch<span class="k">)</span><span class="s2">"</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>git<span class="w"> </span>pull<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>git<span class="w"> </span>checkout<span class="w"> </span><span class="s2">"</span><span class="nv">$CURRENT_BRANCH</span><span class="s2">"</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>git<span class="w"> </span>rebase<span class="w"> </span><span class="s2">"</span><span class="k">$(</span>git_main_branch<span class="k">)</span><span class="s2">"</span>
+<span class="o">}</span>
+</pre></div></div></article>
+  </main>
+      <footer class="site-footer"/>
+    </div>
+  </body>
+</html>
