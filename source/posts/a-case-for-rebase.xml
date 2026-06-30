@@ -13,9 +13,11 @@
       <title>A case for rebase</title>
       <date datetime="2026-07">July 2026</date>
       <content>
-        <p>Of all the commands <code>git</code> has to offer, I feel <code>rebase</code> gets the most negative attention for being something that can torpedo your workflow. I would like to make the argument for positive uses of rebase, and suggest how it can make your life and general workflow better.</p>
+        <p>Of all the commands <code>git</code> has to offer, <code>rebase</code> gets the most negative attention for being something that can torpedo your workflow. I want to make the argument for positive uses of rebase, and show how it can make your life and general workflow better.</p>
 
         <p>This advice is given in the context of a feature branch where you are the sole committer. If you are working against a shared branch or on someone else’s commits, using <code>rebase</code> will cause much confusion when used on public commits (see "May the <code>--force</code> be with you" to understand why this is the case).</p>
+
+        <index />
 
         <h2>What is rebase?</h2>
 
@@ -28,7 +30,7 @@
 
         <p>The <a href="https://git-scm.com/docs/git-rebase">git documentation</a> does a better job than I could of describing how this works in depth, so give that a read first if you’d like more detail.</p>
 
-        <h2>Replacing <code>git merge</code></h2>
+        <h2>Rebase instead of merge</h2>
 
         <p>Using <code>git merge</code> is one way to integrate changes into your branch from a base branch - most commonly seen when bringing your branch up to speed with new commits from <code>main</code>. The way that <code>merge</code> works is to take any differing commits from the base branch, and apply them on top of your feature branch with an additional merge commit.</p>
 
@@ -58,7 +60,7 @@
 
         <p>The other main use of <code>rebase</code> is to let you rewrite the history of your branch. If you’re a reflexive committer like me, you probably end up with a feature branch with a bunch of small commits, undos, and fixes as you’re working on a feature.</p>
 
-        <p>This is all fine, but it makes it a bit of a nightmare for someone reviewing your branch since there’s no logical grouping of changes, and it looks messy, which doesn’t inspire confidence. What we can do here is use an interactive rebase. Give it a starting reference and you can interactively alter the commits that it applies.</p>
+        <p>This makes it a bit of a nightmare for someone reviewing your branch since there’s no logical grouping of changes; and it looks messy, which doesn’t inspire confidence. What we can do here is use an interactive rebase. Give it a starting reference and you can interactively alter the commits that it applies.</p>
 
         <p>The simplest way to do this is by using your base branch as the starting point, e.g. <code>git rebase main -i</code>. However, you can also be more discerning by picking a specific commit to start from - if I know I need to rebase a certain number of commits I’ll often use something like <code>git rebase HEAD~3 -i</code>, which lets me rebase the last three commits (for more detail on what that construction means, see <a href="https://git-scm.com/book/en/v2/Git-Tools-Revision-Selection">the git documentation</a>).</p>
 
