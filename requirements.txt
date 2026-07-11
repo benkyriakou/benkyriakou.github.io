@@ -1,5 +1,4 @@
 bbpb==1.4.2
-csscompressor==0.9.5
 Cython==3.2.6
 lxml==6.1.1
 pillow==12.2.0

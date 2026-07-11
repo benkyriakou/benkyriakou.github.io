@@ -1,7 +1,6 @@
 import os
 import re
 import argparse
-from csscompressor import compress
 from PIL import Image
 from lxml import etree
 from lxml.etree import XSLTApplyError, XSLTParseError
@@ -12,7 +11,6 @@ from pygments.formatters import HtmlFormatter
 # Command-line arguments.
 parser = argparse.ArgumentParser(description="Static blog processor")
 parser.add_argument('--all', action='store_true')
-parser.add_argument('--css', action='store_true')
 parser.add_argument('--images', action='store_true')
 args = parser.parse_args()
 
@@ -34,40 +32,6 @@ except XSLTParseError as e:
     print('{!s}: {!s}'.format(error.level_name, error.message))
 
   exit(1)
-
-# Combine together CSS.
-if args.all or args.css:
-  print('\nCombining CSS\n')
-
-  CSS_SOURCE = os.path.join(BASE_DIR, 'source/css')
-  CSS_DEST = os.path.join(BASE_DIR, 'css', 'style.css')
-
-  # Generate the Pygments styles.
-  PYGMENTS_DEST = os.path.join(CSS_SOURCE, 'pygments.css')
-
-  with open(PYGMENTS_DEST, 'w', encoding='utf8') as fh:
-    fh.write(HtmlFormatter().get_style_defs('.highlight'))
-
-  # Get a sorted list of files for consistency.
-  css_files = sorted(os.listdir(CSS_SOURCE))
-
-  # Filter out anything without a .css extension
-  css_files = [f for f in css_files if f.endswith('.css')]
-
-  css_string = ''
-
-  # Build the new compiled file
-  for css_file in css_files:
-    print('Processing {!s}'.format(css_file))
-
-    with open(os.path.join(CSS_SOURCE, css_file), 'r', encoding='utf8') as fh:
-      css_string += fh.read()
-
-  # Write the new CSS file
-  with open(CSS_DEST, 'w', encoding='utf8') as fh:
-    print('Writing CSS to {!s}'.format(CSS_DEST.replace(BASE_DIR, '')))
-
-    fh.write(compress(css_string))
 
 print('Generating HTML\n')
 
