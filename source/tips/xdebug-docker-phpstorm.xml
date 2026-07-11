@@ -7,7 +7,7 @@
 <document type="article">
   <title>Setting up xdebug with Docker and PHPStorm</title>
   <description>A brief guide on configuring xdebug with Docker.</description>
-  <slug>/posts/xdebug-docker-phpstorm</slug>
+  <slug>/tips/xdebug-docker-phpstorm</slug>
   <content>
     <article>
       <title>Setting up xdebug with Docker and PHPStorm</title>

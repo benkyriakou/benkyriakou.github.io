@@ -7,7 +7,7 @@
 <document type="article">
   <title>Why are my Docker ARGs empty?</title>
   <description>Understanding build stages.</description>
-  <slug>/posts/docker-args-empty</slug>
+  <slug>/tips/docker-args-empty</slug>
   <content>
     <article>
       <title>Why are my Docker ARGs empty?</title>

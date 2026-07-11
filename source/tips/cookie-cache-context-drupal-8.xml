@@ -7,7 +7,7 @@
 <document type="article">
   <title>Why isn't the "cookies" cache context working in Drupal 8?</title>
   <description>Some useful information on core Drupal 8 caching.</description>
-  <slug>/posts/cookie-cache-context-drupal-8</slug>
+  <slug>/tips/cookie-cache-context-drupal-8</slug>
   <content>
     <article>
       <title>Why isn't the "cookies" cache context working in Drupal 8?</title>
