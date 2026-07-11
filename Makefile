@@ -3,9 +3,9 @@
 all: css images
 
 build:
-	rm articles/*.html
-	rm 30-minute-articles/*.html
-	rm posts/*.html
+	rm -f archive/*.html
+	rm -f 30-minute-articles/*.html
+	rm -f posts/*.html
 	. venv/bin/activate; python blog.py
 
 install:
