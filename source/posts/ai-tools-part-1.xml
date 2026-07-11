@@ -5,12 +5,12 @@
 ]>
 
 <document type="article">
-  <title>AI tools</title>
+  <title>AI tools - part 1</title>
   <description>My take on the current state of AI tools.</description>
-  <slug>/posts/ai-tools</slug>
+  <slug>/posts/ai-tools-part-1</slug>
   <content>
     <article>
-      <title>AI tools</title>
+      <title>AI tools - part 1</title>
       <date datetime="2026-04">April 2026</date>
       <content>
         <p>AI is front-and-centre in the media right now, and much of the discussion around it is polarised - AI is either the <em>deus ex machina</em> or the downfall of modern civilisation. My experience has been that there is a middle path, and after having what feels like the same conversations with people I want to write down some of my thoughts.</p>

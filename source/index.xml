@@ -9,7 +9,7 @@
     <xi:include href="posts/a-case-for-rebase.xml" parse="xml" xpointer="xpointer(/document)" />
     <xi:include href="posts/ai-tools-part-2.xml" parse="xml" xpointer="xpointer(/document)" />
     <xi:include href="posts/can-you-do-this-for-me.xml" parse="xml" xpointer="xpointer(/document)" />
-    <xi:include href="posts/ai-tools.xml" parse="xml" xpointer="xpointer(/document)" />
+    <xi:include href="posts/ai-tools-part-1.xml" parse="xml" xpointer="xpointer(/document)" />
     <xi:include href="posts/using-multiple-databases-in-rails.xml" parse="xml" xpointer="xpointer(/document)" />
     <xi:include href="posts/whats-the-time-mr-matsumoto.xml" parse="xml" xpointer="xpointer(/document)" />
     <xi:include href="posts/rails-and-zeitwerk.xml" parse="xml" xpointer="xpointer(/document)" />
