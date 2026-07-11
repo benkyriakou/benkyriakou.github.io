@@ -26,19 +26,13 @@
     <xi:include href="30-minute-articles/own-your-content.xml" parse="xml" xpointer="xpointer(/document)" />
     <xi:include href="posts/30-minute-articles-inauguration.xml" parse="xml" xpointer="xpointer(/document)" />
     <xi:include href="posts/finding-technical-role.xml" parse="xml" xpointer="xpointer(/document)" />
-    <xi:include href="posts/fakeish-news.xml" parse="xml" xpointer="xpointer(/document)" />
     <xi:include href="posts/flexbox.xml" parse="xml" xpointer="xpointer(/document)" />
     <xi:include href="posts/whats-in-a-link.xml" parse="xml" xpointer="xpointer(/document)" />
-    <xi:include href="posts/be-an-adult.xml" parse="xml" xpointer="xpointer(/document)" />
     <xi:include href="posts/provisioning-circleci-with-ansible.xml" parse="xml" xpointer="xpointer(/document)" />
     <xi:include href="posts/lessons-from-pokemon-go.xml" parse="xml" xpointer="xpointer(/document)" />
     <xi:include href="posts/rock-hall.xml" parse="xml" xpointer="xpointer(/document)" />
     <xi:include href="posts/high-quality-websites.xml" parse="xml" xpointer="xpointer(/document)" />
-    <xi:include href="posts/render-conference-2016.xml" parse="xml" xpointer="xpointer(/document)" />
-    <xi:include href="posts/anger-on-the-internet.xml" parse="xml" xpointer="xpointer(/document)" />
     <xi:include href="posts/transliteration.xml" parse="xml" xpointer="xpointer(/document)" />
     <xi:include href="posts/agile-in-practice.xml" parse="xml" xpointer="xpointer(/document)" />
-    <xi:include href="posts/coffee-for-one.xml" parse="xml" xpointer="xpointer(/document)" />
-    <xi:include href="posts/reading-news-efficiently.xml" parse="xml" xpointer="xpointer(/document)" />
   </content>
 </document>
