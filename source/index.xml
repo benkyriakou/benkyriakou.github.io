@@ -22,9 +22,8 @@
     <xi:include href="posts/lxml-the-good-parts.xml" parse="xml" xpointer="xpointer(/document)" />
     <xi:include href="posts/testing-function-mixin-errors-in-scss.xml" parse="xml" xpointer="xpointer(/document)" />
     <xi:include href="posts/web-form-testing-primer.xml" parse="xml" xpointer="xpointer(/document)" />
-    <xi:include href="30-minute-articles/importance-of-process.xml" parse="xml" xpointer="xpointer(/document)" />
-    <xi:include href="30-minute-articles/own-your-content.xml" parse="xml" xpointer="xpointer(/document)" />
-    <xi:include href="posts/30-minute-articles-inauguration.xml" parse="xml" xpointer="xpointer(/document)" />
+    <xi:include href="posts/importance-of-process.xml" parse="xml" xpointer="xpointer(/document)" />
+    <xi:include href="posts/own-your-content.xml" parse="xml" xpointer="xpointer(/document)" />
     <xi:include href="posts/finding-technical-role.xml" parse="xml" xpointer="xpointer(/document)" />
     <xi:include href="posts/flexbox.xml" parse="xml" xpointer="xpointer(/document)" />
     <xi:include href="posts/whats-in-a-link.xml" parse="xml" xpointer="xpointer(/document)" />

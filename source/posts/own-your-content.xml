@@ -5,12 +5,12 @@
 ]>
 
 <document type="article">
-  <title>Own your content [30 minute article]</title>
+  <title>Own your content</title>
   <description>An argument for having ownership of the things you create.</description>
-  <slug>/30-minute-articles/own-your-content</slug>
+  <slug>/posts/own-your-content</slug>
   <content>
     <article>
-      <title>Own your content [30 minute article]</title>
+      <title>Own your content</title>
       <date datetime="2017-03">April 2017</date>
       <content>
         <p>Today there are many platforms that make creating content on the web easy. In some ways this is a good thing, as it frees you to be creative without having to think about your tools. This has been the explicit mission of software like <a href="https://ia.net/writer/">iA's Writer</a>, which places a limit on its configurability to create a focus on the content.</p>
