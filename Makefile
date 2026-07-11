@@ -6,7 +6,7 @@ build:
 	rm -f archive/*.html
 	rm -f 30-minute-articles/*.html
 	rm -f posts/*.html
-	. venv/bin/activate; python blog.py
+	. venv/bin/activate; python bin/blog.py
 
 install:
 	sudo apt install yui-compressor virtualenv
@@ -19,4 +19,4 @@ css:
 	yui-compressor css/style.css -o css/style.css
 
 images:
-	. venv/bin/activate python blog.py --images
+	. venv/bin/activate python bin/images.py
