@@ -1,17 +1,17 @@
-.PHONY: all build install css images
+.PHONY: all install build css images
 
-all: css images
+all: build css images
+
+install:
+	sudo apt install yui-compressor virtualenv
+	virtualenv venv -q
+	. venv/bin/activate; pip install -r requirements.txt
 
 build:
 	rm -f archive/*.html
 	rm -f 30-minute-articles/*.html
 	rm -f posts/*.html
 	. venv/bin/activate; python bin/blog.py
-
-install:
-	sudo apt install yui-compressor virtualenv
-	virtualenv venv -q
-	. venv/bin/activate; pip install -r requirements.txt
 
 css:
 	rm ./css/style.css
