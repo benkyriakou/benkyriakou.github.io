@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<document type="article">
+  <title>Move fast and write conservative code</title>
+  <description>More software philosophy.</description>
+  <slug>/posts/move-fast-and-write-conservative-code</slug>
+  <content>
+    <article>
+      <title>Move fast and write conservative code</title>
+      <date datetime="2026-07">July 2026</date>
+      <content>
+        <p>Facebook’s infamous motto, “Move fast and break things”, has entranced would-be startup darlings for many years. Its recklessness typifies the approach many companies take to achieving success: from Uber’s skirting of employment and taxi legislation to the creative relationship Theranos had with science.</p>
+
+        <p>In the age of sloppy AI-driven software, I’d like to advocate for a better approach - particularly if you work in an industry where breaking things has real-world consequences. An approach where you can still move fast, but safely.</p>
+
+        <p>I’ve realised this philosophy has come to underpin a lot of how I think about writing software, and I want to tell you about my motto,
+        “Move fast and write conservative code”.</p>
+
+        <hr />
+
+        <p>Let’s start with an idea - you’re never going to get software completely right the first time. This is what a lot of the principles of the <a href="https://agilemanifesto.org">Agile manifesto</a> are built around - it’s better to have something working and iterate on it than spend ages chasing perfection.</p>
+
+        <p>Here’s another idea - the best way to avoid tech debt is to outrun it. If you’re constantly working on and improving the software you’re writing, tech debt doesn’t stick around too long. You prune dead code once it has served its purpose, and you move towards your target incrementally until you either hit it or you’re close enough you can’t tell the difference.</p>
+
+        <p>There is a catch to this utopian ideal. To move fast you have to be able to achieve consensus quickly, and be smart enough to find and create a solution in a reasonable amount of time. If you spend most of your time on creation then the bias switches: there’s a high cost associated with change, so it’s better to build once and focus on getting it right the first time.</p>
+
+        <hr />
+
+        <p>“Move fast and break things” is a false economy - forward progress doesn’t have to come at the expense of existing functionality. If you’re writing actual production code, write code that is conservative - that addresses exactly the problem it needs to solve, validates and asserts on what is being passed to it, and only accepts things that it is equipped to handle.</p>
+
+        <p>You might say that this sounds too simple, and conceptually it is. In practice I don’t think most people think about writing software this way because they use patterns that build in dead ends. They write it to solve a problem very procedurally, without breaking it up into component parts or allowing for simple extension in the future by adding configuration rather than restructuring the code.</p>
+
+        <p>Conservative code requires a bit more effort to write - it includes type-checks and bounds-checks. It validates its assumptions, solves a small problem well, and tells you if the problem domain has expanded. It makes use of libraries as much as possible, at whatever level is appropriate.</p>
+
+        <p>However, in many ways this kind of software is <em>simpler</em> to write, because you’re codifying the limitations, and easier to debug,
+        because as soon as you go outside of the understood domain it either refuses to work or complains at you until you fix it. Software that works in silence can be very dangerous, because it keeps bleeding until something else goes wrong.</p>
+
+        <hr />
+
+        <p>Once I started thinking in this way, a lot of the Agile Manifesto made more sense. This is why it’s important to deliver working software fast, and to talk to people as early and as often as possible, because this puts you in contact with real needs and gets you to a solution far faster than operating in a vacuum.</p>
+
+        <p>It’s also why Waterfall is generally going to slow you down unless you’re writing something that has an extremely strict or formal specification, where adherence to a series of pre-defined requirements is more important than solving a particular need, such as cryptography or parsing. The process shifts the bias again, so that the effort of understanding what you need to create vastly outweighs the effort of creating it, and you don’t want to do it over and over again.</p>
+
+        <p>This leads me to another concept that I dislike - “self-documenting”
+        code. In my experience people who claim they write self-documenting code mean that <em>they</em> can understand the code, which is not at all useful. In contrast conservative code <em>is</em> self-documenting in the sense that it is strictly constrained by design, and tries to avoid undefined or underspecified behaviour.</p>
+
+        <p>This also ties in nicely with my belief that you should aim to minimise the amount of procedural logic you need to implement your business code. Extracting logic into libraries helps enforce those properties - libraries have explicit interfaces, support a limited set of operations and interactions, and can validate the data you’re passing through assertions, domain models, data structures, etc.</p>
+
+        <hr />
+
+        <p>If you’re reading this and thinking, “isn’t this software development”, then I congratulate you on having avoided much of the kind of code I’ve been subjected to. The more software I experience, and the more I see other people write code, the more I agree with Linus Torvalds’ assertion that:</p>
+
+        <blockquote>
+
+        <p>Bad programmers worry about the code. Good programmers worry about data structures and their relationships.</p>
+
+        </blockquote>
+
+        <p>In the way that water naturally seeks an equilibrium, code with the right shape and intention naturally leads to software that is simpler to understand, debug, and extend. Conversely, bad shapes repeatedly lead to dead ends - and if you aren’t too wedded to your code, you’re ready to excise the bad parts and keep ahead of the tech debt.</p>
+
+        <hr />
+
+        <p>Now there's an obvious tension here since you need a level of experience and forethought to know <em>when</em> to implement these patterns and how something will change in the future. This is why learning a programming language doesn't make you a good programmer. Still, the best way to learn is by doing. Try the conservative approach, and see whether being more careful actually lets you move faster.</p>
+      </content>
+    </article>
+  </content>
+</document>
