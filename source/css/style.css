@@ -190,11 +190,6 @@ input[type='submit'] {
     white-space: pre-wrap;
   }
 
-  pre {
-    background-color: var(--code-bg);
-    color: var(--code-color);
-  }
-
   picture {
     border: 0;
     display: block;
@@ -229,7 +224,7 @@ input[type='submit'] {
   blockquote {
     font-style: italic;
     margin: 0 0 1.5rem;
-    
+
 
     @media screen and (min-width: 35rem) {
       margin-left: 3rem;
@@ -239,7 +234,7 @@ input[type='submit'] {
     p {
       margin: 0;
 
-      &+p {
+      & + p {
         margin-top: 1rem;
       }
 
@@ -266,7 +261,7 @@ input[type='submit'] {
 
   .reference {
     margin-left: 0.125rem;
-  
+
     a:before {
       content: '[';
     }
@@ -571,7 +566,7 @@ input[type='submit'] {
 
   form {
     display: flex;
-  flex-wrap: wrap;
+    flex-wrap: wrap;
   }
 }
 
@@ -601,20 +596,43 @@ input[type='submit'] {
 
 /* Pygments */
 
-.highlight {
-  background-color: var(--highlight-bg) !important;
+.highlight pre,
+.article__content > .highlight pre {
+  background-color: #0e0c24;
+  border: 1px solid var(--link);
+  border-radius: 0.5rem;
+  box-shadow: 3px 3px 3px 1px #000;
+  margin-left: auto;
+  margin-right: auto;
+  overflow: hidden;
 
-  pre {
-    margin-left: auto;
-    margin-right: auto;
+  &::before {
+    background-image: radial-gradient(circle, #ff5f57 2.5px, transparent 3px),
+    radial-gradient(circle, #febc2e 2.5px, transparent 3px),
+    radial-gradient(circle, #28c840 2.5px, transparent 3px);
+    background-repeat: no-repeat;
+    background-position: left 0.75rem center, left 1.35rem center, left 1.95rem center;
+    content: '';
+    display: block;
+    height: 2rem;
+    background-color: #1e1b3a;
+    border-bottom: 1px solid var(--link);
+    z-index: 1;
+    margin: -1rem -1rem 1rem;
 
-    @media screen and (min-width: 54rem) {
-      min-width: 52rem;
-      max-width: 100vw;
-      width: max-content;
-    }
   }
 
+  @media screen and (min-width: 54rem) {
+    min-width: 52rem;
+    max-width: 100vw;
+    width: max-content;
+    margin-left: auto;
+    margin-right: auto;
+  }
+}
+
+.highlight,
+.article__content > .highlight {
   @media screen and (min-width: 54rem) {
     margin: 0 calc((50vw - 25.5rem) * -1);
   }

@@ -62,7 +62,7 @@ for item in os.walk(SOURCE_DIR):
             options['startinline'] = True
 
         lexer = get_lexer_by_name(lang, **options) if lang else guess_lexer(code)
-        pygments_code = highlight(code, lexer, HtmlFormatter())
+        pygments_code = highlight(code, lexer, HtmlFormatter(style='monokai'))
         code_block.getparent().replace(code_block, etree.fromstring(pygments_code))
 
       # Then apply the XSL styles to the rest.
