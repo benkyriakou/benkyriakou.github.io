@@ -1,4 +1,4 @@
-.PHONY: all install build css images
+.PHONY: all install build css images server
 
 all: build css images
 
@@ -20,3 +20,6 @@ css:
 
 images:
 	. venv/bin/activate python bin/images.py
+
+server:
+	. venv/bin/activate; python -m reloadserver
