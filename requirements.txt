@@ -1,7 +1,7 @@
 bbpb==1.4.2
 Cython==3.2.6
 lxml==6.1.1
-pillow==12.2.0
+pillow==12.3.0
 protobuf==7.35.1
 Pygments==2.20.0
 reloadserver==1.0.0
