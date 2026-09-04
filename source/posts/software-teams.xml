@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<document type="article">
+  <title>Software teams</title>
+  <description>How teams of people build good software.</description>
+  <slug>/posts/software-teams</slug>
+  <content>
+    <article>
+      <title>Software teams</title>
+      <date datetime="2026-09">September 2026</date>
+      <content>
+        <p>In this week's dose of software philosophy; some thoughts on how teams of people build good software. None of these ideas are inherently original, but I hope I've arranged them in an interesting way.</p>
+
+        <p>The seminal work on the relationship of people to software creation is, of course, Fred Brooks' "Mythical Man-Month"; with the main take-away being that building good software is a lot like having a baby. In my experience, this holds true; both involve a small group of fully committed people, happen gradually over a period of time, can be painful and involve some bodily fluids; and produce something that, even if it's a bit ugly, you'll still feel a degree of affection towards.</p>
+
+        <hr/>
+
+        <p>Fred Brooks argues that adding more people makes neither procreation nor software development faster. The problem with big groups in software development is that the output doesn't scale linearly with participants: not for anatomical reasons, but because the number of possible interactions within a group increases quadratically with the number of members.</p>
+
+        <p>This means that larger groups have a harder time maintaining shared knowledge, or achieving consensus; both critical bottlenecks in making software. You also require more processes to manage all of these people and run the team, so you spend more time per capita on paperwork and bureaucracy and less time on the things that matter.</p>
+
+        <p>Amazon popularised the sweet spot for software development being a "two pizza team", or around 6-10 people. This feels about right (even if it greatly underestimates how much pizza one person can eat) - it gives you enough people to cover a spread of disciplines and a few streams of work without making the overhead of managing them unwieldy.</p>
+
+        <hr/>
+
+        <p>Now, clearly you can't make enormous software like Windows with one group of this size, but to avoid the overhead trap each discrete part of the software needs a single group as an owner, and the groups need to be able to collaborate independently of the others. Groups also need to have enough autonomy to make decisions without leadership coming to interfere.</p>
+
+        <p>If the groups are very isolated or don't have an incentive to collaborate, it's going to be hard to produce anything cross-cutting. Instead of helping, teams are fighting with each other to make progress or spending time reinventing things that exist elsewhere in the organisation under another team's ownership.</p>
+
+        <p>Independent teams, however, can make progress as fast as they're able; controlling their own domain and building or re-using the tools they require. Even without direct interaction, independent teams can accelerate each other through the creation and enrichment of shared abstractions, since enabling other teams is incentivised within the organisation.</p>
+
+        <hr/>
+
+        <p>The composition of a team is just as important as its size and operation. All of the people in the team need to be smart and motivated. They don't have to score highly on both, and to some degree you can compensate for one with the other. They can even be motivated by different things. Some might be motivated by the mission; others by getting paid, and this is fine as long as the motivation doesn't bias them to seek outcomes that are misaligned with the organisation.</p>
+
+        <p>Either way, you need a reasonable amount of both smarts and motivation to help push you in the right direction. But even then, it's no guarantee you won't encounter failure along the way to building something good. There might be external circumstances the team can't control. Or maybe you're just unlucky.</p>
+
+        <p>Yes, even with a great team, there's an amount of luck involved. Building something non-trivially good is a lightning in a bottle situation. You need to have the right people, making the right thing, at the right time. There are numerous products that weren't planned into being, but originated from serendipity or random side-projects; Gmail, incident.io, and Monzo's hot coral card, to name a few. Maybe with a slightly different confluence of factors, they wouldn't have made it.</p>
+
+        <hr/>
+
+        <p>My experience is that big organisations often don't understand this process, but they want to try to systematise it to harness "startup energy". They attach a romantic ideal to startups because successful startups are artificially buoyed by their inherent survivorship bias, and are by their nature formed by a small group of smart, motivated people.</p>
+
+        <p>If a company loses sight of the process of success, they develop in one of two ways.</p>
+
+        <p>One way is the path of fear; the people at the top don't understand what makes their product successful and they're afraid of messing it up. To mitigate risk they become very timid, avoiding big changes and instead tweaking the levers they've already got. The natural entropy of software and markets means that eventually this approach will make the product worse, and the organisation will either fail on its own or will be eaten by the competition.</p>
+
+        <p>The other way is the path of arbitrary action; just start doing things to see what sticks. This manifests itself as hack days and skunkworks projects, because they feel they might capture that lightning in a bottle. Generally these either don't produce anything that's useful, lack the follow-through to develop promising ideas, or produce something at the expense of burning out the team doing it.</p>
+
+        <hr/>
+
+        <p>It doesn't have to be this way. Within large organisations are individuals or teams who do have the right ingredients to harness "startup energy". They're smart and they're motivated, but often they're constrained by the structure of the organisation and are stuck plugging away at whatever thankless task management has handed them.</p>
+
+        <p>Giving them the ability to be very successful is a risky proposition, because it requires giving them permission to fail - by trying something that has a larger upside you have to accept that it's not a sure thing. The organisation might invest a lot of time and money in a project only for its reach to exceed its grasp - through no fault of the team.</p>
+
+        <p>But that's just the risk you take. You can cushion some of the sting by moving fast and only building what you need to prove the idea, but you have to also be willing to cut your losses if you aren't getting what you need out of it, either by retiring the product or just putting a hold on further development if the trajectory is wrong.</p>
+
+        <hr/>
+
+        <p>I've seen this template (or lack thereof) determine the success of software development over and over again. Small, smart, motivated teams will get things done; even in the absence of direction or management. They understand their domain and what it needs to succeed, and they will self-start until they reach their goals.</p>
+
+        <p>Those teams need to be able to fail, and some of them need to be able to really fail. They might produce things that end up having a net negative value to the company. But as an organisation you're rolling the dice on hitting that occasional jackpot which covers the losses, and then some.</p>
+
+        <p>Not every team needs to take big risks. There will always be teams that need to do the projects that are less ambitious, and tick the boxes the company needs to function - to fight against code entropy, and support the functions of the business as a whole. They just need to stay small and independent enough to make meaningful progress.</p>
+
+        <p>But to keep making things that are vibrant and new; things that distinguish your product from the rest of the market - that's where you have to take a gamble.</p>
+      </content>
+    </article>
+  </content>
+</document>
