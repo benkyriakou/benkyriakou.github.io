@@ -56,7 +56,7 @@
         </div>
       </header>
       <main class="center-wrapper">
-    <article class="article"><time class="article__date" datetime="2018-03">March 2018</time><h1 class="article__header">Testing SASS function and mixin errors with True</h1><div class="article__content">
+    <article class="article"><h1 class="article__header">Testing SASS function and mixin errors with True</h1><time class="article__date" datetime="2018-03">March 2018</time><div class="article__content">
         <p>Recently I wanted to try out some SASS testing, and came across the <a href="https://github.com/oddbird/true">True framework</a> by Miriam Suzanne. It's a fairly small and straightforward framework to learn, but it's not entirely obvious how to use it to test error output since neither True nor the SASS language support catching errors. Here's a write-up of my approach.</p>
 
         <p>The main reference point for testing errors is the <a href="https://github.com/oddbird/susy/commit/de0c473a95d99117475f1c023f17423803bb7e7b">tests for the Susy library</a> (further explained <a href="https://github.com/oddbird/true/issues/92">in this issue</a>). By passing all function errors through the <code>_susy-error()</code> function, they can either be thrown as regular errors or returned as strings based on the state of <code>$_susy-error-output-override</code>:</p>

@@ -56,7 +56,7 @@
         </div>
       </header>
       <main class="center-wrapper">
-    <article class="article"><time class="article__date" datetime="2019-12">December 2019</time><h1 class="article__header">Router IP conflict on Ubuntu</h1><div class="article__content">
+    <article class="article"><h1 class="article__header">Router IP conflict on Ubuntu</h1><time class="article__date" datetime="2019-12">December 2019</time><div class="article__content">
         <p>I&#8217;d been experiencing IP clashes with my router on Ubuntu, which manifested whenever I used a network with a router in the 192.168.0.0/20 block. I&#8217;d struggled to narrow down the cause, but after some discussion on the Ubuntu forums, I narrowed it down to particular bridge interface that had been set up on the same block:</p>
 
         <pre><code><span>&gt; ip addr | grep inet | grep "192.168.0.1"</span>

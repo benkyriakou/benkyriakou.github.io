@@ -56,7 +56,7 @@
         </div>
       </header>
       <main class="center-wrapper">
-    <article class="article"><time class="article__date" datetime="2024-02">February 2024</time><h1 class="article__header">Using multiple databases in Rails</h1><div class="article__content">
+    <article class="article"><h1 class="article__header">Using multiple databases in Rails</h1><time class="article__date" datetime="2024-02">February 2024</time><div class="article__content">
         <p>We recently embarked on a research project to extract some functionality in our codebase to a separate database. Our motivation was to investigate scalability options for our back-end&#8212;we've previously written about our Postgres database, and as we continue to scale the business our need for database performance grows accordingly.</p>
 
         <p>To properly test out new database back-ends we needed to connect up some representative workloads in our Rails application, which led us to investigate the feasibility of adding new databases to our existing environments. This isn't entirely novel&#8212;we already have code that does this in our Rails application&#8212;but the twist was that we wanted to entirely isolate it from being able to write to our primary database. We could still read from the replica if required, but any writes had to be directed exclusively to our new database.</p>

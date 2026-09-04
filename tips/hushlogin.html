@@ -56,7 +56,7 @@
         </div>
       </header>
       <main class="center-wrapper">
-    <article class="article"><time class="article__date" datetime="2024-09">September 2024</time><h1 class="article__header">.hushlogin</h1><div class="article__content">
+    <article class="article"><h1 class="article__header">.hushlogin</h1><time class="article__date" datetime="2024-09">September 2024</time><div class="article__content">
         <p>I was recently setting up a headless server for my home network and wanted to disable the MOTD when ssh-ing in. In doing so, I discovered an alternative to editing the <code>/etc/motd</code> file.</p>
 
         <p>Per <code>man login</code>, the login service will suppress the MOTD if a <code>$HOME/.hushlogin</code> file exists for the user. Alternatively, you can also set the file that this will check by configuring the <code>HUSHLOGIN_FILE</code> in <code>etc/login.defs</code>.</p>

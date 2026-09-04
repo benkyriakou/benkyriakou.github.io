@@ -18,7 +18,7 @@
 
   --base-color: #E0E0E0;
   --base-bg: #1E1E24;
-  --pale-color: #DDD;
+  --pale-color: #AAA;
 
   --base-font: "Noto Sans", sans-serif;
   --accent-font: "Noto Sans", sans-serif;
@@ -444,8 +444,7 @@ input[type='submit'] {
 .article__header {
   font-size: 2.375rem;
   line-height: 1.25;
-  margin-bottom: 0.75rem;
-  margin-top: 0;
+  margin: 0;
 }
 
 .article__header--teaser {
@@ -480,26 +479,26 @@ input[type='submit'] {
 }
 
 .article__date {
-  align-items: center;
   display: flex;
-  font-weight: 400;
-  justify-content: left;
+  font-style: italic;
+  margin-bottom: 1rem;
+}
+
+.article__date--teaser {
+  margin-bottom: 0;
 
   /* 24rem larger than the max wrapper size */
   @media screen and (min-width: 76rem) {
+    align-items: center;
     font-family: var(--accent-font);
     left: -12rem;
     justify-content: right;
-    height: calc(1.25 * 2.25rem);
+    height: 2rem;
     padding: 0 1.25rem 0 1rem;
     position: absolute;
     top: 0;
     width: 12rem;
   }
-}
-
-.article__date--teaser {
-  height: calc(1.5 * 1.25rem);
 }
 
 .article__external {

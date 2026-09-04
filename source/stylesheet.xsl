@@ -88,14 +88,14 @@
 
   <xsl:template match="article">
     <article class="article">
+      <h1 class="article__header">
+        <xsl:value-of select="title" />
+      </h1>
       <xsl:if test="date/@datetime">
         <time class="article__date" datetime="{date/@datetime}">
           <xsl:value-of select="date" />
         </time>
       </xsl:if>
-      <h1 class="article__header">
-        <xsl:value-of select="title" />
-      </h1>
       <div class="article__content">
         <xsl:apply-templates select="content" />
         <xsl:apply-templates select="content" mode="reference" />
@@ -272,9 +272,6 @@
 
   <xsl:template match="document[@type='article']" mode="teaser">
     <article class="article article--teaser">
-      <time class="article__date article__date--teaser" datetime="{.//article/date/@datetime}">
-        <xsl:value-of select=".//article/date" />
-      </time>
       <xsl:if test="@rel and @rel='external'">
         <span class="article__external">External article</span>
       </xsl:if>
@@ -283,6 +280,9 @@
           <xsl:value-of select=".//article/title" />
         </a>
       </h2>
+      <time class="article__date article__date--teaser" datetime="{.//article/date/@datetime}">
+        <xsl:value-of select=".//article/date" />
+      </time>
       <div class="article__content article__content--teaser">
         <p><xsl:value-of select="description" /></p>
       </div>
